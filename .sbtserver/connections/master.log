@@ -1,34 +1,14 @@
-New log file opened at Tue Aug 02 10:43:30 ART 2016 by 2697@kali
-Taking next connection to: 44314
-New client attempting to connect on port: 42878-44314
-  Address = /127.0.1.1:44314
-This client on port 42878 has uuid 160d4cb7-256f-4b3e-b3aa-bf35a02792a1 configName play-fork-run humanReadableName Play Fork Run protocolVersion 1 featureTags Vector()
-Connected Clients: play-fork-run-160d4cb7-256f-4b3e-b3aa-bf35a02792a1
-Taking next connection to: 44314
-Checking to see if clients are empty...
-We have 1 non-daemon clients, continuing serving connections.
-Taking next connection to: 44314
-New client attempting to connect on port: 42920-44314
-  Address = /127.0.1.1:44314
-Handshake exception on socket: 42920
-sbt.impl.ipc.HandshakeException: Unable to perform handshake
-	at sbt.impl.ipc.Peer.handshake(IPC.scala:46)
-	at sbt.impl.ipc.MultiClientServer.<init>(IPC.scala:150)
-	at sbt.server.SbtServerSocketHandler$$anon$1.run(SbtServerSocketHandler.scala:43)
-Caused by: java.io.EOFException
-	at java.io.DataInputStream.readInt(DataInputStream.java:392)
-	at sbt.impl.ipc.Peer.receive(IPC.scala:95)
-	at sbt.impl.ipc.Peer.handshake(IPC.scala:49)
-	... 2 more
-Taking next connection to: 44314
-New client attempting to connect on port: 42922-44314
-  Address = /127.0.1.1:44314
-This client on port 42922 has uuid cd61db0c-de4e-46cc-aa7b-a954f426b734 configName play-fork-run humanReadableName Play Fork Run protocolVersion 1 featureTags Vector()
-Connected Clients: play-fork-run-cd61db0c-de4e-46cc-aa7b-a954f426b734
-Taking next connection to: 44314
+New log file opened at Thu Aug 04 11:02:32 ART 2016 by 9262@kali
+Taking next connection to: 45764
+New client attempting to connect on port: 36366-45764
+  Address = /127.0.1.1:45764
+This client on port 36366 has uuid 8821b871-5e4a-4af4-9465-82d327e26628 configName play-fork-run humanReadableName Play Fork Run protocolVersion 1 featureTags Vector()
+Connected Clients: play-fork-run-8821b871-5e4a-4af4-9465-82d327e26628
+Taking next connection to: 45764
 Checking to see if clients are empty...
 No non-daemon clients connected after 3 min. Shutting down.
+1 daemon clients are connected.
 Server socket thread exiting.
-0 clients open, will close them...
+1 clients open, will close them...
 All client sockets have been closed.
-Closing the 2697@kali logs at Tue Aug 02 10:51:25 ART 2016, goodbye.
+Closing the 9262@kali logs at Thu Aug 04 11:05:38 ART 2016, goodbye.
