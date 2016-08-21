@@ -8,4 +8,12 @@ class Application extends Controller {
     Ok(views.html.index.render())
   }
 
+  def tables = Action {
+    Ok(views.html.tables.render())
+  }
+
+  def login = Action {
+    Ok(views.html.login.render())
+  }
+
 }

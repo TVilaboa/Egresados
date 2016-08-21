@@ -1,14 +1,10 @@
-New log file opened at Thu Aug 04 11:02:32 ART 2016 by 9262@kali
-Taking next connection to: 45764
-New client attempting to connect on port: 36366-45764
-  Address = /127.0.1.1:45764
-This client on port 36366 has uuid 8821b871-5e4a-4af4-9465-82d327e26628 configName play-fork-run humanReadableName Play Fork Run protocolVersion 1 featureTags Vector()
-Connected Clients: play-fork-run-8821b871-5e4a-4af4-9465-82d327e26628
-Taking next connection to: 45764
+New log file opened at Sun Aug 21 18:45:45 ART 2016 by 3139@kali
+Taking next connection to: 40801
+New client attempting to connect on port: 55712-40801
+  Address = /127.0.1.1:40801
+This client on port 55712 has uuid deeb943a-1c7c-4287-8059-88239dd0e57e configName play-fork-run humanReadableName Play Fork Run protocolVersion 1 featureTags Vector()
+Connected Clients: play-fork-run-deeb943a-1c7c-4287-8059-88239dd0e57e
+Taking next connection to: 40801
 Checking to see if clients are empty...
-No non-daemon clients connected after 3 min. Shutting down.
-1 daemon clients are connected.
-Server socket thread exiting.
-1 clients open, will close them...
-All client sockets have been closed.
-Closing the 9262@kali logs at Thu Aug 04 11:05:38 ART 2016, goodbye.
+We have 1 non-daemon clients, continuing serving connections.
+Taking next connection to: 40801
