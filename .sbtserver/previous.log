@@ -1,4 +1,4 @@
-New log file opened at Sun Aug 21 18:42:42 ART 2016 by 2704@kali
+New log file opened at Mon Aug 22 13:27:05 ART 2016 by 3960@kali
 == resolving dependencies com.typesafe.play#play-netty-server_2.11;2.5.0->org.scala-lang#scala-library;2.11.7 [runtime->runtime(*)]
 == resolving dependencies com.typesafe.play#play-netty-server_2.11;2.5.0->org.scala-lang#scala-library;2.11.7 [runtime->compile]
 == resolving dependencies com.typesafe.play#play-netty-server_2.11;2.5.0->com.typesafe.play#play-server_2.11;2.5.0 [runtime->runtime(*)]
@@ -3286,7 +3286,7 @@ all callers are evicted for io.netty#netty-codec;4.0.33.Final: evicting too
 	[NOT REQUIRED] com.typesafe.akka#akka-actor_2.11;2.3.8!akka-actor_2.11.jar
 	[NOT REQUIRED] com.typesafe.akka#akka-testkit_2.11;2.3.8!akka-testkit_2.11.jar
 	[NOT REQUIRED] com.typesafe#config;1.2.1!config.jar(bundle)
-:: resolution report :: resolve 4508ms :: artifacts dl 123ms
+:: resolution report :: resolve 22755ms :: artifacts dl 2479ms
 	report for ismet-scalongo-seed#ismet-scalongo-seed_2.11;1.0 compile produced in /root/ismet-scalongo-seed/target/resolution-cache/reports/ismet-scalongo-seed-ismet-scalongo-seed_2.11-compile.xml
 	report for ismet-scalongo-seed#ismet-scalongo-seed_2.11;1.0 runtime produced in /root/ismet-scalongo-seed/target/resolution-cache/reports/ismet-scalongo-seed-ismet-scalongo-seed_2.11-runtime.xml
 	report for ismet-scalongo-seed#ismet-scalongo-seed_2.11;1.0 test produced in /root/ismet-scalongo-seed/target/resolution-cache/reports/ismet-scalongo-seed-ismet-scalongo-seed_2.11-test.xml
@@ -3301,68 +3301,16 @@ all callers are evicted for io.netty#netty-codec;4.0.33.Final: evicting too
 	report for ismet-scalongo-seed#ismet-scalongo-seed_2.11;1.0 pom produced in /root/ismet-scalongo-seed/target/resolution-cache/reports/ismet-scalongo-seed-ismet-scalongo-seed_2.11-pom.xml
 	report for ismet-scalongo-seed#ismet-scalongo-seed_2.11;1.0 scala-tool produced in /root/ismet-scalongo-seed/target/resolution-cache/reports/ismet-scalongo-seed-ismet-scalongo-seed_2.11-scala-tool.xml
 	report for ismet-scalongo-seed#ismet-scalongo-seed_2.11;1.0 fork-run produced in /root/ismet-scalongo-seed/target/resolution-cache/reports/ismet-scalongo-seed-ismet-scalongo-seed_2.11-fork-run.xml
-	resolve done (4508ms resolve - 123ms download)
+	resolve done (22755ms resolve - 2479ms download)
 Read from stdout: Done updating.
 Done updating.
-Total time: 6 s, completed Aug 21, 2016 6:42:44 PM
+Total time: 27 s, completed Aug 22, 2016 1:27:11 PM
 > server-post-command-cleanup
 > server-handle-next-server-request
 > scalongo/playForkNotifyStart http://localhost:9000
 Evaluating tasks: *:playForkNotifyStart
-Running task... Cancel: sbt.server.ServerTaskCancellation@6dc84238, check cycles: false
-Total time: 0 s, completed Aug 21, 2016 6:42:47 PM
-> server-post-command-cleanup
-> server-handle-next-server-request
-> {file:/root/ismet-scalongo-seed/}scalongo/*:playForkReload
-Evaluating tasks: *:playForkReload
-Running task... Cancel: sbt.server.ServerTaskCancellation@5a963d1, check cycles: false
-
-Initial source changes: 
-	removed:Set()
-	added: Set()
-	modified: Set(/root/ismet-scalongo-seed/target/scala-2.11/twirl/main/views/html/tables.template.scala)
-Removed products: Set()
-External API changes: API Changes: Set()
-Modified binary dependencies: Set()
-Initial directly invalidated sources: Set(/root/ismet-scalongo-seed/target/scala-2.11/twirl/main/views/html/tables.template.scala)
-
-Sources indirectly invalidated by:
-	product: Set()
-	binary dep: Set()
-	external source: Set()
-All initially invalidated sources: Set(/root/ismet-scalongo-seed/target/scala-2.11/twirl/main/views/html/tables.template.scala)
-
-Read from stdout: Compiling 1 Scala source to /root/ismet-scalongo-seed/target/scala-2.11/classes...
-Compiling 1 Scala source to /root/ismet-scalongo-seed/target/scala-2.11/classes...
-Getting compiler-interface from component compiler for Scala 2.11.7
-Other repositories:
-Default repositories:
-Getting compiler-interface from component compiler for Scala 2.11.7
-Other repositories:
-Default repositories:
-Running cached compiler 329d32ef, interfacing (CompilerInterface) with Scala compiler version 2.11.7
-Calling Scala compiler with arguments  (CompilerInterface):
-	-deprecation
-	-unchecked
-	-encoding
-	utf8
-	-bootclasspath
-	/opt/jdk1.8.0_73/jre/lib/resources.jar:/opt/jdk1.8.0_73/jre/lib/rt.jar:/opt/jdk1.8.0_73/jre/lib/sunrsasign.jar:/opt/jdk1.8.0_73/jre/lib/jsse.jar:/opt/jdk1.8.0_73/jre/lib/jce.jar:/opt/jdk1.8.0_73/jre/lib/charsets.jar:/opt/jdk1.8.0_73/jre/lib/jfr.jar:/opt/jdk1.8.0_73/jre/classes:/root/Documents/activator-dist-1.3.10/repository/org.scala-lang/scala-library/2.11.7/jars/scala-library.jar
-	-classpath
-	/root/ismet-scalongo-seed/target/scala-2.11/classes:/root/Documents/activator-dist-1.3.10/repository/com.typesafe.play/twirl-api_2.11/1.1.1/jars/twirl-api_2.11.jar:/root/Documents/activator-dist-1.3.10/repository/org.apache.commons/commons-lang3/3.4/jars/commons-lang3.jar:/root/.ivy2/cache/org.scala-lang.modules/scala-xml_2.11/bundles/scala-xml_2.11-1.0.1.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe.play/play-server_2.11/2.5.0/jars/play-server_2.11.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe.play/play_2.11/2.5.0/jars/play_2.11.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe.play/build-link/2.5.0/jars/build-link.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe.play/play-exceptions/2.5.0/jars/play-exceptions.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe.play/play-iteratees_2.11/2.5.0/jars/play-iteratees_2.11.jar:/root/.ivy2/cache/org.scala-stm/scala-stm_2.11/jars/scala-stm_2.11-0.7.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe/config/1.3.0/bundles/config.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe.play/play-json_2.11/2.5.0/jars/play-json_2.11.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe.play/play-functional_2.11/2.5.0/jars/play-functional_2.11.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe.play/play-datacommons_2.11/2.5.0/jars/play-datacommons_2.11.jar:/root/Documents/activator-dist-1.3.10/repository/joda-time/joda-time/2.9.2/jars/joda-time.jar:/root/Documents/activator-dist-1.3.10/repository/org.joda/joda-convert/1.8.1/jars/joda-convert.jar:/root/Documents/activator-dist-1.3.10/repository/org.scala-lang/scala-reflect/2.11.7/jars/scala-reflect.jar:/root/Documents/activator-dist-1.3.10/repository/com.fasterxml.jackson.core/jackson-core/2.7.1/bundles/jackson-core.jar:/root/Documents/activator-dist-1.3.10/repository/com.fasterxml.jackson.core/jackson-annotations/2.7.1/bundles/jackson-annotations.jar:/root/Documents/activator-dist-1.3.10/repository/com.fasterxml.jackson.core/jackson-databind/2.7.1/bundles/jackson-databind.jar:/root/Documents/activator-dist-1.3.10/repository/com.fasterxml.jackson.datatype/jackson-datatype-jdk8/2.7.1/bundles/jackson-datatype-jdk8.jar:/root/Documents/activator-dist-1.3.10/repository/com.fasterxml.jackson.datatype/jackson-datatype-jsr310/2.7.1/bundles/jackson-datatype-jsr310.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe.play/play-netty-utils/2.5.0/jars/play-netty-utils.jar:/root/Documents/activator-dist-1.3.10/repository/org.slf4j/slf4j-api/1.7.16/jars/slf4j-api.jar:/root/Documents/activator-dist-1.3.10/repository/org.slf4j/jul-to-slf4j/1.7.16/jars/jul-to-slf4j.jar:/root/Documents/activator-dist-1.3.10/repository/org.slf4j/jcl-over-slf4j/1.7.16/jars/jcl-over-slf4j.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe.play/play-streams_2.11/2.5.0/jars/play-streams_2.11.jar:/root/Documents/activator-dist-1.3.10/repository/org.reactivestreams/reactive-streams/1.0.0/jars/reactive-streams.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe.akka/akka-stream_2.11/2.4.2/jars/akka-stream_2.11.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe.akka/akka-actor_2.11/2.4.2/jars/akka-actor_2.11.jar:/root/Documents/activator-dist-1.3.10/repository/org.scala-lang.modules/scala-java8-compat_2.11/0.7.0/bundles/scala-java8-compat_2.11.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe/ssl-config-akka_2.11/0.1.3/bundles/ssl-config-akka_2.11.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe/ssl-config-core_2.11/0.1.3/bundles/ssl-config-core_2.11.jar:/root/.ivy2/cache/org.scala-lang.modules/scala-parser-combinators_2.11/bundles/scala-parser-combinators_2.11-1.0.4.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe.akka/akka-slf4j_2.11/2.4.2/jars/akka-slf4j_2.11.jar:/root/Documents/activator-dist-1.3.10/repository/commons-codec/commons-codec/1.10/jars/commons-codec.jar:/root/.ivy2/cache/xerces/xercesImpl/jars/xercesImpl-2.11.0.jar:/root/.ivy2/cache/xml-apis/xml-apis/jars/xml-apis-1.4.01.jar:/root/.ivy2/cache/javax.transaction/jta/jars/jta-1.1.jar:/root/Documents/activator-dist-1.3.10/repository/com.google.inject/guice/4.0/jars/guice.jar:/root/.ivy2/cache/javax.inject/javax.inject/jars/javax.inject-1.jar:/root/.ivy2/cache/aopalliance/aopalliance/jars/aopalliance-1.0.jar:/root/Documents/activator-dist-1.3.10/repository/com.google.inject.extensions/guice-assistedinject/4.0/jars/guice-assistedinject.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe.play/play-netty-server_2.11/2.5.0/jars/play-netty-server_2.11.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe.netty/netty-reactive-streams-http/1.0.2/jars/netty-reactive-streams-http.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe.netty/netty-reactive-streams/1.0.2/jars/netty-reactive-streams.jar:/root/.ivy2/cache/io.netty/netty-transport-native-epoll/jars/netty-transport-native-epoll-4.0.33.Final.jar:/root/.ivy2/cache/com.typesafe.play/play-logback_2.11/jars/play-logback_2.11-2.5.0.jar:/root/Documents/activator-dist-1.3.10/repository/ch.qos.logback/logback-core/1.1.4/jars/logback-core.jar:/root/Documents/activator-dist-1.3.10/repository/ch.qos.logback/logback-classic/1.1.4/jars/logback-classic.jar:/root/.ivy2/cache/com.typesafe.play/play-jdbc_2.11/jars/play-jdbc_2.11-2.5.0.jar:/root/.ivy2/cache/com.typesafe.play/play-jdbc-api_2.11/jars/play-jdbc-api_2.11-2.5.0.jar:/root/.ivy2/cache/com.jolbox/bonecp/bundles/bonecp-0.8.0.RELEASE.jar:/root/Documents/activator-dist-1.3.10/repository/com.zaxxer/HikariCP/2.4.3/bundles/HikariCP.jar:/root/Documents/activator-dist-1.3.10/repository/com.googlecode.usc/jdbcdslog/1.0.6.2/jars/jdbcdslog.jar:/root/Documents/activator-dist-1.3.10/repository/com.h2database/h2/1.4.191/jars/h2.jar:/root/.ivy2/cache/tyrex/tyrex/jars/tyrex-1.0.1.jar:/root/.ivy2/cache/com.typesafe.play/play-cache_2.11/jars/play-cache_2.11-2.5.0.jar:/root/Documents/activator-dist-1.3.10/repository/net.sf.ehcache/ehcache-core/2.6.11/jars/ehcache-core.jar:/root/Documents/activator-dist-1.3.10/repository/com.typesafe.play/play-ws_2.11/2.5.0/jars/play-ws_2.11.jar:/root/Documents/activator-dist-1.3.10/repository/com.google.guava/guava/19.0/bundles/guava.jar:/root/Documents/activator-dist-1.3.10/repository/org.asynchttpclient/async-http-client/2.0.0-RC9/jars/async-http-client.jar:/root/Documents/activator-dist-1.3.10/repository/io.netty/netty-codec-http/4.0.34.Final/jars/netty-codec-http.jar:/root/Documents/activator-dist-1.3.10/repository/io.netty/netty-codec/4.0.34.Final/jars/netty-codec.jar:/root/Documents/activator-dist-1.3.10/repository/io.netty/netty-transport/4.0.34.Final/jars/netty-transport.jar:/root/Documents/activator-dist-1.3.10/repository/io.netty/netty-buffer/4.0.34.Final/jars/netty-buffer.jar:/root/Documents/activator-dist-1.3.10/repository/io.netty/netty-common/4.0.34.Final/jars/netty-common.jar:/root/Documents/activator-dist-1.3.10/repository/io.netty/netty-handler/4.0.34.Final/jars/netty-handler.jar:/root/Documents/activator-dist-1.3.10/repository/org.asynchttpclient/netty-resolver-dns/2.0.0-RC9/jars/netty-resolver-dns.jar:/root/Documents/activator-dist-1.3.10/repository/org.asynchttpclient/netty-resolver/2.0.0-RC9/jars/netty-resolver.jar:/root/Documents/activator-dist-1.3.10/repository/org.asynchttpclient/netty-codec-dns/2.0.0-RC9/jars/netty-codec-dns.jar:/root/Documents/activator-dist-1.3.10/repository/org.javassist/javassist/3.20.0-GA/bundles/javassist.jar:/root/.ivy2/cache/oauth.signpost/signpost-core/jars/signpost-core-1.2.1.2.jar:/root/.ivy2/cache/oauth.signpost/signpost-commonshttp4/jars/signpost-commonshttp4-1.2.1.2.jar:/root/.ivy2/cache/org.apache.httpcomponents/httpcore/jars/httpcore-4.0.1.jar:/root/.ivy2/cache/org.apache.httpcomponents/httpclient/jars/httpclient-4.0.1.jar:/root/.ivy2/cache/commons-logging/commons-logging/jars/commons-logging-1.1.1.jar:/root/.ivy2/cache/com.typesafe.play/filters-helpers_2.11/jars/filters-helpers_2.11-2.5.0.jar:/root/.ivy2/cache/com.typesafe.play/play-java_2.11/jars/play-java_2.11-2.5.0.jar:/root/Documents/activator-dist-1.3.10/repository/org.yaml/snakeyaml/1.16/bundles/snakeyaml.jar:/root/Documents/activator-dist-1.3.10/repository/org.hibernate/hibernate-validator/5.2.4.Final/jars/hibernate-validator.jar:/root/.ivy2/cache/javax.validation/validation-api/jars/validation-api-1.1.0.Final.jar:/root/Documents/activator-dist-1.3.10/repository/org.jboss.logging/jboss-logging/3.2.1.Final/jars/jboss-logging.jar:/root/Documents/activator-dist-1.3.10/repository/com.fasterxml/classmate/1.1.0/bundles/classmate.jar:/root/Documents/activator-dist-1.3.10/repository/javax.el/javax.el-api/3.0.0/jars/javax.el-api.jar:/root/Documents/activator-dist-1.3.10/repository/org.springframework/spring-context/4.2.4.RELEASE/jars/spring-context.jar:/root/Documents/activator-dist-1.3.10/repository/org.springframework/spring-core/4.2.4.RELEASE/jars/spring-core.jar:/root/Documents/activator-dist-1.3.10/repository/org.springframework/spring-beans/4.2.4.RELEASE/jars/spring-beans.jar:/root/Documents/activator-dist-1.3.10/repository/org.reflections/reflections/0.9.10/jars/reflections.jar:/root/Documents/activator-dist-1.3.10/repository/net.jodah/typetools/0.4.4/bundles/typetools.jar:/root/Documents/activator-dist-1.3.10/repository/com.google.code.findbugs/jsr305/3.0.1/jars/jsr305.jar:/root/Documents/activator-dist-1.3.10/repository/org.apache.tomcat/tomcat-servlet-api/8.0.32/jars/tomcat-servlet-api.jar:/root/.ivy2/cache/org.jsoup/jsoup/jars/jsoup-1.8.2.jar:/root/.ivy2/cache/com.github.tototoshi/scala-csv_2.11/jars/scala-csv_2.11-1.2.2.jar:/root/.ivy2/cache/org.mongodb.scala/mongo-scala-driver_2.11/jars/mongo-scala-driver_2.11-1.0.1.jar:/root/.ivy2/cache/org.mongodb.scala/mongo-scala-bson_2.11/jars/mongo-scala-bson_2.11-1.0.1.jar:/root/.ivy2/cache/org.mongodb/mongodb-driver-async/jars/mongodb-driver-async-3.1.0.jar:/root/.ivy2/cache/org.mongodb/bson/jars/bson-3.1.0.jar:/root/.ivy2/cache/org.mongodb/mongodb-driver-core/jars/mongodb-driver-core-3.1.0.jar:/root/.ivy2/cache/com.github.t3hnar/scala-bcrypt_2.11/jars/scala-bcrypt_2.11-2.5.jar:/root/.ivy2/cache/de.svenkubiak/jBCrypt/jars/jBCrypt-0.4.jar
-Scala compilation took 5.466021314 s
-New invalidations:
-	Set()
-Initial set of included nodes: Set()
-Previously invalidated, but (transitively) depend on new invalidations:
-	Set()
-All newly invalidated sources after taking into account (previously) recompiled sources:Set()
-Copy resource mappings: 
-	(/root/ismet-scalongo-seed/conf/application.conf,/root/ismet-scalongo-seed/target/scala-2.11/classes/application.conf)
-	(/root/ismet-scalongo-seed/conf/logback.xml,/root/ismet-scalongo-seed/target/scala-2.11/classes/logback.xml)
-	(/root/ismet-scalongo-seed/conf/routes,/root/ismet-scalongo-seed/target/scala-2.11/classes/routes)
-	(/root/ismet-scalongo-seed/conf/messages,/root/ismet-scalongo-seed/target/scala-2.11/classes/messages)
-Total time: 8 s, completed Aug 21, 2016 6:43:31 PM
+Running task... Cancel: sbt.server.ServerTaskCancellation@4d511f02, check cycles: false
+Total time: 0 s, completed Aug 22, 2016 1:27:26 PM
 > server-post-command-cleanup
 > server-handle-next-server-request
 Done executing sbt server engine, result Right(Exit(0))
@@ -3371,4 +3319,4 @@ Waiting for socket thread
 Waiting for request processor thread
 Waiting for command engine result
 Returning control to sbt launcher with result Exit(0)
-Closing the 2704@kali logs at Sun Aug 21 18:45:37 ART 2016, goodbye.
+Closing the 3960@kali logs at Mon Aug 22 13:29:11 ART 2016, goodbye.

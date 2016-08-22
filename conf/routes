@@ -5,6 +5,9 @@
 # Home page
 GET         /                    controllers.Application.index
 
+## Layout
+#GET         /layout                    controllers.Application.layout
+
 # Tables
 GET         /tables                    controllers.Application.tables
 
