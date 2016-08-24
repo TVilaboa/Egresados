@@ -40,14 +40,16 @@ class AuthController @Inject()(userService: UserService,
         Ok
       }).recoverWith {
         case e: MongoWriteException => Future {
+
           Forbidden
         }
-        case _ => Future {
+        case e => Future {
           Forbidden
         }
       }
     } catch {
       case e: Exception => Future {
+        //Ok(e.toString)
         BadRequest
       }
     }

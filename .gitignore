@@ -4,7 +4,7 @@ project/target
 target
 tmp
 .history
-
+*.log
 /.idea
 /*.iml
 /out
@@ -13,5 +13,6 @@ tmp
 /.project
 /RUNNING_PID
 /.settings
+project/.sbtserver
 
     

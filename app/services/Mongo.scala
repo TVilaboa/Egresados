@@ -14,7 +14,7 @@ import scala.concurrent.Future
 @Singleton
 class Mongo @Inject()(applicationLifecycle: ApplicationLifecycle, configuration: Configuration) {
 
-  val client: MongoClient = MongoClient()
+  val client: MongoClient = MongoClient("mongodb://sa:1-egresados@ds147905.mlab.com:47905/egresados")
 
   private val dbName: String = configuration.getString("mongo.db.name").get
 

@@ -15,9 +15,11 @@ unmanagedResourceDirectories in Test <+= baseDirectory(_ / "target/web/public/te
 
 resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
 
+resolvers += Resolver.url("Typesafe Ivy releases", url("https://repo.typesafe.com/typesafe/ivy-releases"))(Resolver.ivyStylePatterns)
+
 libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "1.0.1"
 
 libraryDependencies += "com.github.t3hnar" % "scala-bcrypt_2.11" % "2.5"
 
 
-fork in run := true
+fork in run := false
