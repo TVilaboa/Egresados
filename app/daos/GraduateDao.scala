@@ -30,7 +30,7 @@ trait GraduateDao {
 
   def save(graduate: Graduate): Future[Completed]
 
-  def drop(graduate: Graduate) : Future[Completed]
+  def drop(graduate: Graduate) : Future[Graduate] 
 }
 
 @Singleton
