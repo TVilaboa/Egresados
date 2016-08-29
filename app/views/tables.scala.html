@@ -1,4 +1,4 @@
-@styles = {
+@styles() = {
     <!-- DataTables CSS -->
     <link href="@routes.Assets.at("bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css")" rel="stylesheet">
 
@@ -7,7 +7,7 @@
 
 }
 
-@scripts = {
+@scripts() =  {
 
         <!-- DataTables JavaScript -->
     <script src="@routes.Assets.at("bower_components/datatables/media/js/jquery.dataTables.min.js")"></script>
@@ -25,7 +25,7 @@
     </script>
 }
 
-@layout("Tables"){
+@layout("Tables",scripts,styles){
 
     <div id="wrapper">
 

@@ -1,5 +1,6 @@
 package controllers
 
+import generators.LinkedInUrlGenerator
 import play.api.mvc._
 
 class Application extends Controller {
