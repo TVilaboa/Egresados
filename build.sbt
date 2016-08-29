@@ -8,7 +8,7 @@ scalaVersion := "2.11.7"
 
 routesGenerator := InjectedRoutesGenerator
 
-libraryDependencies ++= Seq(jdbc, cache, ws, filters, specs2 % Test,"org.jsoup" % "jsoup" % "1.8.2",
+libraryDependencies ++= Seq(jdbc, cache, ws, filters, specs2 % Test,"org.jsoup" % "jsoup" % "1.9.2",
   "com.github.tototoshi" %% "scala-csv" % "1.2.2")
 
 unmanagedResourceDirectories in Test <+= baseDirectory(_ / "target/web/public/test")
