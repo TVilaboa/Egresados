@@ -1,3 +1,5 @@
+@(graduates: List[Graduate], hidden: Boolean)
+
 @styles = {
     <!-- DataTables CSS -->
     <link href="@routes.Assets.at("bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css")" rel="stylesheet">
@@ -383,9 +385,10 @@
                                 <input type="text" class="form-control3" placeholder="Graduation Year" aria-describedby="basic-addon3">
 
                                 <br><br>
-
+                                <form method="POST" action="@routes.EgresadosController.doSearch()">
                                 <input type="submit" value="GO"><br>
-                        </div>
+                                </form>
+                    </div>
                     </div>
                         <!-- /.panel-body -->
                 </div>
@@ -415,14 +418,18 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="graduate">
-                                        <td>1</td>
-                                        <td>Florencia</td>
-                                        <td>Velarde</td>
-                                        <td>37039281</td>
-                                        <td>2016</td>
-                                        <td>Informatic Engineering</td>
-                                    </tr>
+                                    <ul>
+                                    @for(graduate : Graduate <- graduates){
+                                        <tr class="graduate">
+                                        <td>@graduate._id</td>
+                                        <td>@graduate.firstName</td>
+                                        <td>@graduate.lastName</td>
+                                        <td>@graduate.documentId</td>
+                                        <td>@graduate.graduationDate</td>
+                                        <td>@graduate.career</td>
+                                        </tr>
+                                    }
+                                    </ul>
                                 </tbody>
                             </table>
 
