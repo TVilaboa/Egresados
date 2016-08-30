@@ -21,7 +21,6 @@ class InfobaeUrlGenerator {
   private var isTorRunning: Boolean = true
 
   def searchInfobaeUrl(searchName: String, startup: String, role: String): String = {
-//    startTorClient()
     if(searchName != null && isTorRunning) {
       val nameSplit = searchName.split(" ")
       var searcher = "site:infobae.com"
@@ -41,9 +40,11 @@ class InfobaeUrlGenerator {
       if(role != null) searcher = searcher + "%20" + role
 
       val result = getDataFromGoogle(nameSplit, searcher)
-//      stopTorClient()
+
+      if(result.isEmpty){
+        throw new NullPointerException("No se encontro ningun articulo.")
+      }
       return result.head
-      return selectCorrectURL(nameSplit, result)
     }
     ""
   }
@@ -110,63 +111,5 @@ class InfobaeUrlGenerator {
     }
     domainName
   }
-
-  private def selectCorrectURL(userName: Array[String], manyURLs: ListBuffer[String]): String = {
-    var url: String = ""
-    val possibleAnswers: ListBuffer[String] = new ListBuffer[String]()
-    if (manyURLs.nonEmpty) {
-      if (isCorrect(userName, manyURLs.head)) url = manyURLs.head else {
-        for (anURL:String <- manyURLs if anURL.substring(8).startsWith("www.infobae.com") || anURL.substring(11).startsWith("infobae.com")) {
-          val splitURL = anURL.split("/")
-          if (splitURL.length >= 5) {
-            val nameOnURL = splitURL(4)
-            if (nameOnURL.equalsIgnoreCase( userName.mkString(""))) {
-              url = anURL
-              //break
-            } else if (nameOnURL.equalsIgnoreCase(userName.mkString("-"))) {
-              url = anURL
-              //break
-            }
-          }
-        }
-      }
-    }
-    url
-  }
-
-  private def isCorrect(userName: Array[String], domain: String): Boolean = {
-    var isCorrect: Boolean = false
-    if (domain.substring(8).startsWith("www.infobae.com") || domain.substring(11).startsWith("infobae.com")) {
-      val splitURL = domain.split("/")
-      if (splitURL.length >= 5) {
-        val nameOnURL = splitURL(4)
-        if (nameOnURL.equalsIgnoreCase(userName.mkString(""))) {
-          isCorrect = true
-        } else if (nameOnURL.equalsIgnoreCase(userName.mkString("-"))) {
-          isCorrect = true
-        } else {
-          var i = 0
-          while (i != userName.length) {
-            if (nameOnURL.contains(userName(i).toLowerCase())) {
-              if (userName.length >= 2 && userName(1).length != 0) {
-                if (i != (userName.length - 1) &&
-                  nameOnURL.contains("" + userName(i + 1).toLowerCase().charAt(0))) {
-                  if (nameOnURL.contains(userName(i + 1).toLowerCase())) {
-                    if (nameOnURL.length < (userName(i).length + userName(i + 1).length + 3)) isCorrect = true
-                  } else if (nameOnURL.length < (userName(i).length + 5)) isCorrect = true
-                } else if (i != 0 &&
-                  nameOnURL.contains("" + userName(i - 1).toLowerCase().charAt(0))) {
-                  if (nameOnURL.length < (userName(i).length + 5)) isCorrect = true
-                }
-              }
-            }
-            i += 1
-          }
-        }
-      }
-    }
-    isCorrect
-  }
-
 
 }

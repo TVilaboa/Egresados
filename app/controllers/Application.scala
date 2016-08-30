@@ -7,7 +7,7 @@ class Application extends Controller {
 
   def index = Action {
     val gen : InfobaeUrlGenerator = new InfobaeUrlGenerator()
-    val url = gen.searchInfobaeUrl("cassol",null,"austral")
+    val url = gen.searchInfobaeUrl("gabeiras",null,"austral")
     print(url)
     Ok(views.html.index.render())
   }
