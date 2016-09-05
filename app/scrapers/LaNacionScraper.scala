@@ -24,12 +24,12 @@ class LaNacionScraper {
     val title = article.get(0).getElementsByTag("h1").get(0).text()
     val date = article.get(0).getElementsByClass("fecha").get(0).text()
     val tuft = article.get(0).getElementsByTag("p").get(0).text()
-    var author: String = ""
+    var author: String = "anonymus"
 
     try{
-      author = article.get(0).getElementsByClass("datos floatfix").get(0).text()
+     author = article.get(0).select("a[itemprop = author]").get(0).text()
     } catch {
-      case  e: Exception => author = "anonymus"
+      case  e: Exception =>
     }
 
     //armo la lista con todos los datos
@@ -39,23 +39,4 @@ class LaNacionScraper {
     data
 
   }
-
-
-//  def scrap(input: String, url: String): List[ScrapperObject] = {
-//    val scrappingList = parse(input)
-//    try {
-//      val document = Jsoup.connect(url).get
-//      for (obj <- scrappingList) {
-//        val selector = obj.getSelector
-//        val elements = document.select(selector)
-//        for (element <- elements) {
-//          if (element.hasText()) obj.addData(element.text()) else obj.addData(element.attr(obj.getExtract))
-//        }
-//      }
-//    } catch {
-//      case e: HttpStatusException => return scrappingList
-//      case e: IOException => e.printStackTrace()
-//    }
-//    scrappingList
-//  }
 }

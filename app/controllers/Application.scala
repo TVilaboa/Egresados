@@ -14,11 +14,12 @@ class Application extends Controller {
   val scraper: LaNacionScraper = new LaNacionScraper()
   println("*********************************")
   for(link <- links) {
+    println(link)
     val list : List[String] = scraper.getArticleData(link)
     println(list.head)
     println(list(1))
     println(list(2))
-    println(link)
+    println(list(3))
   }
   println("*********************************")
 
