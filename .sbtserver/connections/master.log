@@ -1,67 +1,40 @@
-New log file opened at Mon Aug 22 18:56:51 ART 2016 by 14412@MATIAS
-Taking next connection to: 57019
-New client attempting to connect on port: 57020-57019
-  Address = /172.22.38.47:57019
-This client on port 57020 has uuid 3d248921-2b7a-4fcc-ba8c-9dd99af295fa configName play-fork-run humanReadableName Play Fork Run protocolVersion 1 featureTags Vector()
-Connected Clients: play-fork-run-3d248921-2b7a-4fcc-ba8c-9dd99af295fa
-Taking next connection to: 57019
+New log file opened at Mon Aug 22 18:36:51 ART 2016 by 23848@MacBook-Pro-de-Leandro.local
+Taking next connection to: 58527
+New client attempting to connect on port: 58528-58527
+  Address = /172.22.33.53:58527
+This client on port 58528 has uuid e0543af7-e231-488c-b8fd-205214cc4021 configName play-fork-run humanReadableName Play Fork Run protocolVersion 1 featureTags Vector()
+Connected Clients: play-fork-run-e0543af7-e231-488c-b8fd-205214cc4021
+Taking next connection to: 58527
 Checking to see if clients are empty...
 We have 1 non-daemon clients, continuing serving connections.
-Taking next connection to: 57019
+Taking next connection to: 58527
 Checking to see if clients are empty...
 We have 1 non-daemon clients, continuing serving connections.
-Taking next connection to: 57019
+Taking next connection to: 58527
 Checking to see if clients are empty...
 We have 1 non-daemon clients, continuing serving connections.
-Taking next connection to: 57019
+Taking next connection to: 58527
 Checking to see if clients are empty...
 We have 1 non-daemon clients, continuing serving connections.
-Taking next connection to: 57019
+Taking next connection to: 58527
 Checking to see if clients are empty...
 We have 1 non-daemon clients, continuing serving connections.
-Taking next connection to: 57019
+Taking next connection to: 58527
 Checking to see if clients are empty...
 We have 1 non-daemon clients, continuing serving connections.
-Taking next connection to: 57019
+Taking next connection to: 58527
 Checking to see if clients are empty...
 We have 1 non-daemon clients, continuing serving connections.
-Taking next connection to: 57019
+Taking next connection to: 58527
 Checking to see if clients are empty...
 We have 1 non-daemon clients, continuing serving connections.
-Taking next connection to: 57019
+Taking next connection to: 58527
 Checking to see if clients are empty...
 We have 1 non-daemon clients, continuing serving connections.
-Taking next connection to: 57019
-Checking to see if clients are empty...
-We have 1 non-daemon clients, continuing serving connections.
-Taking next connection to: 57019
-Checking to see if clients are empty...
-We have 1 non-daemon clients, continuing serving connections.
-Taking next connection to: 57019
-Checking to see if clients are empty...
-We have 1 non-daemon clients, continuing serving connections.
-Taking next connection to: 57019
-Checking to see if clients are empty...
-We have 1 non-daemon clients, continuing serving connections.
-Taking next connection to: 57019
-Checking to see if clients are empty...
-We have 1 non-daemon clients, continuing serving connections.
-Taking next connection to: 57019
-Checking to see if clients are empty...
-We have 1 non-daemon clients, continuing serving connections.
-Taking next connection to: 57019
-Checking to see if clients are empty...
-We have 1 non-daemon clients, continuing serving connections.
-Taking next connection to: 57019
-Checking to see if clients are empty...
-We have 1 non-daemon clients, continuing serving connections.
-Taking next connection to: 57019
-Checking to see if clients are empty...
-We have 1 non-daemon clients, continuing serving connections.
-Taking next connection to: 57019
+Taking next connection to: 58527
 Checking to see if clients are empty...
 No non-daemon clients connected after 3 min. Shutting down.
 Server socket thread exiting.
 0 clients open, will close them...
 All client sockets have been closed.
-Closing the 14412@MATIAS logs at Mon Aug 22 19:53:52 ART 2016, goodbye.
+Closing the 23848@MacBook-Pro-de-Leandro.local logs at Mon Aug 22 22:05:06 ART 2016, goodbye.
