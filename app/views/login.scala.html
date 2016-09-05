@@ -4,7 +4,7 @@
 
     <head>
 
-        <meta charset="utf-8">
+        <meta content="application/json" charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="">
@@ -56,16 +56,15 @@
                             <h3 class="panel-title">Login</h3>
                         </div>
                         <div class="panel-body">
-                            <form role="form">
+                            <form role="form" type="application/json" method="post" action="@routes.AuthController.login()">
                                 <fieldset>
                                     <div class="form-group">
-                                        <input class="form-control" placeholder="User" name="user" type="user" autofocus>
+                                        <input class="form-control" placeholder="User" name="user"autofocus>
                                     </div>
                                     <div class="form-group">
                                         <input class="form-control" placeholder="Password" name="password" type="password" value="">
                                     </div>
-                                        <!-- Change this to a button or input when using this as a form -->
-                                    <a href="index.scala.html" class="btn btn-lg btn-success btn-block">Go</a>
+                                    <input class="btn btn-lg btn-success btn-block" type="Submit" value="Go">
                                 </fieldset>
                             </form>
                         </div>
