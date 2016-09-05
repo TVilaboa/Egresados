@@ -1,9 +1,27 @@
 package controllers
 
-import generators.LinkedInUrlGenerator
+import generators.{LaNacionUrlGenerator, LinkedInUrlGenerator}
 import play.api.mvc._
+import scrapers.LaNacionScraper
+
+import scala.collection.mutable.ListBuffer
 
 class Application extends Controller {
+
+  //Test La Nacion URL Generator, se los dejo por si querian ver.
+  val generator: LaNacionUrlGenerator = new LaNacionUrlGenerator()
+  val links: ListBuffer[String] = generator.searchLaNacionUrl("lopez gabeiras")
+  val scraper: LaNacionScraper = new LaNacionScraper()
+  println("*********************************")
+  for(link <- links) {
+    val list : List[String] = scraper.getArticleData(link)
+    println(list.head)
+    println(list(1))
+    println(list(2))
+    println(link)
+  }
+  println("*********************************")
+
 
   def index = Action {
     Ok(views.html.index.render())
