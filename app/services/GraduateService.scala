@@ -12,6 +12,7 @@ import scala.concurrent.Future
   * Created by Fede on 8/28/2016.
   */
 class GraduateService @Inject()(graduateDao: GraduateDao) {
+  def all(): Future[Seq[Graduate]] = graduateDao.all()
   def find(graduateId: String): Future[Graduate] = graduateDao.find(graduateId)
 
   def findByDocumentId(documentId: String): Future[Graduate] = graduateDao.findByDocumentId(documentId)

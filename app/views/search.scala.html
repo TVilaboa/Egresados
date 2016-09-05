@@ -1,4 +1,4 @@
-@(graduates: List[Graduate], hidden: Boolean)
+@(graduates: Seq[Graduate], hidden: Boolean)
 
 @styles = {
     <!-- DataTables CSS -->
@@ -382,7 +382,8 @@
 
                                 <input type="text" class="form-control1" placeholder="Identification" aria-describedby="basic-addon1"> &nbsp &nbsp
                                 <input type="text" class="form-control2" placeholder="Surname" aria-describedby="basic-addon2"> &nbsp &nbsp
-                                <input type="text" class="form-control3" placeholder="Graduation Year" aria-describedby="basic-addon3">
+                                <input type="text" class="form-control3" placeholder="StudentCode" aria-describedby="basic-addon3"> &nbsp &nbsp
+                                <input type="text" class="form-control4" placeholder="Graduation Year" aria-describedby="basic-addon4">
 
                                 <br><br>
                                 <form method="POST" action="@routes.EgresadosController.doSearch()">
@@ -413,6 +414,7 @@
                                         <th>Name</th>
                                         <th>Surname</th>
                                         <th>Identification</th>
+                                        <th>Student Code</th>
                                         <th>Graduation year</th>
                                         <th>Degree</th>
                                     </tr>
@@ -425,6 +427,7 @@
                                         <td>@graduate.firstName</td>
                                         <td>@graduate.lastName</td>
                                         <td>@graduate.documentId</td>
+                                        <td>@graduate.studentCode</td>
                                         <td>@graduate.graduationDate</td>
                                         <td>@graduate.career</td>
                                         </tr>

@@ -18,6 +18,8 @@ import scala.concurrent.Future
   */
 @ImplementedBy(classOf[MongoGraduateDao])
 trait GraduateDao {
+  def all(): Future[Seq[Graduate]]
+
   def find(graduateId: String): Future[Graduate]
 
   def findByDocumentId(documentId: String): Future[Graduate]
@@ -25,6 +27,8 @@ trait GraduateDao {
   def findByFirstName(firstName: String): Future[Graduate]
 
   def findByLastName(lastName: String): Future[Graduate]
+
+  def findByStudentCode(studentCode: String): Future[Graduate]
 
   def update(graduate: Graduate): Future[UpdateResult]
 
@@ -37,6 +41,10 @@ trait GraduateDao {
 class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
   private val graduates: MongoCollection[Document] = mongo.db.getCollection("graduate")
 
+  override def all(): Future[Seq[Graduate]] = {
+    graduates.find().toFuture().map(doc => doc.map(documentToGraduate))
+  }
+
   override def find(graduateId: String): Future[Graduate] = {
     graduates.find(equal("_id", graduateId)).head().map[Graduate]((doc: Document) => {
       documentToGraduate(doc)
@@ -45,6 +53,12 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
 
   override def findByDocumentId(documentId: String): Future[Graduate] = {
     graduates.find(equal("documentId", documentId)).head().map[Graduate]((doc: Document) => {
+      documentToGraduate(doc)
+    })
+  }
+
+  override def findByStudentCode(studentCode: String): Future[Graduate] = {
+    graduates.find(equal("studentCode", studentCode)).head().map[Graduate]((doc: Document) => {
       documentToGraduate(doc)
     })
   }
@@ -86,7 +100,10 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
       doc.get("birthDate").get.asString().getValue,
       doc.get("entryDate").get.asString().getValue,
       doc.get("graduationDate").get.asString().getValue,
-      doc.get("career").get.asString().getValue
+      doc.get("career").get.asString().getValue,
+      doc.get("studentCode").get.asString().getValue
     )
   }
+
+
 }

@@ -11,10 +11,12 @@ case class Graduate(
                       firstName: String,
                       lastName: String,
                       documentId: String,
+                      studentCode: String,
                       birthDate: String,
                       entryDate: String,
                       graduationDate: String,
                       career: String
+
                     )
 
 object Graduate {
