@@ -24,3 +24,5 @@ GET         /secure              controllers.AuthController.securedSampleAction
 #EgresadosController
 GET         /search             controllers.EgresadosController.search
 POST        /search             controllers.EgresadosController.doSearch
+GET         /add                controllers.EgresadosController.add
+POST        /                   controllers.EgresadosController.save

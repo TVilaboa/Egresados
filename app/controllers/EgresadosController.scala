@@ -19,14 +19,15 @@ class EgresadosController @Inject()(graduateService: GraduateService) extends Co
   def search = Action { implicit request => {
     var graduates = Seq[Graduate]()
     val all: Future[Seq[Graduate]] = graduateService.all()
-    all onSuccess  {
+    all onSuccess {
       case results: Seq[Graduate] => {
         println("Success")
         results.foreach { result => {
 
           graduates = graduates :+ result
 
-        } }
+        }
+        }
 
       }
 
@@ -37,7 +38,7 @@ class EgresadosController @Inject()(graduateService: GraduateService) extends Co
 
       }
     }
-    Await.ready(all,Duration.Inf)
+    Await.ready(all, Duration.Inf)
 
     Ok(views.html.search.render(graduates, false))
   }
@@ -50,4 +51,12 @@ class EgresadosController @Inject()(graduateService: GraduateService) extends Co
   }
   }
 
+  def add = Action { implicit request => {
+    Ok(views.html.addGraduate.render())
+}
+}
+def save = Action { implicit request => {
+Ok(views.html.index.render())
+}
+}
 }
