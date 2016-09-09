@@ -346,7 +346,7 @@
                         <div class="panel-heading">Add a Graduate</div>
                             <!-- /.panel-heading --> 
                         <div class="panel-body">
-                            <form method="POST" action="@routes.EgresadosController.save()">
+                            <form method="POST" action="@routes.EgresadosController.addGraduate()">
                                 <div class="form-group">
                                     <label for="firstName">Nombre</label>
                                     <input type="text" class="form-control" id="firstName" placeholder="Nombre">
@@ -357,28 +357,28 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="dni">DNI</label>
-                                    <input type="number" class="form-control" id="dni" placeholder="DNI">
+                                    <input type="text" class="form-control" id="dni" placeholder="DNI">
                                 </div>
                                 <div class="form-group">
                                     <label for="birthday birthmonth birthyear">Fecha de nacimiento</label>
                                     <br>
-                                    <input type="number" id="birthday" placeholder="Dia">
-                                    <input type="number" id="birthmonth" placeholder="Mes">
-                                    <input type="number" id="birthyear" placeholder="Año">
+                                    <input type="text" id="birthday" placeholder="Dia">
+                                    <input type="text" id="birthmonth" placeholder="Mes">
+                                    <input type="text" id="birthyear" placeholder="Año">
                                 </div>
                                 <div class="form-group">
                                     <label for="entryday entrymonth entryyear">Fecha de ingreso a la facultad</label>
                                     <br>
-                                    <input type="number" id="entryday" placeholder="Dia">
-                                    <input type="number" id="entrymonth" placeholder="Mes">
-                                    <input type="number" id="entryyear" placeholder="Año">
+                                    <input type="text" id="entryday" placeholder="Dia">
+                                    <input type="text" id="entrymonth" placeholder="Mes">
+                                    <input type="text" id="entryyear" placeholder="Año">
                                 </div>
                                 <div class="form-group">
                                     <label for="graduationday graduationmonth graduationyear">Fecha de graduacion</label>
                                     <br>
-                                    <input type="number" id="graduationday" placeholder="Dia">
-                                    <input type="number" id="graduationmonth" placeholder="Mes">
-                                    <input type="number" id="graduationyear" placeholder="Año">
+                                    <input type="text" id="graduationday" placeholder="Dia">
+                                    <input type="text" id="graduationmonth" placeholder="Mes">
+                                    <input type="text" id="graduationyear" placeholder="Año">
                                 </div>
                                 <div class="form-group">
                                     <label for="career">Carrera</label>
