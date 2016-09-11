@@ -1,4 +1,5 @@
-@()
+@(login: Form[(String,String)])(implicit session: play.api.mvc.Session)
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -56,10 +57,10 @@
                             <h3 class="panel-title">Login</h3>
                         </div>
                         <div class="panel-body">
-                            <form role="form" type="application/json" method="post" action="@routes.AuthController.login()">
+                            <form role="form" enctype='json' method="post" action="@routes.UserAuthController.login()">
                                 <fieldset>
                                     <div class="form-group">
-                                        <input class="form-control" placeholder="User" name="user"autofocus>
+                                        <input class="form-control" placeholder="User" name="user" value="" type="text" autofocus>
                                     </div>
                                     <div class="form-group">
                                         <input class="form-control" placeholder="Password" name="password" type="password" value="">
@@ -72,6 +73,10 @@
                 </div>
             </div>
         </div>
+
+        <script>
+
+        </script>
 
             <!-- jQuery -->
         <script src="@routes.Assets.at("bower_components/jquery/dist/jquery.min.js")"></script>
