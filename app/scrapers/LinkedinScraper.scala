@@ -75,6 +75,8 @@ object LinkedinScraper {
       println("\tDescripcion: " + getText(description))
     }
 
+
+
   }
 
   private def getText(e: Elements): String = {
