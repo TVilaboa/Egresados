@@ -84,6 +84,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,
         graduateData.entryday+"/"+graduateData.entrymonth+"/"+graduateData.entryyear,
         graduateData.graduationday+"/"+graduateData.graduationmonth+"/"+graduateData.graduationyear,
         graduateData.carreer
+
       )
 
       graduateService.save(graduate).map((_) => {
