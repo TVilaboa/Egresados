@@ -7,7 +7,7 @@ import play.api.libs.json.Json
   */
 object GraduateForms {
 
-  case class GraduateData(firstName: String, lastName: String, dni: String, birthday: String, birthmonth: String, birthyear: String, entryday: String, entrymonth: String, entryyear: String, graduationday: String, graduationmonth: String, graduationyear:String, carreer: String)
+  case class GraduateData(firstName: String, lastName: String, dni: String, studentCode:String, birthday: String, birthmonth: String, birthyear: String, entryday: String, entrymonth: String, entryyear: String, graduationday: String, graduationmonth: String, graduationyear:String, carreer: String)
   implicit val signupFormat = Json.format[GraduateData]
 
 }

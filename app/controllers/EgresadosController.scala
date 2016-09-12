@@ -76,10 +76,10 @@ class EgresadosController @Inject()(graduateService: GraduateService,
       val graduateData: GraduateData = rawBody.validate[GraduateData].get
       val graduate = Graduate(
         UUID.randomUUID().toString,
-        "???????????????",
         graduateData.firstName,
         graduateData.lastName,
         graduateData.dni,
+        graduateData.studentCode,
         graduateData.birthday+"/"+graduateData.birthmonth+"/"+graduateData.birthyear,
         graduateData.entryday+"/"+graduateData.entrymonth+"/"+graduateData.entryyear,
         graduateData.graduationday+"/"+graduateData.graduationmonth+"/"+graduateData.graduationyear,
