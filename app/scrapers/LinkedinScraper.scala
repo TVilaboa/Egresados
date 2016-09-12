@@ -7,7 +7,6 @@ package scrapers
 
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements
-
 import scala.collection.JavaConversions._
 
 object LinkedinScraper {

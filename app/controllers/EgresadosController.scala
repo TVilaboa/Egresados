@@ -16,7 +16,7 @@ import scala.concurrent.{Await, Future}
   */
 class EgresadosController @Inject()(graduateService: GraduateService) extends Controller {
 
-  def search = Action { implicit request => {
+  /*def search = Action { implicit request => {
     var graduates = Seq[Graduate]()
     val all: Future[Seq[Graduate]] = graduateService.all()
     all onSuccess  {
@@ -48,6 +48,6 @@ class EgresadosController @Inject()(graduateService: GraduateService) extends Co
     graduateService.all().foreach(g => graduates ++ g)
     Ok(views.html.search.render(graduates, true))
   }
-  }
+  }*/
 
 }
