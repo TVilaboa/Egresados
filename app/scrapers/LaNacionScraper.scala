@@ -1,11 +1,10 @@
 package scrapers
 
-import generators.LaNacionUrlGenerator
+import models.{LaNacionUserNews, News}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
-import org.jsoup.select.Elements
+import java.util.Date
 
-import scala.collection.mutable.ListBuffer
 
 /**
   * ismet-scalongo-seed
@@ -13,7 +12,7 @@ import scala.collection.mutable.ListBuffer
   */
 class LaNacionScraper {
 
-  def getArticleData(url : String): List[String] ={
+  def getArticleData(url : String): News ={
 
     val userAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
     val doc: Document = Jsoup.connect(url).userAgent(userAgentString).get()
@@ -33,10 +32,9 @@ class LaNacionScraper {
     }
 
     //armo la lista con todos los datos
-    val data : List[String] = List(title, date, tuft, author)
+    val news: News = new News(url, title, date, tuft, author)
 
-
-    data
+    news
 
   }
 }

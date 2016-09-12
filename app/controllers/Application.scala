@@ -1,6 +1,10 @@
 package controllers
 
+import java.sql.Timestamp
+import java.util.Date
+
 import generators.{LaNacionUrlGenerator, LinkedInUrlGenerator}
+import models.{LaNacionUserNews, News}
 import play.api.mvc._
 import scrapers.LaNacionScraper
 
@@ -12,16 +16,20 @@ class Application extends Controller {
   val generator: LaNacionUrlGenerator = new LaNacionUrlGenerator()
   val links: ListBuffer[String] = generator.searchLaNacionUrl("lopez gabeiras")
   val scraper: LaNacionScraper = new LaNacionScraper()
-  println("*********************************")
+  val news: ListBuffer[News] = new ListBuffer[News]
+
   for(link <- links) {
-    println(link)
-    val list : List[String] = scraper.getArticleData(link)
-    println(list.head)
-    println(list(1))
-    println(list(2))
-    println(list(3))
+    news += scraper.getArticleData(link)
+    }
+    val userNews: LaNacionUserNews = new LaNacionUserNews(news, new Timestamp(new Date().getTime))
+    for(news <- userNews.getNews) {
+      println(news.getUrl)
+      println(news.getTitle)
+      println(news.getDate)
+      println(news.getTuft)
+      println(news.getAuthor)
+      println("*********************************")
   }
-  println("*********************************")
 
 
   def index = Action {

@@ -16,7 +16,6 @@ case class Graduate(
                       entryDate: String,
                       graduationDate: String,
                       career: String
-
                     )
 
 object Graduate {
