@@ -15,7 +15,8 @@ GET         /tables                    controllers.Application.tables
 GET         /assets/*file        controllers.Assets.at(path="/public", file)
 
 #Auth
-POST        /signup              controllers.AuthController.signup
+GET         /signup              controllers.UserAuthController.signupView
+POST        /signup              controllers.UserAuthController.signup
 GET         /login               controllers.Application.login
 POST        /login               controllers.UserAuthController.login
 POST        /logout              controllers.AuthController.logout

@@ -1,5 +1,4 @@
 @(login: Form[(String,String)])(implicit session: play.api.mvc.Session)
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -41,36 +40,45 @@
         background: -ms-linear-gradient(90deg, #FF512F 10%, #DD2476 90%);
         background: -o-linear-gradient(90deg, #FF512F 10%, #DD2476 90%);
         background: linear-gradient(90deg, #FF512F 10%, #DD2476 90%);
+            background:
         font-family: 'Open Sans', sans-serif!important;
+        }
+        .block{
+        background-image: url('http://www.info-universidades.com.ar/info-universidades/images/universidad-austral.jpg');
+        position: relative;
         }
         </style>
 
     </head>
 
-    <body>
-
+    <body class="block">
         <div class="container">
-            <div class="row">
-                <div class="col-md-4 col-md-offset-4">
-                    <div class="login-panel panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Login</h3>
-                        </div>
-                        <div class="panel-body">
-                            <form role="form" enctype='json' method="post" action="@routes.UserAuthController.login()">
-                                <fieldset>
-                                    <div class="form-group">
-                                        <input class="form-control" placeholder="User" name="user" value="" type="text" autofocus>
-                                    </div>
-                                    <div class="form-group">
-                                        <input class="form-control" placeholder="Password" name="password" type="password" value="">
-                                    </div>
-                                    <input class="btn btn-lg btn-success btn-block" type="Submit" value="Go">
-                                </fieldset>
-                            </form>
+        <div class="">
+
+                <span>
+                    <div class="row">
+                        <div class="col-md-4 col-md-offset-4">
+                            <div class="login-panel panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Login</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <form role="form" enctype='json' method="post" action="@routes.UserAuthController.login()">
+                                        <fieldset>
+                                            <div class="form-group">
+                                                <input class="form-control" placeholder="User" name="user" value="" type="text" autofocus>
+                                            </div>
+                                            <div class="form-group">
+                                                <input class="form-control" placeholder="Password" name="password" type="password" value="">
+                                            </div>
+                                            <input class="btn btn-lg btn-success btn-block" type="Submit" value="Go">
+                                        </fieldset>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </span>
             </div>
         </div>
 
