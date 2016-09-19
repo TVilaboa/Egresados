@@ -346,46 +346,46 @@
                         <div class="panel-heading">Add a Graduate</div>
                             <!-- /.panel-heading --> 
                         <div class="panel-body">
-                            <form method="POST" action="@routes.EgresadosController.addGraduate()">
-                                <div class="form-group">
-                                    <label for="firstName">Nombre</label>
-                                    <input type="text" class="form-control" id="firstName" placeholder="Nombre">
-                                </div>
-                                <div class="form-group">
-                                    <label for="lastName">Apellido</label>
-                                    <input type="text" class="form-control" id="lastName" placeholder="Apellido">
-                                </div>
-                                <div class="form-group">
-                                    <label for="dni">DNI</label>
-                                    <input type="text" class="form-control" id="dni" placeholder="DNI">
-                                </div>
-                                <div class="form-group">
-                                    <label for="birthday birthmonth birthyear">Fecha de nacimiento</label>
-                                    <br>
-                                    <input type="text" id="birthday" placeholder="Dia">
-                                    <input type="text" id="birthmonth" placeholder="Mes">
-                                    <input type="text" id="birthyear" placeholder="Año">
-                                </div>
-                                <div class="form-group">
-                                    <label for="entryday entrymonth entryyear">Fecha de ingreso a la facultad</label>
-                                    <br>
-                                    <input type="text" id="entryday" placeholder="Dia">
-                                    <input type="text" id="entrymonth" placeholder="Mes">
-                                    <input type="text" id="entryyear" placeholder="Año">
-                                </div>
-                                <div class="form-group">
-                                    <label for="graduationday graduationmonth graduationyear">Fecha de graduacion</label>
-                                    <br>
-                                    <input type="text" id="graduationday" placeholder="Dia">
-                                    <input type="text" id="graduationmonth" placeholder="Mes">
-                                    <input type="text" id="graduationyear" placeholder="Año">
-                                </div>
-                                <div class="form-group">
-                                    <label for="career">Carrera</label>
-                                    <input type="text" class="form-control" id="career" placeholder="Carrera">
-                                </div>
-                                <input type="submit" value="ADD"><br> 
-                            </form>
+                                @helper.form(action = routes.EgresadosController.addGraduate()){
+                                    <input type="number" style="display : none" name="id" value="-1" class="form-control">
+                                    <div class="form-group">
+                                        <label for="firstName">Nombre</label>
+                                        <input type="text" class="form-control" name="firstName" id="firstName" placeholder="Nombre">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="lastName">Apellido</label>
+                                        <input type="text" class="form-control" name="lastName" id="lastName" placeholder="Apellido">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="dni">DNI</label>
+                                        <input type="text" class="form-control" name="dni" id="dni" placeholder="DNI">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="studentcode">StudentCode</label>
+                                        <input type="text" class="form-control" name="studentcode" id="studentcode" placeholder="StudentCode">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="birthday">Fecha de nacimiento</label>
+                                        <br>
+                                        <input type="text" name="birthday" id="birthday" placeholder="DD/MM/AAAA">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="entryday">Fecha de ingreso a la facultad</label>
+                                        <br>
+                                        <input type="text" name="entryday" id="entryday" placeholder="DD/MM/AAAA">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="graduationday">Fecha de graduacion</label>
+                                        <br>
+                                        <input type="text" name="graduationday" id="graduationday" placeholder="DD/MM/AAAA">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="career">Carrera</label>
+                                        <input type="text" name="career" class="form-control" id="career" placeholder="Carrera">
+                                    </div>
+                                    <input type="submit" value="ADD"><br>
+                                }
+                                 
                         </div> 
                         <!-- /.panel-body --> 
                     </div>

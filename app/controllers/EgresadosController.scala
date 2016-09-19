@@ -11,6 +11,9 @@ import forms.GraduateForms.GraduateData
 import models.{User, Graduate}
 import play.api.i18n.MessagesApi
 import play.api.libs.json.JsValue
+import play.api.data.Form
+import play.api.data.Forms._
+
 import play.api.mvc._
 import services.{SessionService, UserService, GraduateService}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -25,6 +28,20 @@ class EgresadosController @Inject()(graduateService: GraduateService,
                                     sessionService: SessionService,
                                     secureAction: SecureAction,
                                     val messagesApi: MessagesApi) extends Controller {
+
+  val graduateForm = Form(
+    mapping(
+      "id" -> text(),
+      "firstName" -> text(),
+      "lastName" -> text(),
+      "dni" -> text(),
+      "studentCode" -> text(),
+      "birthday" -> text(),
+      "entrydate" -> text(),
+      "graduationdate" -> text(),
+      "carreer" -> text()
+    )(Graduate.apply)(Graduate.unapply)
+  )
 
   def search = Action { implicit request => {
     var graduates = Seq[Graduate]()
@@ -69,21 +86,18 @@ class EgresadosController @Inject()(graduateService: GraduateService,
   Ok(views.html.index.render())
   }
   }
-
   def addGraduate = Action.async { implicit request =>
-    val rawBody: JsValue = request.body.asJson.get
     try {
-      val graduateData: GraduateData = rawBody.validate[GraduateData].get
       val graduate = Graduate(
         UUID.randomUUID().toString,
-        graduateData.firstName,
-        graduateData.lastName,
-        graduateData.dni,
-        graduateData.studentCode,
-        graduateData.birthday+"/"+graduateData.birthmonth+"/"+graduateData.birthyear,
-        graduateData.entryday+"/"+graduateData.entrymonth+"/"+graduateData.entryyear,
-        graduateData.graduationday+"/"+graduateData.graduationmonth+"/"+graduateData.graduationyear,
-        graduateData.carreer
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("firstName").get(0),
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("lastName").get(0),
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("dni").get(0),
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("studentcode").get(0),
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("birthday").get(0),
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("entryday").get(0),
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("graduationday").get(0),
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("career").get(0)
 
       )
 
@@ -105,14 +119,4 @@ class EgresadosController @Inject()(graduateService: GraduateService,
       }
     }
   }
-
-
-
-
-
-
-
-
-
-
 }
