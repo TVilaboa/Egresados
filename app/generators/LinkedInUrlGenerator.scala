@@ -8,95 +8,27 @@ import java.util.ArrayList
 import org.jsoup.Jsoup
 import scala.collection.JavaConversions._
 
-class LinkedInUrlGenerator {
-
-  def searchLinkedinUrl(searchName: String, startup: String, role: String): String = {
-    if (searchName != null) {
-      val nameSplit = searchName.split(" ")
-      var searcher = "linkedIn"
-      for (i <- 0 until nameSplit.length - 1) {
-        if (!java.lang.Character.isLetter(nameSplit(i).charAt(0))) nameSplit(i) = nameSplit(i).substring(1).trim() else if (!java.lang.Character.isLetter(nameSplit(i).charAt(nameSplit(i).length - 1))) nameSplit(i) = nameSplit(i).substring(0,
-          nameSplit(i).length - 1).trim()
-      }
-      var i = 0
-      while (i != nameSplit.length) {
-        searcher = searcher + "%20" + nameSplit(i)
-        i += 1
-      }
-      if (startup != null) searcher = searcher + "%20" + startup
-      if (role != null) searcher = searcher + "%20" + role
-      val result = getDataFromGoogle(nameSplit, searcher)
-      return selectCorrectURL(nameSplit, result)
-    }
-    ""
-  }
+class LinkedInUrlGenerator extends BasicUrlGenerator{
 
   def printTime() {
     val date = new java.util.Date()
     println("#####" + new Timestamp(date.getTime))
   }
 
-  private def getDataFromGoogle(name: Array[String], query: String): ArrayList[String] = {
-    val result = new ArrayList[String]()
-    val request = "https://www.google.com.ar/search?q=" + query + "&num=10"
-    try {
-      val doc = Jsoup.connect(request).userAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)")
-        .timeout(50000)
-        .get
-      val links = doc.select("a[href*=linkedin]")
-      for (link <- links) {
-        var temp = link.attr("href")
-        if (temp.startsWith("/url?q=")) {
-          temp = cleanDomain(temp)
-          if (temp != null && temp != "") result.add(temp)
-        }
-      }
-    } catch {
-      case e: SocketException => e.printStackTrace()
-      case e: IOException => if (e.getMessage == "HTTP error fetching URL") {
-        Thread.sleep(10000)
-      }
-    }
-    result
+  private def selectProfileUrl(username : Array[String], list : List[String]) : List[String] = {
+    val filterByMethod = list.filter(x => isCorrect(username, x))
+    if(filterByMethod.nonEmpty)
+      return filterByMethod
+
+    //Filters result by Condition
+    val possible : List[String] = list.filter(x => x.substring(8).startsWith("www.linkedin.com") || x.substring(11).startsWith("linkedin.com"))
+    val filterByCondition = possible.filter(x => username.mkString("").equalsIgnoreCase(x.split("/")(4)))
+    filterByCondition
   }
 
-  private def cleanDomain(url: String): String = {
-    var domainName = ""
-    var domainNameSplitByAmper: Array[String] = null
-    if (!url.contains("pub/dir/")) {
-      domainName = url.substring(7)
-      if (domainName.contains("&")) {
-        domainNameSplitByAmper = domainName.split("&")
-        domainName = domainNameSplitByAmper(0)
-      }
-    }
-    domainName
-  }
-
-  private def selectCorrectURL(userName: Array[String], manyURLs: ArrayList[String]): String = {
-    var url = ""
-    val possibleAnswers = new ArrayList[String]()
-    if (!manyURLs.isEmpty) {
-      if (isCorrect(userName, manyURLs.get(0))) url = manyURLs.get(0) else {
-        for (anURL <- manyURLs if anURL.substring(8).startsWith("www.linkedin.com") || anURL.substring(11).startsWith("linkedin.com")) {
-          val splitURL = anURL.split("/")
-          if (splitURL.length >= 5) {
-            val nameOnURL = splitURL(4)
-//            if (nameOnURL.equalsIgnoreCase(String.join("", userName))) {
-            if (nameOnURL.equalsIgnoreCase(userName.mkString(""))) {
-              url = anURL
-              //break
-            } else if (nameOnURL.equalsIgnoreCase(userName.mkString(""))) {
-              url = anURL
-              //break
-            }
-          }
-        }
-      }
-    }
-    url
-  }
-
+  /**
+    * TODO Refactor Code
+    * */
   private def isCorrect(userName: Array[String], domain: String): Boolean = {
     var isCorrect = false
     if (domain.substring(8).startsWith("www.linkedin.com") || domain.substring(11).startsWith("linkedin.com")) {
@@ -137,4 +69,85 @@ class LinkedInUrlGenerator {
     }
     isCorrect
   }
+
+  /**
+    * En función de un nombre:String y un String a buscar, devuelve una Lista con los resultados obtenidos
+    **/
+  override def getSearchedUrl(name: Option[String], query: Option[String]): List[String] = {
+    var result : List[String] = List()
+    if(name.isDefined){
+      //Split both name and query : Option[String]
+      val splittedName = name.get.split(" ")
+      val splittedQuery = query.get.split(" ")
+
+      var searcher = "linkedIn"
+
+      for(splitVal : String <- splittedName)
+        searcher = searcher + "%20" + splitVal
+
+      for(splitVal : String <- splittedQuery)
+        searcher = searcher + "%20" + splitVal
+
+      val urls = getGoogleSearchRegisters(searcher)
+      result = selectProfileUrl(splittedName, urls)
+    }
+    result
+  }
+
+  /**
+    * En función del nombre de la persona que se encuentra dentro de un Array[String] y de un parametro
+    * de busqueda (query : String), nos retorna una Lista con posibles resultados
+    **/
+  override def getGoogleSearchRegisters(query: String): List[String] = {
+    var result : List[String] = List()
+    val request = "https://www.google.com.ar/search?q=" + query + "&num=10"
+    try {
+      val doc = Jsoup.connect(request).userAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)")
+        .timeout(50000)
+        .get
+      val links = doc.select("a[href*=linkedin]")
+      for (link <- links) {
+        var temp = link.attr("href")
+        if (temp.startsWith("/url?q=")) {
+          temp = cleanUrlDomain(temp)
+          if(!"".equals(temp))
+            result = temp :: result
+        }
+      }
+    } catch {
+      case e: SocketException => e.printStackTrace()
+      case e: IOException => if (e.getMessage == "HTTP error fetching URL") {
+        Thread.sleep(10000)
+      }
+    }
+    result
+  }
+
+  /**
+    * Metodo que se encarga de limpiar un dominio (url:String) para eliminar cualquier exceso de caracteres
+    **/
+  override def cleanUrlDomain(url: String): String = {
+    var domainName = ""
+    if(!url.contains("pub/dir/")){
+        domainName = url.substring(7)
+        if (domainName.contains("&")) {
+          domainName = domainName.split("&").head
+      }
+    }
+    domainName
+  }
+}
+
+/**
+  * To test searcher add following line to Application.index
+  *     val name : List[String] = List("Franco Testori", "Ricardo Pasquini", "Kevin Stessens", "Javier Isoldi", "Pedro Colunga")
+  *     val list : List[(String,String)] = name.flatMap(x =>
+  *     LinkedInUrlGeneratorObject.search(Option(x), Option("Universidad Austral")).map((x,_)))
+  *     println("URL: \n")
+  *     list.foreach(x=> println(x._1 + " : " + x._2 + "\n"))
+  * */
+object LinkedInUrlGeneratorObject{
+  val generator : BasicUrlGenerator = new LinkedInUrlGenerator()
+
+  def search(name : Option[String], query : Option[String]) : List[String] = generator.getSearchedUrl(name,query)
 }
