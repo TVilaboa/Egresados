@@ -6,8 +6,7 @@ import java.util.Date
   * Created by Fede on 8/28/2016.
   */
 
-case class Graduate(
-                      _id: String,
+case class Graduate(  _id: String,
                       firstName: String,
                       lastName: String,
                       documentId: String,
@@ -16,7 +15,6 @@ case class Graduate(
                       entryDate: String,
                       graduationDate: String,
                       career: String
-
                     )
 
 object Graduate {
