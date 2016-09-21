@@ -1,4 +1,5 @@
-@(graduates: Seq[Graduate], form : Form[Graduate], condition : Boolean)
+@(graduates: Seq[Graduate], form : Form[Graduate], condition : Boolean, firstName : String = "",
+        lastName : String = "",gradDate : String = "",carreer : String = "")
 
 @styles = {
     <!-- DataTables CSS -->
@@ -55,21 +56,21 @@
                                 <div class="form-group">
                                     <div class="col-md-6">
                                         <label>Firstname</label>
-                                        <input type="text" class="form-control" name="firstName" aria-describedby="basic-addon1">
+                                        <input value='@firstName' type="text" class="form-control" name="firstName" aria-describedby="basic-addon1">
                                     </div>
                                     <div class="col-md-6">
                                         <label>Lastname</label>
-                                        <input type="text" class="form-control" name="lastName" aria-describedby="basic-addon2">
+                                        <input value='@lastName' type="text" class="form-control" name="lastName" aria-describedby="basic-addon2">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-md-6">
                                         <label>Graduation Year</label>
-                                        <input type="text" class="form-control" name="graduationDate" aria-describedby="basic-addon4">
+                                        <input value="@gradDate" type="text" class="form-control" name="graduationDate" aria-describedby="basic-addon4">
                                     </div>
                                     <div class="col-md-6">
                                         <label>Career</label>
-                                        <input type="text" class="form-control" name="career" aria-describedby="basic-addon3">
+                                        <input value="@carreer" type="text" class="form-control" name="career" aria-describedby="basic-addon3">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -104,7 +105,7 @@
                                         <th>Identification</th>
                                         <th>Student Code</th>
                                         <th>Graduation year</th>
-                                        <th>Degree</th>
+                                        <th>Carrer</th>
                                     </tr>
                                 </thead>
                                 <tbody>

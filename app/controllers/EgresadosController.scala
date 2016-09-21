@@ -24,17 +24,23 @@ class EgresadosController @Inject()(graduateService: GraduateService) extends Co
       "firstName" -> text(),
       "lastName" -> text(),
       "documentId" -> text(),
-      "studentCode" -> text(),
       "birthDate" -> text(),
       "entryDate" -> text(),
       "graduationDate" -> text(),
-      "career" -> text()
+      "career" -> text(),
+      "studentCode" -> text()
     )(Graduate.apply)(Graduate.unapply)
   )
 
   def showSearchForm = Action{
     var graduates = Seq[Graduate]()
-    Ok(views.html.search.render(graduates, graduateForm,true))
+
+
+    val all: Future[Seq[Graduate]] = graduateService.all()
+
+
+    graduates = Await.result(all,Duration.Inf)
+    Ok(views.html.search.render(graduates, graduateForm,true,null,null,null,null))
   }
 
   def search = Action { implicit request => {
@@ -47,26 +53,8 @@ class EgresadosController @Inject()(graduateService: GraduateService) extends Co
 
 
     val all: Future[Seq[Graduate]] = graduateService.all()
-    all onSuccess  {
-      case results: Seq[Graduate] => {
-        println("Success")
-        results.foreach { result => {
 
-          graduates = graduates :+ result
-
-        } }
-
-      }
-
-    }
-    all onFailure {
-      case _ => {
-        println("Error")
-
-      }
-    }
-
-    Await.ready(all,Duration.Inf)
+    graduates = Await.result(all,Duration.Inf)
 
     if(firstname.nonEmpty)
       graduates = graduates.filter(x => x.firstName.toLowerCase.contains(firstname.toLowerCase))
@@ -77,7 +65,7 @@ class EgresadosController @Inject()(graduateService: GraduateService) extends Co
     if(career.nonEmpty)
       graduates = graduates.filter(x => x.career.toLowerCase.contains(career.toLowerCase))
 
-    Ok(views.html.search.render(graduates, graduateForm, false))
+    Ok(views.html.search.render(graduates, graduateForm, false,firstname,lastname,gradDate,career))
   }
   }
 
