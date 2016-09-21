@@ -56,10 +56,11 @@ class UserAuthController @Inject()(userService: UserService,
           )
           sessionService.save(session)
           val response = Map("sessionId" -> sessionId)
-          Ok(Json.toJson(response)).withCookies(Cookie("sessionId", sessionId))
+//          Ok(Json.toJson(response)).withCookies(Cookie("sessionId", sessionId))
+            Ok(views.html.index.render())
       }).recoverWith {
         case e: IllegalStateException => Future {
-          Forbidden
+          Unauthorized(views.html.login.render(null, null))
         }
       }
   }
@@ -100,8 +101,8 @@ class UserAuthController @Inject()(userService: UserService,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("password").get(0),
         System.currentTimeMillis())
 
-      userService.save(user).map((_) => {
-        Ok
+        userService.save(user).map((_) => {
+        Ok(views.html.login.render(null, null))
       }).recoverWith {
         case e: MongoWriteException => Future {
 
