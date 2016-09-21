@@ -1,18 +1,14 @@
 package scrapers
 
-import models.{LaNacionUserNews, News}
+import java.util.UUID
+
+import models.LaNacionNews
 import org.jsoup.Jsoup
-import org.jsoup.nodes.{Document, Element}
-import java.util.Date
+import org.jsoup.nodes.Document
 
+class LaNacionScraper () {
 
-/**
-  * ismet-scalongo-seed
-  * Created by jeronimocarlos on 9/5/16.
-  */
-class LaNacionScraper {
-
-  def getArticleData(url : String): News ={
+  def getArticleData(url : String): LaNacionNews ={
 
     val userAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
     val doc: Document = Jsoup.connect(url).userAgent(userAgentString).get()
@@ -32,7 +28,7 @@ class LaNacionScraper {
     }
 
     //armo la lista con todos los datos
-    val news: News = new News(url, title, date, tuft, author)
+    val news: LaNacionNews = LaNacionNews(UUID.randomUUID().toString,url, title, date, tuft, author)
 
     news
 
