@@ -82,10 +82,12 @@ class EgresadosController @Inject()(graduateService: GraduateService,
     Ok(views.html.addGraduate.render())
   }
   }
+
   def save = Action { implicit request => {
-  Ok(views.html.index.render())
+    Ok(views.html.index.render())
   }
   }
+
   def addGraduate = Action.async { implicit request =>
     try {
       val graduate = Graduate(
@@ -102,7 +104,16 @@ class EgresadosController @Inject()(graduateService: GraduateService,
       )
 
       graduateService.save(graduate).map((_) => {
-        Ok
+        val name = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("firstName").get(0)
+        val surname = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("lastName").get(0)
+        val dni = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("dni").get(0)
+        val code = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("studentcode").get(0)
+        val bday = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("birthday").get(0)
+        val eday = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("entryday").get(0)
+        val gday = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("graduationday").get(0)
+        val career = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("career").get(0)
+        Ok(views.html.graduateProfile.render(name,surname,dni,code,bday,eday,gday,career,"Graduado creado correctamente!"))
+
       }).recoverWith {
         case e: MongoWriteException => Future {
 
@@ -119,4 +130,5 @@ class EgresadosController @Inject()(graduateService: GraduateService,
       }
     }
   }
+
 }

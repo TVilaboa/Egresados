@@ -16,7 +16,4 @@ class Application extends Controller {
   def login = Action {
     Ok(views.html.login.render())
   }
-
-
-
 }

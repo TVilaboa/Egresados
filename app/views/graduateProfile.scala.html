@@ -1,6 +1,12 @@
-@layout(title = "Add Graduate") {
+@(name : String ,surname : String ,dni : String ,code : String ,bday : String ,eday : String ,gday : String ,career : String, message : String)
+@layout(title = "Graduate Profile"){
+
+
+
+
     <div id="wrapper">
-                      <!-- Navigation --> 
+
+            <!-- Navigation -->
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -283,8 +289,7 @@
                                 <!-- /.nav-second-level -->
                         </li>
                         <li>
-                            <a href="#"><i class="fa fa-sitemap fa-fw"></i>
-                                Multi-Level Dropdown<span class="fa arrow"></span></a>
+                            <a href="#"><i class="fa fa-sitemap fa-fw"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
                                     <a href="#">Second Level Item</a>
@@ -331,64 +336,56 @@
             </div>
                 <!-- /.navbar-static-side -->
         </nav>
+
         <div id="page-wrapper">
                          <div class="row"> 
             <div class="col-lg-12">
-                <h1 class="page-header">New Graduate</h1> 
+                <h1 class="page-header">Graduate Profile</h1> 
             </div>
                 <!-- /.col-lg-12 -->
         </div>
+
+                @message
+                <br>
+
                 <!-- /.row --> 
             <div class="row"> 
                 <div class="col-lg-12">
                     <div class="panel panel-default"> 
-                        <div class="panel-heading">Add a Graduate</div>
+                        <div class="panel-heading">Perfil de @name @surname</div>
                             <!-- /.panel-heading --> 
                         <div class="panel-body">
-                            @helper.form(action = routes.EgresadosController.addGraduate()) {
-                                <input type="number" style="display : none" name="id" value="-1" class="form-control">
                                 <div class="form-group">
-                                    <label for="firstName">Nombre</label>
-                                    <input onkeypress="return soloLetras(event)" required type="text" class="form-control" name="firstName" id="firstName" placeholder="Nombre">
+                                   <label>Nombre:</label>
+                                    @name
                                 </div>
-                                <div class="form-group">
-                                    <label for="lastName">Apellido</label>
-                                    <input onkeypress="return soloLetras(event)" required type="text" class="form-control" name="lastName" id="lastName" placeholder="Apellido">
-                                </div>
-                                <div class="form-group">
-                                    <label for="dni">DNI</label>
-                                    <input onkeypress="return isNumberKey(event)" required type="text" class="form-control" name="dni" id="dni" placeholder="DNI">
-                                </div>
-                                <div class="form-group">
-                                    <label for="studentcode">StudentCode</label>
-                                    <input type="text" class="form-control" name="studentcode" id="studentcode" placeholder="StudentCode">
-                                </div>
-                                <div class="form-group">
-                                    <label for="birthday">Fecha de nacimiento</label>
-                                    <br>
-                                    <input required type="text" name="birthday" id="birthday" placeholder="DD/MM/AAAA">
-                                </div>
-                                <div class="form-group">
-                                    <label for="entryday">Fecha de ingreso a la facultad</label>
-                                    <br>
-                                    <input required type="text" name="entryday" id="entryday" placeholder="DD/MM/AAAA">
-                                </div>
-                                <div class="form-group">
-                                    <label for="graduationday">Fecha de graduacion</label>
-                                    <br>
-                                    <input type="text" name="graduationday" id="graduationday" placeholder="DD/MM/AAAA">
-                                </div>
-                                <div class="form-group">
-                                    <label for="career">Carrera</label>
-                                    <input onkeypress="return soloLetras(event)" required type="text" name="career" class="form-control" id="career" placeholder="Carrera">
-                                </div>
-                                <input type="submit" value="ADD" class="btn btn-info btn-lg">
-
-                            }
-                             
+                            <div class="form-group">
+                                <label>Apellido:</label>
+                                @surname
+                            </div>
+                            <div class="form-group">
+                                <label>DNI:</label>
+                                @dni
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha de nacimiento:</label>
+                                @bday
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha de ingreso:</label>
+                                @eday
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha de graduacion:</label>
+                                @gday
+                            </div>
+                            <div class="form-group">
+                                <label>Carrera:</label>
+                                @career
+                            </div>
                         </div> 
 
-                        <!-- /.panel-body --> 
+                            <!-- /.panel-body --> 
                     </div>
                                              <!-- /.panel --> 
                 </div>
@@ -398,37 +395,12 @@
                              <!-- /.row -->  
             <!-- /.row --> 
         </div>
-                     <!-- /#page-wrapper -->
-              </div>
 
-     
-    <script>
 
-            function soloLetras(e){
-                key = e.keyCode || e.which;
-                tecla = String.fromCharCode(key).toLowerCase();
-                letras = " áéíóúabcdefghijklmnñopqrstuvwxyz";
-                especiales = "8-37-39-46";
+    </div>
+        <!-- /#wrapper -->
 
-                tecla_especial = false
-                for(var i in especiales){
-                    if(key == especiales[i]){
-                        tecla_especial = true;
-                        break;
-                    }
-                }
 
-                if(letras.indexOf(tecla)==-1 && !tecla_especial){
-                    return false;
-                }
-            }
-
-            function isNumberKey(evt){
-                var charCode = (evt.which) ? evt.which : event.keyCode
-                if (charCode > 31 && (charCode < 48 || charCode > 57))
-                    return false;
-                return true;
-            }
-
-    </script>
 }
+
+

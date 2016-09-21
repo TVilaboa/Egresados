@@ -25,5 +25,5 @@ GET         /secure              controllers.AuthController.securedSampleAction
 GET         /search             controllers.EgresadosController.search
 POST        /search             controllers.EgresadosController.doSearch
 GET         /add                controllers.EgresadosController.add
-POST        /add                controllers.EgresadosController.addGraduate
+POST        /profile                controllers.EgresadosController.addGraduate
 
