@@ -60,17 +60,17 @@ class UserAuthController @Inject()(userService: UserService,
             Ok(views.html.index.render())
       }).recoverWith {
         case e: IllegalStateException => Future {
-          Unauthorized(views.html.login.render(null, null))
+          Unauthorized(views.html.login.render(null,"Invalid User/Password combination" ,null))
         }
       }
   }
-
-  def authenticate = Action { implicit request =>
-    loginForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(html.login(formWithErrors)),
-      user => Redirect(routes.Application.index()).withSession(Security.username -> user._1)
-    )
-  }
+//
+//  def authenticate = Action { implicit request =>
+//    loginForm.bindFromRequest.fold(
+//      formWithErrors => BadRequest(html.login(formWithErrors)),
+//      user => Redirect(routes.Application.index()).withSession(Security.username -> user._1)
+//    )
+//  }
 
   def logout = Action {
     Redirect(routes.Application.index()).withNewSession.flashing(
@@ -102,7 +102,7 @@ class UserAuthController @Inject()(userService: UserService,
         System.currentTimeMillis())
 
         userService.save(user).map((_) => {
-        Ok(views.html.login.render(null, null))
+        Ok(views.html.login.render(null,"", null))
       }).recoverWith {
         case e: MongoWriteException => Future {
 
