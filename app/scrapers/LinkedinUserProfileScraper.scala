@@ -4,32 +4,35 @@ package scrapers
   * Elaborado por Brian Re y Michele Re
  */
 
-import java.util.{ArrayList, Date}
+import java.util.{UUID, ArrayList, Date}
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements
 import scala.collection.JavaConversions._
+import models.{LinkedinUserProfile, LinkedinEducation, LinkedinJob}
+import play.data.format.Formats.DateTime
 
-object LinkedinUserProfileScraper {
 
-  def main(args: Array[String]) {
-    val userProfile1 = getLinkedinProfile("https://ar.linkedin.com/in/ignacio-cassol-894a0935")
-    val userProfile2 = getLinkedinProfile("https://ar.linkedin.com/in/javier-isoldi-5a937091?trk=pub-pbmap")
-    val userProfile3 = getLinkedinProfile("https://ar.linkedin.com/in/andres-scoccimarro-303412")
-    val userProfile4 = getLinkedinProfile("https://ar.linkedin.com/in/santiagofuentes?trk=pub-pbmap")
-    val userProfile5 = getLinkedinProfile("https://ar.linkedin.com/in/kevstessens?trk=pub-pbmap")
-  }
+class LinkedinUserProfileScraper () {
+
+//  def main(args: Array[String]) {
+//    val userProfile1 = getLinkedinProfile("https://ar.linkedin.com/in/ignacio-cassol-894a0935")
+//    val userProfile2 = getLinkedinProfile("https://ar.linkedin.com/in/javier-isoldi-5a937091?trk=pub-pbmap")
+//    val userProfile3 = getLinkedinProfile("https://ar.linkedin.com/in/andres-scoccimarro-303412")
+//    val userProfile4 = getLinkedinProfile("https://ar.linkedin.com/in/santiagofuentes?trk=pub-pbmap")
+//    val userProfile5 = getLinkedinProfile("https://ar.linkedin.com/in/kevstessens?trk=pub-pbmap")
+//  }
 
   def getLinkedinProfile(url: String): LinkedinUserProfile = {
     val userAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
     val doc = Jsoup.connect(url).userAgent(userAgentString).get
     val profile = doc.select("#profile")
-    val title = profile.get(0).getElementsByClass("profile-overview-content")
+    val title = profile.get(0).getElementsByClass(  "profile-overview-content")
       .get(0)
       .getElementsByTag("p")
     val posicionActual = getText(title)
     val experience = doc.select("#experience")
     val position = experience.get(0).getElementsByClass("position")
-    val empleos = new ArrayList[Empleo]()
+    var listJobs: List[LinkedinJob] = List[LinkedinJob]()
     for (el <- position) {
       val posicion = el.getElementsByClass("item-title")
       val cargoEmpleo = getText(posicion)
@@ -46,11 +49,11 @@ object LinkedinUserProfileScraper {
       val periodoEmpleo = getText(periodoTrabajo)
       val descripcion = el.getElementsByClass("description")
       val descripcionEmpleo = getText(descripcion)
-      empleos.add(new Empleo(cargoEmpleo, lugarEmpleo, urlTrabajo, periodoEmpleo, descripcionEmpleo))
+      listJobs = LinkedinJob(UUID.randomUUID().toString,cargoEmpleo,lugarEmpleo,urlTrabajo,periodoEmpleo,descripcionEmpleo) :: listJobs
     }
     val education = doc.select("#education")
     val educationList = education.get(0).getElementsByClass("school")
-    val estudios = new ArrayList[Estudio]()
+    var listEducation: List[LinkedinEducation] = List[LinkedinEducation]()
     for (el <- educationList) {
       val school = el.getElementsByClass("item-title").get(0)
       var instituto: String = null
@@ -67,9 +70,9 @@ object LinkedinUserProfileScraper {
       val date = getText(dateRange)
       val description = el.getElementsByClass("description")
       val desc = getText(description)
-      estudios.add(new Estudio(instituto, urlInstituto, degree, date, desc))
+      listEducation = LinkedinEducation(UUID.randomUUID().toString,instituto,urlInstituto,degree,date,desc) :: listEducation
     }
-    new LinkedinUserProfile(posicionActual, empleos, estudios, url, new Date())
+    LinkedinUserProfile(UUID.randomUUID().toString,posicionActual, listJobs,listEducation , url, new Date())
   }
 
   private def getText(e: Elements): String = {
