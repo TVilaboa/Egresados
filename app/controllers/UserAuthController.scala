@@ -13,6 +13,7 @@ import play.api.mvc._
 import views.html
 import services.{SessionService, UserService}
 import scala.concurrent.ExecutionContext.Implicits.global
+import com.github.t3hnar.bcrypt._
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -43,7 +44,10 @@ class UserAuthController @Inject()(userService: UserService,
   }
 
   def login = Action.async { implicit request =>
-      userService.findByUsername(request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("user").get(0)).map((user: User) => {
+    try{
+      userService.findByUsername(loginForm.bindFromRequest().data("user")).map((user: User) => {
+        val insertedPassword =loginForm.bindFromRequest().data("password")
+        if(insertedPassword.isBcrypted(user.password)){
           val sessionId: String = UUID.randomUUID().toString
           val currentTimeMillis: Long = System.currentTimeMillis()
           val session: Session = models.Session(
@@ -56,21 +60,23 @@ class UserAuthController @Inject()(userService: UserService,
           )
           sessionService.save(session)
           val response = Map("sessionId" -> sessionId)
-//          Ok(Json.toJson(response)).withCookies(Cookie("sessionId", sessionId))
-            Ok(views.html.index.render())
+          //          Ok(Json.toJson(response)).withCookies(Cookie("sessionId", sessionId))
+          Ok(views.html.index.render())
+        }else
+          Unauthorized(views.html.login.render(null,"Invalid Password" ,null))
+
       }).recoverWith {
         case e: IllegalStateException => Future {
-          Unauthorized(views.html.login.render(null,"Invalid User/Password combination" ,null))
+          Unauthorized(views.html.login.render(null,"Invalid Username" ,null))
         }
       }
+    }
+    catch {
+      case e: Exception => Future {
+        Unauthorized(views.html.login.render(null,"Invalid Username" ,null))
+      }
+    }
   }
-//
-//  def authenticate = Action { implicit request =>
-//    loginForm.bindFromRequest.fold(
-//      formWithErrors => BadRequest(html.login(formWithErrors)),
-//      user => Redirect(routes.Application.index()).withSession(Security.username -> user._1)
-//    )
-//  }
 
   def logout = Action {
     Redirect(routes.Application.index()).withNewSession.flashing(
@@ -95,10 +101,10 @@ class UserAuthController @Inject()(userService: UserService,
     try {
       val user = User(
         UUID.randomUUID().toString,
-        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("name").get(0),
-        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("email").get(0),
-        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("username").get(0),
-        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("password").get(0),
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("name").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("email").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("username").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("password").head.bcrypt,
         System.currentTimeMillis())
 
         userService.save(user).map((_) => {

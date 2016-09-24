@@ -1,6 +1,5 @@
 @import play.api.mvc.Session
 @(login: Form[(String,String)], message : String)(implicit session: play.api.mvc.Session)
-@layout(title = "Login"){
     <html lang="en">
 
     <head>
@@ -64,7 +63,11 @@
                                     <h3 class="panel-title">Login</h3>
                                 </div>
 
-                                @message
+                                @if(message.nonEmpty){
+                                    <div class="alert alert-danger">
+                                        <strong>@message</strong>
+                                    </div>
+                                }
 
                                 <div class="panel-body">
                                     <form role="form" enctype='json' method="post" action="@routes.UserAuthController.login()">
@@ -105,4 +108,3 @@
     </body>
 
 </html>
-}
