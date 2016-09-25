@@ -14,7 +14,7 @@ case class Graduate(  _id: String,
                       entryDate: String,
                       graduationDate: String,
                       career: String,
-                        studentCode: String
+                        studentCode: String,
                       laNacionNews: List[LaNacionNews]
                     )
 

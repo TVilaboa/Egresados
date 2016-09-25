@@ -4,32 +4,37 @@ import java.sql.Timestamp
 import java.util.Date
 
 import com.google.inject.Inject
-import generators.LaNacionUrlGenerator
-import models.{LaNacionUserNews, LaNacionNews}
+import generators.{LaNacionUrlGeneratorObject, LaNacionUrlGenerator}
+import models.{Graduate, LaNacionUserNews, LaNacionNews}
 import play.api.mvc.{Action, Controller}
 import scrapers.LaNacionScraper
-import services.LaNacionNewsService
+import services.{GraduateService, LaNacionNewsService}
 
 import scala.collection.mutable.ListBuffer
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 
 /**
   * Created by matias on 21/09/2016.
   */
-class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService) extends Controller{
+class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService,graduateService: GraduateService) extends Controller{
 
   def saveNews = Action {
     val generator: LaNacionUrlGenerator = new LaNacionUrlGenerator()
-    val links: ListBuffer[String] = generator.searchLaNacionUrl("lopez gabeiras")
+    val links = LaNacionUrlGeneratorObject.search(Option("lopez gabeiras"),Option("Universidad Austral"))
     val scraper: LaNacionScraper = new LaNacionScraper()
     var news: List[LaNacionNews] = List[LaNacionNews]()
     var element: LaNacionNews = null
-
+    var graduate : Graduate = Await.result(graduateService.findByLastName("Testori"),Duration.Inf)
     for(link <- links) {
       element = scraper.getArticleData(link)
       newsLaNacionService.save(element)
       news = element :: news
-      news = scraper.getArticleData(link) :: news
+
+      //news = scraper.getArticleData(link) :: news
     }
+    graduate = graduate.copy(laNacionNews = news)
+    var result = Await.result(graduateService.update(graduate),Duration.Inf)
     val userNews: LaNacionUserNews = new LaNacionUserNews(news, new Timestamp(new Date().getTime))
     for(news <- userNews.news) {
       println(news.url)
