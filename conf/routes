@@ -24,6 +24,7 @@ GET         /secure              controllers.AuthController.securedSampleAction
 #EgresadosController
 GET         /search             controllers.EgresadosController.search
 POST        /search             controllers.EgresadosController.doSearch
-GET         /add                controllers.EgresadosController.add
-POST        /profile                controllers.EgresadosController.addGraduate
+GET         /add                controllers.EgresadosController.showGraduateForm
+POST        /add                controllers.EgresadosController.addGraduate
+GET         /profile/:id        controllers.EgresadosController.showProfile(id : String)
 
