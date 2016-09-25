@@ -25,3 +25,9 @@ GET         /secure              controllers.AuthController.securedSampleAction
 #EgresadosController
 GET         /egresados/search             controllers.EgresadosController.showSearchForm
 POST        /egresados/search             controllers.EgresadosController.search
+GET         /add                controllers.EgresadosController.showGraduateForm
+POST        /add                controllers.EgresadosController.addGraduate
+GET         /profile/:id        controllers.EgresadosController.showProfile(id : String)
+
+#LaNacionController
+GET         /lanacion/search    controllers.LaNacionNewsController.saveNews

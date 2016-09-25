@@ -7,6 +7,7 @@ import scala.collection.mutable.ListBuffer
 
 class Application extends Controller {
 
+
   def index = Action {
 
     Ok(views.html.index.render())
@@ -19,7 +20,4 @@ class Application extends Controller {
   def login = Action {
     Ok(views.html.login.render(null,"",null))
   }
-
-
-
 }

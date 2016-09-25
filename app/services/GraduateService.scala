@@ -21,6 +21,8 @@ class GraduateService @Inject()(graduateDao: GraduateDao) {
 
   def findByLastName(lastName: String): Future[Graduate] = graduateDao.findByLastName(lastName)
 
+  def findByStudentCode(studentCode : String): Future[Graduate] = graduateDao.findByStudentCode(studentCode)
+
   def update(graduate: Graduate): Future[UpdateResult] = graduateDao.update(graduate)
 
   def save(graduate: Graduate): Future[Completed] = graduateDao.save(graduate)
