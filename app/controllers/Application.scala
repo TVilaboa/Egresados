@@ -7,6 +7,7 @@ import scala.collection.mutable.ListBuffer
 
 class Application extends Controller {
 
+
   def index = Action {
 
     Ok(views.html.index.render())

@@ -8,7 +8,8 @@ import akka.actor.Status.Success
 import com.google.inject.Inject
 import com.mongodb.MongoWriteException
 import forms.GraduateForms.GraduateData
-import models.{Graduate, User}
+import io.netty.util.Mapping
+import models.{LaNacionNews, Graduate, User}
 import play.api.i18n.MessagesApi
 import play.api.libs.json.JsValue
 import play.api.data.Form
@@ -38,7 +39,13 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       "entryDate" -> text(),
       "graduationDate" -> text(),
       "career" -> text(),
-      "studentCode" -> text()
+      "studentCode" -> text(),
+      "lanacionNews" -> list(mapping("_id" -> text(),
+      "url" -> text(),
+      "title" -> text(),
+      "date" -> text(),
+      "tuft" -> text(),
+      "author" -> text())(LaNacionNews.apply)(LaNacionNews.unapply))
     )(Graduate.apply)(Graduate.unapply)
   )
 
@@ -100,7 +107,8 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("birthday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("entryday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("graduationday").head,
-        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("career").head
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("career").head,
+        null
 
       )
 
