@@ -16,124 +16,94 @@ import org.jsoup.nodes.Element
 
 import scala.collection.mutable.ListBuffer
 
-class LaNacionUrlGenerator {
+class LaNacionUrlGenerator extends BasicUrlGenerator{
 
-    private var isTorRunning: Boolean = true
+    /**
+      * En función de un nombre:String y un String a buscar, devuelve una Lista con los resultados obtenidos
+      **/
+    override def getSearchedUrl(name: Option[String], query: Option[String]): List[String] = {
+      var result : List[String] = List()
+      if(name.isDefined){
+        //Split both name and query : Option[String]
+        val splittedName = name.get.split(" ")
+        val splittedQuery = query.get.split(" ")
 
-    def searchLaNacionUrl(searchName: String): ListBuffer[String] = {
-       // startTorClient()
-        if(searchName != null && isTorRunning) {
-            val quotationName = "%22" + searchName + "%22"
-            val nameSplit = quotationName.split(" ")
-            var searcher = "lanacion"
+        var searcher = "lanacion"
 
-            //Limpio los nombres que tienen comas u otro caracter
-            for(i <- 0  until (nameSplit.length-1)) {
-                nameSplit(i) = nameSplit(i).filter("abcdefghijklmnopqrstuvwxyz%22".contains(_))
-            }
+        for(splitVal : String <- splittedName)
+          searcher = searcher + "%20" + splitVal
 
-            //Completo para el buscador de google
-            for(word <- nameSplit) {
-                searcher = searcher + "%20" + word
-            }
+        for(splitVal : String <- splittedQuery)
+          searcher = searcher + "%20" + splitVal
 
-            searcher = searcher + "%20austral"
-
-            val result = getDataFromGoogle(nameSplit, searcher)
-         //   stopTorClient()
-            return selectCorrectURLs(nameSplit, result)
-        }
-      scala.collection.mutable.ListBuffer.empty[String]
+        val urls = getGoogleSearchRegisters(searcher)
+        result = selectProfileUrl(splittedName, urls)
+      }
+      result
     }
+
+  /**
+    * En función del nombre de la persona que se encuentra dentro de un Array[String] y de un parametro
+    * de busqueda (query : String), nos retorna una Lista con posibles resultados
+    **/
+  override def getGoogleSearchRegisters(query: String): List[String] = {
+    var result : List[String] = List()
+    val request = "https://www.google.com.ar/search?q=" + query + "&num=10"
+    try {
+      val doc = Jsoup.connect(request).userAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)")
+        .timeout(50000)
+        .get
+      val links: Elements = doc.select("a[href*=lanacion]")
+      for (link <- links) {
+        var temp = link.attr("href")
+        if (temp.startsWith("/url?q=")) {
+          temp = cleanUrlDomain(temp)
+          if(!"".equals(temp))
+            result = temp :: result
+        }
+      }
+    } catch {
+      case e: SocketException => e.printStackTrace()
+      case e: IOException => if (e.getMessage == "HTTP error fetching URL") {
+        Thread.sleep(10000)
+      }
+    }
+    result
+  }
+
+    /**
+      * Metodo que se encarga de limpiar un dominio (url:String) para eliminar cualquier exceso de caracteres
+      **/
+    override def cleanUrlDomain(url: String): String = {
+      val split : Array[String] = url.split("http://")
+      val aux = split.filter(x => x.contains("www.lanacion.com.ar/"))
+      if(aux.nonEmpty)
+        return aux.head.substring(0, aux.head.indexOf("-"))
+      ""
+    }
+
+    private def selectProfileUrl(username : Array[String], list : List[String]) : List[String] = list.filter(isCorrect(username,_))
+
 
     def printTime(): Unit = {
       println("#####" + new Timestamp(new Date().getTime))
     }
 
-    def startTorClient() {
-        System.setProperty("socksProxyHost", "localhost")
-        System.setProperty("socksProxyPort", "9050")
-        Thread.sleep(1000)
-        isTorRunning = true
-    }
-
-    def stopTorClient() {
-        System.clearProperty("socksProxyHost")
-        System.clearProperty("socksProxyPort")
-        isTorRunning = false
-    }
-
-    def getDataFromGoogle(name: Array[String], query: String): ListBuffer[String] = {
-      val result = scala.collection.mutable.ListBuffer.empty[String]
-      val request = "https://www.google.com.ar/search?q=" + query + "&num=10"
-
-      try {
-        val doc: Document = Jsoup.connect(request).userAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)")
-          .timeout(50000)
-          .get
-        val links: Elements = doc.select("a[href*=lanacion]")
-        for (link:Element <- links.toList) {
-          var temp: String = link.attr("href")
-          if (temp.startsWith("/url?q=")) {
-            temp = cleanDomain(temp)
-            if (temp != null && temp != "") result += temp
-          }
-        }
-      } catch {
-        case e: SocketException => {
-          e.printStackTrace()
-          isTorRunning = false
-        }
-        case e: IOException => if (e.getMessage == "HTTP error fetching URL") {
-          Thread.sleep(10000)
-        }
-      }
-      result
-    }
-
-    def cleanDomain(url: String): String = {
-        var domainName: String = ""
-        var domainNameSplitByAmper = Array[String]()
-
-        //Elimino las url que tengan busqueda de usuarios
-        if (!url.contains("pub/dir/")) {
-            //Borro los caracteres '/url?q='
-            domainName = url.substring(7)
-            //Limpio los parámetros pasados por url
-            if (domainName.contains("&")) {
-                domainNameSplitByAmper = domainName.split("&")
-                domainName = domainNameSplitByAmper(0)
-            }
-        }
-        domainName
-    }
-
-  private def selectCorrectURLs(name: Array[String], manyURLs: ListBuffer[String]): ListBuffer[String] = {
-    for(url <- manyURLs) {
-      if(!isCorrect(name, url)) {
-        manyURLs -= url
-      }
-    }
-    manyURLs
-  }
-
     private def isCorrect(searchName: Array[String], domain: String): Boolean = {
-      for(i <- 0  until (searchName.length-1)) {
-        searchName(i) = searchName(i).filter(!"%22".contains(_))
-      }
-      var isCorrect: Boolean = false
-      if (domain.substring(7).startsWith("www.lanacion.com.ar") || domain.substring(11).startsWith("lanacion.com.ar")) {
-          isCorrect = true
-//        val splitURL = domain.split("/")
-//        if (splitURL.length >= 4) {
-//          val nameOnURL = splitURL(3)
-//          for(name <- searchName) {
-//            if (nameOnURL.contains(name)) {
-//              isCorrect = true
-//            }
-//          }
-//        }
-      }
-      isCorrect
+      domain.contains("www.lanacion.com.ar/")
     }
+}
+
+/**
+  * To test searcher add following line to Application.index
+  *     val name : List[String] = List("Agustin Lopez Gabeiras", "Emilio Lopez Gabeiras")
+  *     val list : List[(String,String)] = name.flatMap(x =>
+  *     LaNacionUrlGeneratorObject.search(Option(x), Option("Universidad Austral")).map((x,_)))
+  *     println("URL: \n")
+  *     list.foreach(x=> println(x._1 + " : " + x._2 + "\n"))
+  * */
+object LaNacionUrlGeneratorObject{
+  val generator : BasicUrlGenerator = new LaNacionUrlGenerator()
+
+  def search(name : Option[String], query : Option[String]) : List[String] = generator.getSearchedUrl(name,query)
 }

@@ -97,11 +97,11 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
       doc.get("firstName").get.asString().getValue,
       doc.get("lastName").get.asString().getValue,
       doc.get("documentId").get.asString().getValue,
+      doc.get("studentCode").get.asString().getValue,
       doc.get("birthDate").get.asString().getValue,
       doc.get("entryDate").get.asString().getValue,
       doc.get("graduationDate").get.asString().getValue,
-      doc.get("career").get.asString().getValue,
-      doc.get("studentCode").get.asString().getValue
+      doc.get("career").get.asString().getValue
     )
   }
 

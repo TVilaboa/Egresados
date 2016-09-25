@@ -21,4 +21,8 @@ class UserService @Inject()(userDao: UserDao) {
 
   def save(user: User) = userDao.save(user)
 
+  def create(name : String, email:String, username : String, password: String, timestamp : Long)= {
+    userDao.save(new User((Math.random().toInt).toString,name, email, username, password,timestamp))
+  }
+
 }

@@ -56,7 +56,8 @@ class AuthController @Inject()(userService: UserService,
   }
 
   def login = Action.async { implicit request =>
-    val rawBody: JsValue = request.body.asJson.get
+    request.body
+    val rawBody= request.body.asJson.get
     try {
       val loginData = rawBody.validate[LoginData].get
 
