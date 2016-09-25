@@ -149,7 +149,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         }
       }
       Await.ready(result, Duration.Inf)
-      Ok(views.html.graduateProfile.render(graduate.get))
+      Ok(views.html.graduateProfile.render(graduate))
 
     }
   }
