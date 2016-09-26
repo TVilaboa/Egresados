@@ -22,7 +22,7 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
 
   def saveLinkedinUserProfile = Action {
     val generator: LinkedInUrlGenerator = new LinkedInUrlGenerator()
-    val link: String = generator.searchLinkedinUrl("lucas luppani","","")
+    val link: String = generator.searchLinkedinUrl("Franco Testori","Universidad Austral","")
     val scraper : LinkedinUserProfileScraper = new LinkedinUserProfileScraper()
     var linkedinUserProfile = scraper.getLinkedinProfile(link)
     linkedinUserProfileService.save(linkedinUserProfile)

@@ -22,5 +22,8 @@ POST        /logout              controllers.AuthController.logout
 GET         /secure              controllers.AuthController.securedSampleAction
 
 #EgresadosController
-GET         /search             controllers.EgresadosController.search
-POST        /search             controllers.EgresadosController.doSearch
+#GET         /search             controllers.EgresadosController.search
+#POST        /search             controllers.EgresadosController.doSearch
+
+#LinkedInScraper
+GET          /linkedin/search    controllers.LinkedinUserProfileController.saveLinkedinUserProfile
