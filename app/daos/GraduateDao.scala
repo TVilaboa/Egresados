@@ -21,7 +21,7 @@ import scala.concurrent.Future
 @ImplementedBy(classOf[MongoGraduateDao])
 trait GraduateDao {
   def all(): Future[Seq[Graduate]]
-
+  
   def find(graduateId: String): Future[Graduate]
 
   def findByDocumentId(documentId: String): Future[Graduate]
@@ -126,6 +126,5 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
     }
     return news
   }
-
 
 }

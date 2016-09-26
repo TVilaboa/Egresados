@@ -29,5 +29,7 @@ GET         /add                controllers.EgresadosController.showGraduateForm
 POST        /add                controllers.EgresadosController.addGraduate
 GET         /profile/:id        controllers.EgresadosController.showProfile(id : String)
 
+#LinkedInScraper
+GET          /linkedin/search    controllers.LinkedinUserProfileController.saveLinkedinUserProfile
 #LaNacionController
 GET         /lanacion/search    controllers.LaNacionNewsController.saveNews
