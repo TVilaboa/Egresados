@@ -16,17 +16,32 @@
 @scripts = {
 
         <!-- DataTables JavaScript -->
+    <script src="https://code.jquery.com/jquery-1.12.3.js"></script>
     <script src="@routes.Assets.at("bower_components/datatables/media/js/jquery.dataTables.min.js")"></script>
+    <script src="https://editor.datatables.net/extensions/Editor/js/dataTables.editor.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.2.0/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.print.min.js"></script>
     <script src="@routes.Assets.at("bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js")"></script>
     <script src="@routes.Assets.at("bower_components/datatables-responsive/js/dataTables.responsive.js")"></script>
-    <script src="https://cdn.datatables.net/buttons/1.2.1/js/dataTables.buttons.min.js"></script>
 
 
         <!-- Page-Level Demo Scripts - Tables - Use for reference -->
     <script>
             $(document).ready(function() {
                 $('#dataTables-example').DataTable({
-                    responsive: true
+                    dom: 'Bfrtip',
+                    responsive: true,
+                    select: true,
+                    buttons: [
+                        'copy',
+                        'excel',
+                        'csv',
+                        'pdf',
+                        'print'
+                    ]
                 });
             });
     </script>
