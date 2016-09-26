@@ -9,7 +9,7 @@ import com.google.inject.Inject
 import com.mongodb.MongoWriteException
 import forms.GraduateForms.GraduateData
 import io.netty.util.Mapping
-import models.{LaNacionNews, Graduate, User}
+import models._
 import play.api.i18n.MessagesApi
 import play.api.libs.json.JsValue
 import play.api.data.Form
@@ -41,11 +41,26 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       "career" -> text(),
       "studentCode" -> text(),
       "lanacionNews" -> list(mapping("_id" -> text(),
-      "url" -> text(),
-      "title" -> text(),
-      "date" -> text(),
-      "tuft" -> text(),
-      "author" -> text())(LaNacionNews.apply)(LaNacionNews.unapply))
+        "url" -> text(),
+        "title" -> text(),
+        "date" -> text(),
+        "tuft" -> text(),
+        "author" -> text()) (LaNacionNews.apply)(LaNacionNews.unapply)),
+      "linkedinUserProfile" -> mapping("_id" -> text(),
+        "actualPosition" -> text(),
+        "jobList" -> list(mapping("_id" -> text(),
+          "position" -> text(),
+          "workPlace" -> text(),
+          "workUrl" -> text(),
+          "activityPeriod" -> text(),
+          "jobDescription" -> text()) (LinkedinJob.apply) (LinkedinJob.unapply)),
+        "educationList" -> list(mapping("_id" -> text(),
+          "institute" -> text(),
+          "instituteUrl" -> text(),
+          "title" -> text(),
+          "educationPeriod" -> text(),
+          "educationDescription" -> text()) (LinkedinEducation.apply) (LinkedinEducation.unapply)),
+        "profileUrl" -> text()) (LinkedinUserProfile.apply) (LinkedinUserProfile.unapply)
     )(Graduate.apply)(Graduate.unapply)
   )
 
@@ -108,6 +123,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("entryday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("graduationday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("career").head,
+        null,
         null
 
       )

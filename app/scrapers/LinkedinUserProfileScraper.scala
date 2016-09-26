@@ -86,7 +86,7 @@ class LinkedinUserProfileScraper () {
         listEducation = LinkedinEducation(UUID.randomUUID().toString,instituto,urlInstituto,degree,date,desc) :: listEducation
       }
     }
-    LinkedinUserProfile(UUID.randomUUID().toString,posicionActual, listJobs,listEducation , url, new Date())
+    LinkedinUserProfile(UUID.randomUUID().toString,posicionActual, listJobs,listEducation , url)
   }
 
   private def getText(e: Elements): String = {

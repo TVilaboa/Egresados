@@ -1,6 +1,5 @@
 package services
 
-import java.util.Date
 
 import com.google.inject.Inject
 import daos.LinkedinUserProfileDao
@@ -10,10 +9,6 @@ import org.mongodb.scala.result.UpdateResult
 import play.data.format.Formats.DateTime
 
 import scala.concurrent.Future
-
-/**
-  * Created by Nacho on 23/09/2016.
-  */
 
 class LinkedinUserProfileService @Inject()(linkedinUserProfileDao: LinkedinUserProfileDao) {
 
@@ -28,8 +23,6 @@ class LinkedinUserProfileService @Inject()(linkedinUserProfileDao: LinkedinUserP
   def findByEducationList(linkedinUserEducationList:List[LinkedinEducation]): Future[LinkedinUserProfile] = linkedinUserProfileDao.findByEducationList(linkedinUserEducationList)
 
   def findByProfileUrl(linkedinUserProfileUrl: String): Future[LinkedinUserProfile] = linkedinUserProfileDao.findByProfileUrl(linkedinUserProfileUrl)
-
-  def findByDate(linkedinUserProfileDate: Date): Future[LinkedinUserProfile] = linkedinUserProfileDao.findByDate(linkedinUserProfileDate)
 
   def update(linkedinUserProfile : LinkedinUserProfile): Future[UpdateResult] = linkedinUserProfileDao.update(linkedinUserProfile)
 

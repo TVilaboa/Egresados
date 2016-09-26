@@ -32,8 +32,6 @@ trait LinkedinUserProfileDao {
 
   def findByProfileUrl(linkedinUserProfileUrl: String): Future[LinkedinUserProfile]
 
-  def findByDate(linkedinUserProfileDate: Date): Future[LinkedinUserProfile]
-
   def update(linkedinUserProfile : LinkedinUserProfile): Future[UpdateResult]
 
   def save(linkedinUserProfile : LinkedinUserProfile): Future[Completed]
@@ -79,12 +77,6 @@ class MongoLinkedinUserProfileDao @Inject()(mongo: Mongo) extends LinkedinUserPr
     })
   }
 
-  override def findByDate(linkedinUserProfileDate: Date): Future[LinkedinUserProfile] = {
-    linkedinUserProfile.find(equal("timestamp", linkedinUserProfileDate)).head().map[LinkedinUserProfile]((doc: Document) => {
-      documentToLinkedinUserProfile(doc)
-    })
-  }
-
   override def update(linkedinProfile: LinkedinUserProfile): Future[UpdateResult] = {
     linkedinUserProfile.updateOne(equal("_id", linkedinProfile._id), Document(Json.toJson(linkedinProfile).toString)).head()
   }
@@ -107,8 +99,7 @@ class MongoLinkedinUserProfileDao @Inject()(mongo: Mongo) extends LinkedinUserPr
       doc.get("actualPosition").get.asString().getValue,
       doc.get("jobList").get.asArray().getValues.asInstanceOf[List[LinkedinJob]],
       doc.get("educationList").get.asArray().getValues.asInstanceOf[List[LinkedinEducation]],
-      doc.get("profileUrl").get.asString().getValue,
-      doc.get("timestamp").get.asDateTime().asInstanceOf[Date]
+      doc.get("profileUrl").get.asString().getValue
     )
   }
 

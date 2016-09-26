@@ -2,7 +2,7 @@ package daos
 
 
 import com.google.inject.{ImplementedBy, Inject, Singleton}
-import models.{LaNacionNews, Graduate}
+import models._
 import org.bson.{BsonArray, BsonValue}
 import org.mongodb.scala._
 import org.mongodb.scala.model.Filters._
@@ -95,8 +95,10 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
 
   private def documentToGraduate(doc: Document): Graduate = {
     var nacionNews : List[LaNacionNews] =  List[LaNacionNews]()
+    var linkedinUserProfile: LinkedinUserProfile = null
     try{
       nacionNews = bsonToListLanacion(doc.get("laNacionNews").get.asArray())
+      linkedinUserProfile = bsonToLinkedinUserProfile(doc.get("linkedinUserProfile").get)
     } catch {
       case _ => {
         println("Error: El egresado no tiene la lista de noticias generada")
@@ -113,7 +115,8 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
       doc.get("graduationDate").get.asString().getValue,
       doc.get("career").get.asString().getValue,
       doc.get("studentCode").get.asString().getValue,
-      nacionNews
+      nacionNews,
+      linkedinUserProfile
      )
   }
 
@@ -124,7 +127,32 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
       news = news :+ LaNacionNews(doc.get("_id").asString().getValue,doc.get("url").asString().getValue,doc.get("title").asString().getValue,
         doc.get("date").asString().getValue,doc.get("tuft").asString().getValue,doc.get("author").asString().getValue)
     }
-    return news
+    news
+  }
+
+  private def bsonToLinkedinUserProfile(bson : BsonValue) : LinkedinUserProfile ={
+    var doc = bson.asDocument()
+    LinkedinUserProfile(doc.get("_id").asString().getValue,doc.get("actualPosition").asString().getValue, bsonToListJobs(doc.get("jobList").asArray()), bsonToListEducation(doc.get("educationList").asArray()), doc.get("profileUrl").asString().getValue)
+  }
+
+  private def bsonToListJobs(bson : BsonArray) : List[LinkedinJob] ={
+    var jobs = List[LinkedinJob]()
+    for(bsonV : BsonValue <- bson.getValues){
+      var doc = bsonV.asDocument()
+      jobs = jobs :+ LinkedinJob(doc.get("_id").asString().getValue,doc.get("position").asString().getValue,doc.get("workplace").asString().getValue,
+        doc.get("workUrl").asString().getValue,doc.get("activityPeriod").asString().getValue,doc.get("jobDescription").asString().getValue)
+    }
+    jobs
+  }
+
+  private def bsonToListEducation(bson : BsonArray) : List[LinkedinEducation] ={
+    var educationList = List[LinkedinEducation]()
+    for(bsonV : BsonValue <- bson.getValues){
+      var doc = bsonV.asDocument()
+      educationList = educationList :+ LinkedinEducation(doc.get("_id").asString().getValue,doc.get("institute").asString().getValue,doc.get("instituteUrl").asString().getValue,
+        doc.get("title").asString().getValue,doc.get("educationPeriod").asString().getValue,doc.get("educationDescription").asString().getValue)
+    }
+    educationList
   }
 
 }
