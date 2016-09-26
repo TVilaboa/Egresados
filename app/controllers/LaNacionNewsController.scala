@@ -3,6 +3,7 @@ package controllers
 import java.sql.Timestamp
 import java.util.Date
 
+import actions.SecureAction
 import com.google.inject.Inject
 import generators.{LaNacionUrlGeneratorObject, LaNacionUrlGenerator}
 import models.{Graduate, LaNacionUserNews, LaNacionNews}
@@ -17,9 +18,9 @@ import scala.concurrent.duration.Duration
 /**
   * Created by matias on 21/09/2016.
   */
-class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService,graduateService: GraduateService) extends Controller{
+class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService,graduateService: GraduateService, secureAction: SecureAction) extends Controller{
 
-  def saveNews = Action {
+  def saveNews = secureAction {
     val generator: LaNacionUrlGenerator = new LaNacionUrlGenerator()
     val links = LaNacionUrlGeneratorObject.search(Option("lopez gabeiras"),Option("Universidad Austral"))
     val scraper: LaNacionScraper = new LaNacionScraper()
@@ -35,15 +36,7 @@ class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService
     }
     graduate = graduate.copy(laNacionNews = news)
     var result = Await.result(graduateService.update(graduate),Duration.Inf)
-    val userNews: LaNacionUserNews = new LaNacionUserNews(news, new Timestamp(new Date().getTime))
-    for(news <- userNews.news) {
-      println(news.url)
-      println(news.title)
-      println(news.date)
-      println(news.tuft)
-      println(news.author)
-      println("*********************************")
-    }
+
     Ok
   }
 

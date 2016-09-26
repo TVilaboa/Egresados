@@ -49,7 +49,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     )(Graduate.apply)(Graduate.unapply)
   )
 
-  def showSearchForm = Action{
+  def showSearchForm = secureAction{
     var graduates = Seq[Graduate]()
 
 
@@ -60,7 +60,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     Ok(views.html.search.render(graduates, graduateForm,true,null,null,null,null))
   }
 
-  def search = Action { implicit request => {
+  def search = secureAction { implicit request => {
     var graduates = Seq[Graduate]()
 
     val firstname = graduateForm.bindFromRequest.data("firstName")
@@ -86,17 +86,17 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
   }
 
-  def showGraduateForm = Action { implicit request => {
+  def showGraduateForm = secureAction { implicit request => {
     Ok(views.html.addGraduate.render())
   }
   }
 
-  def save = Action { implicit request => {
+  def save = secureAction { implicit request => {
     Ok(views.html.index.render())
   }
   }
 
-  def addGraduate = Action.async { implicit request =>
+  def addGraduate = secureAction.async { implicit request =>
     try {
       val graduate = Graduate(
         UUID.randomUUID().toString,
@@ -140,7 +140,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     }
   }
 
-  def showProfile(id:String) = Action {
+  def showProfile(id:String) = secureAction {
     try{
       var graduate: Option[Graduate] = None
       val result: Future[Graduate] = graduateService.find(id)

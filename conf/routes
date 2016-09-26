@@ -20,6 +20,7 @@ POST        /signup              controllers.UserAuthController.signup
 GET         /login               controllers.Application.login
 POST        /login               controllers.UserAuthController.login
 POST        /logout              controllers.AuthController.logout
+GET         /logout              controllers.UserAuthController.logout
 GET         /secure              controllers.AuthController.securedSampleAction
 
 #EgresadosController

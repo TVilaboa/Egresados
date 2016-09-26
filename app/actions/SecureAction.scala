@@ -27,10 +27,10 @@ class SecureAction @Inject()(sessionService: SessionService,
         .findUserBySessionId(c.value)
         .map(u => Right(new UserRequest[A](u, request)))
         .recover {
-          case NonFatal(_) => Left(Results.Forbidden)
+          case NonFatal(_) => Left(Results.Unauthorized(views.html.login.render(null,"You must login!" ,null)))
         }
     }.getOrElse(Future {
-      Left(Results.Forbidden)
+      Left(Results.Unauthorized(views.html.login.render(null,"You must login!" ,null)))
     })
 
   }
