@@ -128,3 +128,4 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
   }
 
 }
+
