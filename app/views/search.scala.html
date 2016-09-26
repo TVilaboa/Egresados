@@ -19,6 +19,7 @@
     <script src="@routes.Assets.at("bower_components/datatables/media/js/jquery.dataTables.min.js")"></script>
     <script src="@routes.Assets.at("bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js")"></script>
     <script src="@routes.Assets.at("bower_components/datatables-responsive/js/dataTables.responsive.js")"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.1/js/dataTables.buttons.min.js"></script>
 
 
         <!-- Page-Level Demo Scripts - Tables - Use for reference -->
@@ -40,6 +41,29 @@
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="page-header">Austral University Graduates</h1>
+                <button type="button" href="#success" data-toggle="modal" >Export Results</button>
+                    <!-- Modal -->
+                <div class="modal fade" id="success" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header modal-header-success">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                <h1><i class="header-panel"></i> Export Results</h1>
+                            </div>
+                            <div class="modal-body">
+                                <ul>
+                                    <button type="button" class="dt-button buttons-csv buttons-html5" id="csv" name="csv" href="#dataTables-example">CSV</button>
+                                    <button type="button" class="button" id="xlsx" name="xlsx">XLSX</button>
+                                    <button type="button" class="button" id="json" name="json">JSON</button>
+                                </ul>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+                <!-- Modal -->
             </div>
                 <!-- /.col-lg-12 -->
         </div>
