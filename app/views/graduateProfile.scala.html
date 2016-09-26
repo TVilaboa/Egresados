@@ -1,0 +1,71 @@
+@(graduate : Option[Graduate])
+@layout(title = "Graduate Profile"){
+
+    <div id="page-wrapper">
+            <div class="row"> 
+                <div class="col-lg-12">
+                    <h1 class="page-header">Graduate Profile</h1> 
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+
+                <!-- /.row --> 
+            <div class="row"> 
+                <div class="col-lg-12">
+                    @if(graduate.isEmpty){
+                        <div class="alert alert-danger">
+                            <strong>No existe el perfil de graduado correspondiente</strong>
+                        </div>
+                    }else{
+                        <div class="panel panel-default"> 
+                            <div class="alert alert-info">
+                                Perfil de :<strong>@graduate.get.firstName @graduate.get.lastName</strong>
+                            </div>
+                                <!-- /.panel-heading --> 
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label>Nombre:</label>
+                                    @graduate.get.firstName
+                                </div>
+                                <div class="form-group">
+                                    <label>Apellido:</label>
+                                    @graduate.get.lastName
+                                </div>
+                                <div class="form-group">
+                                    <label>DNI:</label>
+                                    @graduate.get.documentId
+                                </div>
+                                <div class="form-group">
+                                    <label>Fecha de nacimiento:</label>
+                                    @graduate.get.birthDate
+                                </div>
+                                <div class="form-group">
+                                    <label>Fecha de ingreso:</label>
+                                    @graduate.get.entryDate
+                                </div>
+                                <div class="form-group">
+                                    <label>Fecha de graduacion:</label>
+                                    @graduate.get.graduationDate
+                                </div>
+                                <div class="form-group">
+                                    <label>Carrera:</label>
+                                    @graduate.get.career
+                                </div>
+                            </div> 
+
+                            <!-- /.panel-body --> 
+                        </div>
+
+                    }
+                                             <!-- /.panel --> 
+                </div>
+                                     <!-- /.col-lg-12 --> 
+
+            </div>
+                             <!-- /.row -->  
+            <!-- /.row --> 
+        </div>
+
+}
+
+

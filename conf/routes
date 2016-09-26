@@ -15,12 +15,21 @@ GET         /tables                    controllers.Application.tables
 GET         /assets/*file        controllers.Assets.at(path="/public", file)
 
 #Auth
-POST        /signup              controllers.AuthController.signup
+GET         /signup              controllers.UserAuthController.signupView
+POST        /signup              controllers.UserAuthController.signup
 GET         /login               controllers.Application.login
-POST        /login               controllers.AuthController.login
+POST        /login               controllers.UserAuthController.login
 POST        /logout              controllers.AuthController.logout
 GET         /secure              controllers.AuthController.securedSampleAction
 
 #EgresadosController
-GET         /search             controllers.EgresadosController.search
-POST        /search             controllers.EgresadosController.doSearch
+GET         /egresados/search             controllers.EgresadosController.showSearchForm
+POST        /egresados/search             controllers.EgresadosController.search
+GET         /add                controllers.EgresadosController.showGraduateForm
+POST        /add                controllers.EgresadosController.addGraduate
+GET         /profile/:id        controllers.EgresadosController.showProfile(id : String)
+
+#LinkedInScraper
+GET          /linkedin/search    controllers.LinkedinUserProfileController.saveLinkedinUserProfile
+#LaNacionController
+GET         /lanacion/search    controllers.LaNacionNewsController.saveNews
