@@ -1,3 +1,4 @@
+
 package controllers
 
 import java.util.UUID
@@ -9,7 +10,7 @@ import com.google.inject.Inject
 import com.mongodb.MongoWriteException
 import forms.GraduateForms.GraduateData
 import io.netty.util.Mapping
-import models.{LaNacionNews, Graduate, User}
+import models.{InfobaeNews, LaNacionNews, Graduate, User}
 import play.api.i18n.MessagesApi
 import play.api.libs.json.JsValue
 import play.api.data.Form
@@ -45,7 +46,13 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       "title" -> text(),
       "date" -> text(),
       "tuft" -> text(),
-      "author" -> text())(LaNacionNews.apply)(LaNacionNews.unapply))
+      "author" -> text())(LaNacionNews.apply)(LaNacionNews.unapply)),
+      "infobaeNews" -> list(mapping("_id" -> text(),
+      "url" -> text(),
+      "title" -> text(),
+      "date" -> text(),
+      "tuft" -> text(),
+      "author" -> text())(InfobaeNews.apply)(InfobaeNews.unapply))
     )(Graduate.apply)(Graduate.unapply)
   )
 
@@ -108,6 +115,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("entryday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("graduationday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("career").head,
+        null,
         null
 
       )
@@ -162,3 +170,4 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     }
   }
 }
+
