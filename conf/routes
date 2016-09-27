@@ -3,33 +3,36 @@
 # ~~~~
 
 # Home page
-GET         /                    controllers.Application.index
+GET         /                   controllers.Application.index
 
 ## Layout
-#GET         /layout                    controllers.Application.layout
+#GET         /layout            controllers.Application.layout
 
 # Tables
-GET         /tables                    controllers.Application.tables
+GET         /tables             controllers.Application.tables
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file        controllers.Assets.at(path="/public", file)
+GET         /assets/*file       controllers.Assets.at(path="/public", file)
 
 #Auth
-GET         /signup              controllers.UserAuthController.signupView
-POST        /signup              controllers.UserAuthController.signup
-GET         /login               controllers.Application.login
-POST        /login               controllers.UserAuthController.login
-POST        /logout              controllers.AuthController.logout
-GET         /secure              controllers.AuthController.securedSampleAction
+GET         /signup             controllers.UserAuthController.signupView
+POST        /signup             controllers.UserAuthController.signup
+GET         /login              controllers.Application.login
+POST        /login              controllers.UserAuthController.login
+POST        /logout             controllers.AuthController.logout
+GET         /secure             controllers.AuthController.securedSampleAction
 
 #EgresadosController
-GET         /egresados/search             controllers.EgresadosController.showSearchForm
-POST        /egresados/search             controllers.EgresadosController.search
+GET         /egresados/search   controllers.EgresadosController.showSearchForm
+POST        /egresados/search   controllers.EgresadosController.search
 GET         /add                controllers.EgresadosController.showGraduateForm
 POST        /add                controllers.EgresadosController.addGraduate
 GET         /profile/:id        controllers.EgresadosController.showProfile(id : String)
+GET         /update/:id         controllers.EgresadosController.showUpdatingForm(id : String)
+POST         /update/:id         controllers.EgresadosController.update(id : String)
 
 #LinkedInScraper
-GET          /linkedin/search    controllers.LinkedinUserProfileController.saveLinkedinUserProfile
+GET          /linkedin/search   controllers.LinkedinUserProfileController.saveLinkedinUserProfile
+
 #LaNacionController
 GET         /lanacion/search    controllers.LaNacionNewsController.saveNews

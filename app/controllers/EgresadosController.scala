@@ -141,7 +141,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
 
   def showProfile(id:String) = Action {
-    try{
       var graduate: Option[Graduate] = None
       val result: Future[Graduate] = graduateService.find(id)
       result onSuccess {
@@ -156,9 +155,45 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
         }
       }
-      Await.ready(result, Duration.Inf)
+      graduate = Option(Await.result(result, Duration.Inf))
       Ok(views.html.graduateProfile.render(graduate))
+  }
 
+  def showUpdatingForm (id:String) = Action {
+      var graduate: Option[Graduate] = None
+      val result: Future[Graduate] = graduateService.find(id)
+      result onSuccess {
+        case grad: Graduate => {
+          println("Success")
+          graduate = Option(grad)
+        }
+      }
+      result onFailure {
+        case _ => {
+          println("Error")
+
+        }
+      }
+      graduate = Option(Await.result(result, Duration.Inf))
+      Ok(views.html.updateGraduate.render(graduate.get))
+  }
+
+  def update (id:String) = Action {
+    var graduate: Option[Graduate] = None
+    val result: Future[Graduate] = graduateService.find(id)
+    result onSuccess {
+      case grad: Graduate => {
+        println("Success")
+        graduate = Option(grad)
+      }
     }
+    result onFailure {
+      case _ => {
+        println("Error")
+
+      }
+    }
+    graduate = Option(Await.result(result, Duration.Inf))
+    Ok(views.html.graduateProfile.render(graduate))
   }
 }
