@@ -1,100 +1,55 @@
+@(graduate: Option[Graduate])
 @layout(title = "Add Graduate") {
     <div id="page-wrapper">
-                         <div class="row"> 
-            <div class="col-lg-12">
-                <h1 class="page-header">New Graduate</h1> 
-            </div>
-                <!-- /.col-lg-12 -->
+                     <div class="row"> 
+        <div class="col-lg-12">
+            <h1 class="page-header">Validación de Links</h1> 
+            <h3 style="margin-top: 0 ;"> Graduado: @graduate.get.firstName @graduate.get.lastName </h3>
         </div>
-                <!-- /.row --> 
-            <div class="row"> 
-                <div class="col-lg-12">
-                    <div class="panel panel-default"> 
-                        <div class="alert alert-info">
-                            Alta de Graduado Manual
-                        </div>
-                            <!-- /.panel-heading --> 
-                        <div class="panel-body">
-                            @helper.form(action = routes.EgresadosController.addGraduate()) {
-                                <input type="number" style="display : none" name="id" value="-1" class="form-control">
-                                <div class="form-group">
-                                    <label for="firstName">Nombre</label>
-                                    <input onkeypress="return soloLetras(event)" required type="text" class="form-control" name="firstName" id="firstName" placeholder="Nombre">
-                                </div>
-                                <div class="form-group">
-                                    <label for="lastName">Apellido</label>
-                                    <input onkeypress="return soloLetras(event)" required type="text" class="form-control" name="lastName" id="lastName" placeholder="Apellido">
-                                </div>
-                                <div class="form-group">
-                                    <label for="dni">DNI</label>
-                                    <input onkeypress="return isNumberKey(event)" required type="text" class="form-control" name="dni" id="dni" placeholder="DNI">
-                                </div>
-                                <div class="form-group">
-                                    <label for="studentcode">StudentCode</label>
-                                    <input type="text" class="form-control" name="studentcode" id="studentcode" placeholder="StudentCode">
-                                </div>
-                                <div class="form-group">
-                                    <label for="birthday">Fecha de nacimiento</label>
-                                    <br>
-                                    <input required type="text" name="birthday" id="birthday" placeholder="DD/MM/AAAA">
-                                </div>
-                                <div class="form-group">
-                                    <label for="entryday">Fecha de ingreso a la facultad</label>
-                                    <br>
-                                    <input required type="text" name="entryday" id="entryday" placeholder="DD/MM/AAAA">
-                                </div>
-                                <div class="form-group">
-                                    <label for="graduationday">Fecha de graduacion</label>
-                                    <br>
-                                    <input type="text" name="graduationday" id="graduationday" placeholder="DD/MM/AAAA">
-                                </div>
-                                <div class="form-group">
-                                    <label for="career">Carrera</label>
-                                    <input onkeypress="return soloLetras(event)" required type="text" name="career" class="form-control" id="career" placeholder="Carrera">
-                                </div>
-                                <input type="submit" value="ADD" class="btn btn-info btn-lg">
-
-                            }
-                             
-                        </div> 
-
-                        <!-- /.panel-body --> 
-                    </div>
-                                             <!-- /.panel --> 
-                </div>
-                                     <!-- /.col-lg-12 --> 
-
-            </div>
-                             <!-- /.row -->  
+            <!-- /.col-lg-12 -->
+    </div>
             <!-- /.row --> 
+        <div class="row"> 
+            <div class="col-lg-12">
+                <div class="panel panel-default"> 
+                    <div class="alert alert-info">
+                        La Nación
+                    </div>
+                    <table class="table table-hover">
+                        @for(news <- graduate.get.laNacionNews) {
+                            <tr>
+                                <td> <input type="checkbox" name="urlLinkedIn" id="@news._id"> </td> <td><a href="@news.url">@news.url</a></td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+                                         <!-- /.panel --> 
+            </div>
+
+                                 <!-- /.col-lg-12 --> 
+
         </div>
+                         <!-- /.row -->  
+        <!-- /.row --> 
+    </div>
      
     <script>
 
-            function soloLetras(e){
-                key = e.keyCode || e.which;
-                tecla = String.fromCharCode(key).toLowerCase();
-                letras = " áéíóúabcdefghijklmnñopqrstuvwxyz";
-                especiales = "8-37-39-46";
+            function validateLinks(){
+                validateLaNacion();
+                validateLinkedIn();
+                validateInfobae();
+            }
 
-                tecla_especial = false
-                for(var i in especiales){
-                    if(key == especiales[i]){
-                        tecla_especial = true;
+            function validateLaNacion(){
+                var buttons = document.getElementsByName('urlLinkedIn');
+                var link;
+                for (var i = 0; i < buttons.length; i++) {
+                    if (buttons[i].checked) {
+                        link = buttons[i].value;
                         break;
                     }
                 }
-
-                if(letras.indexOf(tecla)==-1 && !tecla_especial){
-                    return false;
-                }
-            }
-
-            function isNumberKey(evt){
-                var charCode = (evt.which) ? evt.which : event.keyCode
-                if (charCode > 31 && (charCode < 48 || charCode > 57))
-                    return false;
-                return true;
             }
 
     </script>

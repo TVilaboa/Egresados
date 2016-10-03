@@ -97,7 +97,8 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
 
   def renderValidate = Action { implicit request => {
-    Ok(views.html.validateGraduateLinks.render())
+    val graduate: Graduate = Await.result(graduateService.find("1"),Duration.Inf)
+    Ok(views.html.validateGraduateLinks.render(Option(graduate)))
   }
   }
 
