@@ -177,4 +177,8 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
     }
   }
+
+  def showProfileTest = Action {
+    Ok(views.html.graduateProfile.render(Option(Await.result(graduateService.find("456"),Duration.Inf))))
+  }
 }

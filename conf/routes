@@ -3,7 +3,8 @@
 # ~~~~
 
 # Home page
-GET         /                    controllers.Application.index
+GET         /index                    controllers.Application.index
+GET         /     controllers.EgresadosController.showProfileTest
 
 ## Layout
 #GET         /layout                    controllers.Application.layout
@@ -23,13 +24,13 @@ POST        /logout              controllers.AuthController.logout
 GET         /secure              controllers.AuthController.securedSampleAction
 
 #EgresadosController
-GET         /egresados/search             controllers.EgresadosController.showSearchForm
-POST        /egresados/search             controllers.EgresadosController.search
-GET         /add                controllers.EgresadosController.showGraduateForm
-POST        /add                controllers.EgresadosController.addGraduate
-GET         /profile/:id        controllers.EgresadosController.showProfile(id : String)
+GET         /egresados/search    controllers.EgresadosController.showSearchForm
+POST        /egresados/search    controllers.EgresadosController.search
+GET         /add                 controllers.EgresadosController.showGraduateForm
+POST        /add                 controllers.EgresadosController.addGraduate
+GET         /profile/:id         controllers.EgresadosController.showProfile(id : String)
 
 #LinkedInScraper
 GET          /linkedin/search    controllers.LinkedinUserProfileController.saveLinkedinUserProfile
 #LaNacionController
-GET         /lanacion/search    controllers.LaNacionNewsController.saveNews
+GET         /lanacion/search     controllers.LaNacionNewsController.saveNews

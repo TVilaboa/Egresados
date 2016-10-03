@@ -51,6 +51,49 @@
                                     <label>Carrera:</label>
                                     @graduate.get.career
                                 </div>
+                                    @if(graduate.get.laNacionNews.isEmpty){
+                                        <div class="form-group">
+                                            <label>Noticias Diario La Nacion:</label>
+                                            No hay noticias
+                                        </div>
+                                    } else {
+                                        <div class="form-group">
+                                            <label>Noticias Diario La Nacion:</label>
+                                            <ul>
+                                            @for(news : LaNacionNews <- graduate.get.laNacionNews){
+                                                <li>Titulo: "@news.title"  -->  URL: <a href=@news.url>@news.url</a></li>
+                                            }
+                                            </ul>
+                                        </div>
+                                    }
+
+                                @if(graduate.get.linkedinUserProfile == null){
+                                    <div class="form-group">
+                                        <label>Perfil de Linkedin:</label>
+                                        No tiene un usuario en Linkedin
+                                    </div>
+                                } else {
+                                    <div class="form-group">
+                                        <label>Perfil de Linkedin:</label>
+                                        <a href=@graduate.get.linkedinUserProfile.profileUrl>@graduate.get.linkedinUserProfile.profileUrl</a>
+                                    </div>
+                                    <div class = "form-group">
+                                        <label>Lista de Trabajos:</label>
+                                        <ul>
+                                        @for(job : LinkedinJob <- graduate.get.linkedinUserProfile.jobList){
+                                            <li>Institucion: @job.workplace --> Rol: @job.position</li>
+                                        }
+                                        </ul>
+                                    </div>
+                                    <div class = "form-group">
+                                        <label>Educacion:</label>
+                                        <ul>
+                                        @for(education : LinkedinEducation <- graduate.get.linkedinUserProfile.educationList){
+                                            <li>Institucion: @education.institute --> Titulo: @education.title</li>
+                                        }
+                                        </ul>
+                                    </div>
+                                }
                             </div> 
 
                             <!-- /.panel-body --> 
