@@ -178,22 +178,45 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       Ok(views.html.updateGraduate.render(graduate.get))
   }
 
-  def update (id:String) = Action {
-    var graduate: Option[Graduate] = None
-    val result: Future[Graduate] = graduateService.find(id)
-    result onSuccess {
-      case grad: Graduate => {
-        println("Success")
-        graduate = Option(grad)
-      }
-    }
-    result onFailure {
-      case _ => {
-        println("Error")
+  def update (id:String) = Action.async { implicit request =>
+    try {
+      val graduate = Graduate(
+        id,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("firstName").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("lastName").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("dni").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("studentcode").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("birthday").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("entryday").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("graduationday").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("career").head,
+        null
+      )
 
+      graduateService.update(graduate).map((_) => {
+        //        val name = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("firstName").get(0)
+        //        val surname = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("lastName").get(0)
+        //        val dni = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("dni").get(0)
+        //        val code = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("studentcode").get(0)
+        //        val bday = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("birthday").get(0)
+        //        val eday = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("entryday").get(0)
+        //        val gday = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("graduationday").get(0)
+        //        val career = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("career").get(0)
+        Redirect("/profile/" + id)
+        //        Ok(views.html.graduateProfile.render(name,surname,dni,code,bday,eday,gday,career,"Graduado creado correctamente!"))
+      }).recoverWith {
+        case e: MongoWriteException => Future {
+          Forbidden
+        }
+        case e => Future {
+          Forbidden
+        }
+      }
+    } catch {
+      case e: Exception => Future {
+        //Ok(e.toString)
+        BadRequest
       }
     }
-    graduate = Option(Await.result(result, Duration.Inf))
-    Ok(views.html.graduateProfile.render(graduate))
   }
 }
