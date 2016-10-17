@@ -22,7 +22,7 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
 
     //Filters result by Condition
     val possible : List[String] = list.filter(x => x.substring(8).startsWith("www.linkedin.com") || x.substring(11).startsWith("linkedin.com"))
-    val filterByCondition = possible.filter(x => username.mkString("").equalsIgnoreCase(x.split("/")(4)))
+    val filterByCondition = possible.filter(x => x.split("/").length >= 5 && username.mkString("").equalsIgnoreCase(x.split("/")(4)))
     filterByCondition
   }
 
@@ -39,7 +39,7 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
         for (name <- nameOnURL if !name.matches(".*\\d+.*")) {
           nameUrl += name + "-"
         }
-        if (nameUrl.charAt(nameUrl.length - 1) == '-') {
+        if (nameUrl.length > 0 && nameUrl.charAt(nameUrl.length - 1) == '-') {
           nameUrl = nameUrl.substring(0, nameUrl.length - 1)
         }
         if (nameUrl.equalsIgnoreCase(userName.mkString(""))) {

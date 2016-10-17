@@ -13,14 +13,14 @@ import services.{GraduateService, LinkedinUserProfileService}
 
 
 import scala.collection.mutable.ListBuffer
-import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
 
 /**
   * Created by Nacho on 23/09/2016.
   */
 
-class LinkedinUserProfileController @Inject() (linkedinUserProfileService: LinkedinUserProfileService, graduateService: GraduateService) extends Controller{
+class LinkedinUserProfileController @Inject() (linkedinUserProfileService: LinkedinUserProfileService,graduateService: GraduateService) extends Controller{
 
   def saveLinkedinUserProfile = Action {
     val generator: LinkedInUrlGenerator = new LinkedInUrlGenerator()
@@ -37,6 +37,26 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
     var result = Await.result(graduateService.update(graduate),Duration.Inf)
 
     Ok
+  }
+
+  def saveAllLinkedinUserProfile = Action {
+    val generator: LinkedInUrlGenerator = new LinkedInUrlGenerator()
+    var graduates = Seq[Graduate]()
+    val all: Future[Seq[Graduate]] = graduateService.all()
+    graduates = Await.result(all,Duration.Inf)
+    for(grad <- graduates){
+      val link: List[String] = generator.getSearchedUrl(Option(grad.firstName + " " + grad.lastName),Option("Universidad Austral"))
+      val scraper : LinkedinUserProfileScraper = new LinkedinUserProfileScraper()
+      link.map{link : String =>
+        var linkedinUserProfile = scraper.getLinkedinProfile(link)
+        linkedinUserProfileService.save(linkedinUserProfile)
+
+      }
+    }
+
+
+
+    Ok(views.html.index.render("Success"))
   }
 
 }

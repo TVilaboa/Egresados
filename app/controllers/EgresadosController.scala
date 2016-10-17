@@ -106,8 +106,8 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
   }
 
-  def save = Action { implicit request => {
-    Ok(views.html.index.render())
+  def save = secureAction { implicit request => {
+    Ok(views.html.index.render(""))
   }
   }
 

@@ -14,7 +14,7 @@ class Application @Inject()(secureAction: SecureAction) extends Controller {
 
   def index = secureAction {
 
-    Ok(views.html.index.render())
+    Ok(views.html.index.render(""))
   }
 
   def tables = secureAction {
