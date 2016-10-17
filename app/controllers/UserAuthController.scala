@@ -2,6 +2,7 @@ package controllers
 
 import java.util.UUID
 
+import actions.SecureAction
 import com.google.inject.Inject
 import com.mongodb.MongoWriteException
 import forms.AuthForms.{LoginData, SignupData}
@@ -19,7 +20,8 @@ import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class UserAuthController @Inject()(userService: UserService,
-                                   sessionService: SessionService) extends Controller {
+                                   sessionService: SessionService,
+                                   secureAction: SecureAction) extends Controller {
 
   val loginForm = Form(
     mapping = tuple(
@@ -60,8 +62,10 @@ class UserAuthController @Inject()(userService: UserService,
           )
           sessionService.save(session)
           val response = Map("sessionId" -> sessionId)
-          //          Ok(Json.toJson(response)).withCookies(Cookie("sessionId", sessionId))
-          Ok(views.html.index.render())
+//          Ok(Json.toJson(response)).withCookies(Cookie("sessionId", sessionId))
+//          Redirect("/").withCookies(Cookie("sessionId", sessionId))
+
+          Ok(views.html.index.render()).withCookies(Cookie("sessionId", sessionId))
         }else
           Unauthorized(views.html.login.render(null,"Invalid Password" ,null))
 
@@ -78,10 +82,10 @@ class UserAuthController @Inject()(userService: UserService,
     }
   }
 
-  def logout = Action {
-    Redirect(routes.Application.index()).withNewSession.flashing(
-      "success" -> "You are now logged out."
-    )
+  def logout = secureAction { implicit request =>
+    sessionService.delete(request.sessionId)
+
+    Unauthorized(views.html.login.render(null,"" ,null)).withNewSession.discardingCookies(DiscardingCookie("sessionId"))
   }
 
   val userForm = Form(
