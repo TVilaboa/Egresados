@@ -111,7 +111,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("entryday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("graduationday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("career").head,
-        null
+      null
 
       )
 
@@ -176,16 +176,23 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       import java.io.File
       val filename = csv.filename
       val contentType = csv.contentType
-      csv.ref.moveTo(new File(s"\\tmp\\$filename"))
-      val reader = CSVReader.open(new File(s"\\tmp\\$filename"))
+      csv.ref.moveTo(new File(s"/tmp/$filename"),replace = true)
+      val reader = CSVReader.open(new File(s"/tmp/$filename"))
       val info = reader.allWithHeaders()
       for(l <- info){
-        val nombre = l.get("Nombre")
-        val apellido = l.get("Apellido")
-        val id = l.get("DNI")
-        print(nombre)
-        print(apellido)
-        print(id)
+        val firstName = l.getOrElse("Nombre", "")
+        val lastName = l.getOrElse("Apellido", "")
+        val documentId = l.getOrElse("DNI", "")
+        val birthDate = l.getOrElse("Fecha de nacimiento", "")
+        val entryDate = l.getOrElse("Año de Ingreso", "")
+        val graduationDate = l.getOrElse("Fecha de Ingreso","")
+        if(!documentId.equals("")) {
+//          val graduate : Future[Graduate] = graduateService.findByDocumentId(documentId)
+
+          val graduate : Graduate = Graduate(UUID.randomUUID().toString, firstName, lastName, documentId, birthDate, entryDate, graduationDate, "", "", List[LaNacionNews]())
+          graduateService.save(graduate)
+        }
+
       }
 
       Ok("File uploaded")
