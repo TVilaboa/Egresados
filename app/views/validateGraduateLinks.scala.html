@@ -18,7 +18,7 @@
                     <table class="table table-hover">
                     @for(news <- graduate.get.laNacionNews) {
                         <tr>
-                            <td> <input type="checkbox" name="urlLaNacion" id="@news._id"> </td> <td><a href="@news.url">@news.url</a></td>
+                            <td> <input type="checkbox" name="urlLaNacion" value="@news.url" id="@news._id"> </td> <td><a href="@news.url">@news.url</a></td>
                         </tr>
                     }
                     </table>
@@ -67,49 +67,74 @@
             </div>
 
                                  <!-- /.col-lg-12 --> 
-
+            <button onclick="validateLinks()" class="btn btn-default" type="submit">Button</button>
         </div>
-
     </div>
      
     <script>
 
             function validateLinks(){
-                validateLaNacion();
-                validateLinkedIn();
-                validateInfobae();
+                //var linkedInLinks = [];
+                var laNacionLinks = [];
+               // var infobaeLinks = [];
+                validateLaNacion(laNacionLinks);
+                //validateLinkedIn(linkedInLinks);
+                //validateInfobae(infobaeLinks);
+                //sendPost(linkedInLinks, laNacionLinks, infobaeLinks);
+                sendPost(laNacionLinks);
             }
 
-            function validateLaNacion(){
+            function validateLaNacion(array){
                 var buttons = document.getElementsByName('urlLaNacion');
-                var link;
                 for (var i = 0; i < buttons.length; i++) {
                     if (buttons[i].checked) {
-                        link = buttons[i].value;
-                        break;
+                        array.push(buttons[i].value);
                     }
                 }
             }
-//            function validateLinkedIn(){
-//                var buttons = document.getElementsByName('urlLinkedIn');
-//                var link;
-//                for (var i = 0; i < buttons.length; i++) {
-//                    if (buttons[i].checked) {
-//                        link = buttons[i].value;
-//                        break;
-//                    }
-//                }
-//            }
-//            function validateInfobae(){
-//                var buttons = document.getElementsByName('urlInfobae');
-//                var link;
-//                for (var i = 0; i < buttons.length; i++) {
-//                    if (buttons[i].checked) {
-//                        link = buttons[i].value;
-//                        break;
-//                    }
-//                }
-//            }
 
+
+            function validateLinkedIn(array){
+                var buttons = document.getElementsByName('urlLinkedIn');
+                for (var i = 0; i < buttons.length; i++) {
+                    if (buttons[i].checked) {
+                        array.push(buttons[i].value);
+                    }
+                }
+            }
+            function validateInfobae(array){
+                var buttons = document.getElementsByName('urlInfobae');
+                for (var i = 0; i < buttons.length; i++) {
+                    if (buttons[i].checked) {
+                        array.push(buttons[i].value);
+                    }
+                }
+            }
+
+            /*function sendPost(linkedInLinks, laNacionLinks, infobaeLinks){
+                $.ajax({
+                type :  "POST",
+                dataType: 'json',
+                data: { id:@graduate.get._id , infobaeLinks:infobaeLinks, laNacionLinks:laNacionLinks, linkedInLinks:linkedInLinks},
+                url  :  "@routes.EgresadosController.validateLinks",
+                success: function(data){
+                    console.log(data);
+                }
+            });
+
+            }*/
+
+            function sendPost(laNacionLinks){
+                $.ajax({
+                    type :  "POST",
+                    dataType: 'json',
+                    data: { id:@graduate.get._id , infobaeLinks:[], laNacionLinks:laNacionLinks, linkedInLinks:[]},
+                    url  :  "@routes.EgresadosController.validateLinks",
+                    success: function(data){
+                        console.log(data);
+                    }
+                });
+
+            }
     </script>
 }
