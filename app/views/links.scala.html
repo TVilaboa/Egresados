@@ -1,0 +1,22 @@
+@(links : Int, total : Int)
+@layout(title = "Link results") {
+  <div id="page-wrapper">
+    <div class="row"> 
+      <div class="col-lg-12">
+        <h1 class="page-header">Stats</h1> 
+      </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <div class="row"> 
+      <div class="col-lg-12">
+        <div class="alert alert-success">
+          <strong>LinkedIn url found =></strong> @links
+        </div>
+        <div class="alert alert-danger">
+          <strong>LinkedIn url NOT found =></strong> @total
+        </div>
+      </div>
+    </div>
+  </div>
+
+}

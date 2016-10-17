@@ -49,6 +49,7 @@
             <div class="col-lg-12">
                 <div class="panel panel-default">
                         <!-- /.panel-heading -->
+
                     <div class="panel-body">
                         <div class="dataTable_wrapper">
                             <h3>Search</h3>
@@ -113,12 +114,12 @@
                                         @if(graduates.nonEmpty){
                                             @for(graduate : Graduate <- graduates){
                                                 <tr class="graduate">
-                                                    <td>@graduate.firstName</td>
-                                                    <td>@graduate.lastName</td>
-                                                    <td>@graduate.documentId</td>
-                                                    <td>@graduate.studentCode</td>
-                                                    <td>@graduate.graduationDate</td>
-                                                    <td>@graduate.career</td>
+                                                    <td><a href="@routes.EgresadosController.showProfile(graduate._id)">@graduate.firstName</td>
+                                                    <td><a href="@routes.EgresadosController.showProfile(graduate._id)">@graduate.lastName</td>
+                                                    <td><a href="@routes.EgresadosController.showProfile(graduate._id)">@graduate.documentId</td>
+                                                    <td><a href="@routes.EgresadosController.showProfile(graduate._id)">@graduate.studentCode</td>
+                                                    <td><a href="@routes.EgresadosController.showProfile(graduate._id)">@graduate.graduationDate</td>
+                                                    <td><a href="@routes.EgresadosController.showProfile(graduate._id)">@graduate.career</td>
                                                 </tr>
                                             }
                                         }else{

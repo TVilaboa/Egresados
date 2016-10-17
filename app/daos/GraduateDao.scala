@@ -37,6 +37,8 @@ trait GraduateDao {
   def save(graduate: Graduate): Future[Completed]
 
   def drop(graduate: Graduate) : Future[Graduate]
+
+  def getNumberWithLinks() : Future[Int]
 }
 
 @Singleton
@@ -125,6 +127,10 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
         doc.get("date").asString().getValue,doc.get("tuft").asString().getValue,doc.get("author").asString().getValue)
     }
     return news
+  }
+
+  override def getNumberWithLinks() : Future[Int] = {
+    graduates.find().toFuture().map(doc => doc.count(x => x.get("linkedinUserProfile").isDefined))
   }
 
 }

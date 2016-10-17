@@ -161,4 +161,19 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
     }
   }
+
+  def getLinkedInUrlStats = secureAction{
+    var graduates = Seq[Graduate]()
+
+
+    val all: Future[Seq[Graduate]] = graduateService.all()
+
+
+    graduates = Await.result(all,Duration.Inf)
+
+    val links : Int = Await.result(graduateService.getNumberWithLinks, Duration.Inf)
+
+    Ok(views.html.links(links,graduates.size))
+
+  }
 }
