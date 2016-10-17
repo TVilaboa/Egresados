@@ -13,8 +13,7 @@ case class LinkedinUserProfile(
                               actualPosition: String,
                               jobList: List[LinkedinJob],
                               educationList: List[LinkedinEducation],
-                              profileUrl: String,
-                              timestamp: Date
+                              profileUrl: String
                               )
 
 object LinkedinUserProfile{

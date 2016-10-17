@@ -34,4 +34,4 @@ GET         /stats          controllers.EgresadosController.getLinkedInUrlStats
 #LinkedInScraper
 GET          /linkedin/search    controllers.LinkedinUserProfileController.saveLinkedinUserProfile
 #LaNacionController
-GET         /lanacion/search    controllers.LaNacionNewsController.saveNews
+GET         /lanacion/search     controllers.LaNacionNewsController.saveNews

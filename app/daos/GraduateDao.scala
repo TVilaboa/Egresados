@@ -2,7 +2,7 @@ package daos
 
 
 import com.google.inject.{ImplementedBy, Inject, Singleton}
-import models.{LaNacionNews, Graduate}
+import models._
 import org.bson.{BsonArray, BsonValue}
 import org.mongodb.scala._
 import org.mongodb.scala.model.Filters._
@@ -97,12 +97,19 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
 
   private def documentToGraduate(doc: Document): Graduate = {
     var nacionNews : List[LaNacionNews] =  List[LaNacionNews]()
+    var linkedinUserProfile: LinkedinUserProfile = null
     try{
       nacionNews = bsonToListLanacion(doc.get("laNacionNews").get.asArray())
     } catch {
       case _ => {
         println("Error: El egresado no tiene la lista de noticias generada")
-
+      }
+    }
+    try{
+      linkedinUserProfile = bsonToLinkedinUserProfile(doc.get("linkedinUserProfile").get)
+    } catch {
+      case _ => {
+        println("Error: El egresado no tiene el usuario de linkedin generado")
       }
     }
     Graduate(
@@ -115,12 +122,13 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
       doc.get("graduationDate").get.asString().getValue,
       doc.get("career").get.asString().getValue,
       doc.get("studentCode").get.asString().getValue,
-      nacionNews)
+      nacionNews,
+      linkedinUserProfile
+     )
   }
 
   private def bsonToListLanacion(bson : BsonArray) : List[LaNacionNews] ={
     var news = List[LaNacionNews]()
-
     for(bsonV : BsonValue <- bson.getValues){
       var doc = bsonV.asDocument()
       news = news :+ LaNacionNews(doc.get("_id").asString().getValue,doc.get("url").asString().getValue,doc.get("title").asString().getValue,
@@ -129,9 +137,91 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
     news
   }
 
+  private def bsonToLinkedinUserProfile(bson : BsonValue) : LinkedinUserProfile ={
+    var doc = bson.asDocument()
+    LinkedinUserProfile(doc.get("_id").asString().getValue,doc.get("actualPosition").asString().getValue, bsonToListJobs(doc.get("jobList").asArray()), bsonToListEducation(doc.get("educationList").asArray()), doc.get("profileUrl").asString().getValue)
+  }
+
+  private def bsonToListJobs(bson : BsonArray) : List[LinkedinJob] ={
+    var jobs = List[LinkedinJob]()
+    for(bsonV : BsonValue <- bson.getValues){
+      var doc = bsonV.asDocument()
+      var position: String = null
+      var workplace: String = null
+      var workUrl: String = null
+      var activityPeriod: String = null
+      var jobDescription: String = null
+      if(!doc.get("position").isNull()) {
+        position = doc.get("position").asString().getValue()
+      } else {
+        position = "No hay informacion"
+      }
+      if(!doc.get("workplace").isNull()) {
+        workplace = doc.get("workplace").asString().getValue()
+      } else {
+        workplace = "No hay informacion"
+      }
+      if(!doc.get("workUrl").isNull()) {
+        workUrl = doc.get("workUrl").asString().getValue()
+      } else {
+        workUrl = "No hay informacion"
+      }
+      if(!doc.get("activityPeriod").isNull()) {
+        activityPeriod = doc.get("activityPeriod").asString().getValue()
+      } else {
+        activityPeriod = "No hay informacion"
+      }
+      if(!doc.get("jobDescription").isNull()) {
+        jobDescription = doc.get("jobDescription").asString().getValue()
+      } else {
+        jobDescription = "No hay informacion"
+      }
+      jobs = jobs :+ LinkedinJob(doc.get("_id").asString().getValue(),position,workplace, workUrl, activityPeriod, jobDescription)
+    }
+    jobs
+  }
+
+  private def bsonToListEducation(bson : BsonArray) : List[LinkedinEducation] ={
+    var educationList = List[LinkedinEducation]()
+    for(bsonV : BsonValue <- bson.getValues){
+      var doc = bsonV.asDocument()
+      var institute: String = null
+      var instituteUrl: String = null
+      var title: String = null
+      var educationPeriod: String = null
+      var educationDescription: String = null
+      if(!doc.get("institute").isNull()) {
+        institute = doc.get("institute").asString().getValue()
+      } else {
+        institute = "No hay informacion"
+      }
+      if(!doc.get("instituteUrl").isNull()) {
+        instituteUrl = doc.get("instituteUrl").asString().getValue()
+      } else {
+        instituteUrl = "No hay informacion"
+      }
+      if(!doc.get("title").isNull()) {
+        title = doc.get("title").asString().getValue()
+      } else {
+        title = "No hay informacion"
+      }
+      if(!doc.get("educationPeriod").isNull()) {
+        educationPeriod = doc.get("educationPeriod").asString().getValue()
+      } else {
+        educationPeriod = "No hay informacion"
+      }
+      if(!doc.get("educationDescription").isNull()) {
+        educationDescription = doc.get("educationDescription").asString().getValue()
+      } else {
+        educationDescription = "No hay informacion"
+      }
+      educationList = educationList :+ LinkedinEducation(doc.get("_id").asString().getValue(),institute,instituteUrl, title,educationPeriod,educationDescription)
+    }
+    educationList
+  }
   override def getNumberWithLinks() : Future[Seq[(String, String, String, String)]] = {
 
     graduates.find().toFuture().map(doc => doc.filter(x => x.get("linkedinUserProfile").isDefined).map(y => (y.get("_id").get.asString().getValue,y.get("firstName").get.asString().getValue,y.get("lastName").get.asString().getValue,y.get("linkedinUserProfile").get.asDocument().get("profileUrl").asString().getValue)))
   }
-
 }
+

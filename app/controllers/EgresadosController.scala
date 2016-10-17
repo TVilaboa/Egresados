@@ -9,7 +9,7 @@ import com.google.inject.Inject
 import com.mongodb.MongoWriteException
 import forms.GraduateForms.GraduateData
 import io.netty.util.Mapping
-import models.{LaNacionNews, Graduate, User}
+import models._
 import play.api.i18n.MessagesApi
 import play.api.libs.json.JsValue
 import play.api.data.Form
@@ -41,15 +41,30 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       "career" -> text(),
       "studentCode" -> text(),
       "lanacionNews" -> list(mapping("_id" -> text(),
-      "url" -> text(),
-      "title" -> text(),
-      "date" -> text(),
-      "tuft" -> text(),
-      "author" -> text())(LaNacionNews.apply)(LaNacionNews.unapply))
+        "url" -> text(),
+        "title" -> text(),
+        "date" -> text(),
+        "tuft" -> text(),
+        "author" -> text()) (LaNacionNews.apply)(LaNacionNews.unapply)),
+      "linkedinUserProfile" -> mapping("_id" -> text(),
+        "actualPosition" -> text(),
+        "jobList" -> list(mapping("_id" -> text(),
+          "position" -> text(),
+          "workPlace" -> text(),
+          "workUrl" -> text(),
+          "activityPeriod" -> text(),
+          "jobDescription" -> text()) (LinkedinJob.apply) (LinkedinJob.unapply)),
+        "educationList" -> list(mapping("_id" -> text(),
+          "institute" -> text(),
+          "instituteUrl" -> text(),
+          "title" -> text(),
+          "educationPeriod" -> text(),
+          "educationDescription" -> text()) (LinkedinEducation.apply) (LinkedinEducation.unapply)),
+        "profileUrl" -> text()) (LinkedinUserProfile.apply) (LinkedinUserProfile.unapply)
     )(Graduate.apply)(Graduate.unapply)
   )
 
-  def showSearchForm = secureAction{
+  def showSearchForm = Action{
     var graduates = Seq[Graduate]()
 
 
@@ -60,7 +75,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     Ok(views.html.search.render(graduates, graduateForm,true,null,null,null,null))
   }
 
-  def search = secureAction { implicit request => {
+  def search = Action { implicit request => {
     var graduates = Seq[Graduate]()
 
     val firstname = graduateForm.bindFromRequest.data("firstName")
@@ -86,17 +101,17 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
   }
 
-  def showGraduateForm = secureAction { implicit request => {
+  def showGraduateForm = Action { implicit request => {
     Ok(views.html.addGraduate.render())
   }
   }
 
-  def save = secureAction { implicit request => {
+  def save = Action { implicit request => {
     Ok(views.html.index.render())
   }
   }
 
-  def addGraduate = secureAction.async { implicit request =>
+  def addGraduate = Action.async { implicit request =>
     try {
       val graduate = Graduate(
         UUID.randomUUID().toString,
@@ -108,6 +123,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("entryday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("graduationday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("career").head,
+        null,
         null
 
       )
@@ -140,14 +156,14 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     }
   }
 
-  def showProfile(id:String) = secureAction {
+  def showProfile(id:String) = Action {
     try{
       var graduate: Option[Graduate] = None
       val result: Future[Graduate] = graduateService.find(id)
       result onSuccess {
         case grad: Graduate => {
           println("Success")
-          graduate = Option(grad)
+
         }
       }
       result onFailure {
@@ -156,10 +172,14 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
         }
       }
-      Await.ready(result, Duration.Inf)
+      graduate = Option(Await.result(result, Duration.Inf))
       Ok(views.html.graduateProfile.render(graduate))
 
     }
+  }
+
+  def showProfileTest = Action {
+    Ok(views.html.graduateProfile.render(Option(Await.result(graduateService.find("456"),Duration.Inf))))
   }
 
   def getLinkedInUrlStats = secureAction{
