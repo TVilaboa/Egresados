@@ -4,7 +4,6 @@
 
 # Home page
 GET         /index                    controllers.Application.index
-GET         /     controllers.EgresadosController.showProfileTest
 
 ## Layout
 #GET         /layout                    controllers.Application.layout

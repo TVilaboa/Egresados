@@ -163,7 +163,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       result onSuccess {
         case grad: Graduate => {
           println("Success")
-          graduate = Option(grad)
+
         }
       }
       result onFailure {
@@ -172,7 +172,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
         }
       }
-      Await.ready(result, Duration.Inf)
+      graduate = Option(Await.result(result, Duration.Inf))
       Ok(views.html.graduateProfile.render(graduate))
 
     }

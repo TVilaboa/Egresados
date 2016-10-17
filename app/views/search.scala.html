@@ -106,6 +106,7 @@
                                         <th>Student Code</th>
                                         <th>Graduation year</th>
                                         <th>Carrer</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -119,6 +120,7 @@
                                                     <td>@graduate.studentCode</td>
                                                     <td>@graduate.graduationDate</td>
                                                     <td>@graduate.career</td>
+                                                    <td><a href="@routes.EgresadosController.showProfile(graduate._id)">Detail</a> </td>
                                                 </tr>
                                             }
                                         }else{
