@@ -27,5 +27,5 @@ class GraduateService @Inject()(graduateDao: GraduateDao) {
 
   def save(graduate: Graduate): Future[Completed] = graduateDao.save(graduate)
 
-  def getNumberWithLinks : Future[Int] = graduateDao.getNumberWithLinks()
+  def getNumberWithLinks : Future[Seq[(String,String,String,String)]] = graduateDao.getNumberWithLinks()
 }

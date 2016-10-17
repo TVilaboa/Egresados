@@ -38,7 +38,7 @@ trait GraduateDao {
 
   def drop(graduate: Graduate) : Future[Graduate]
 
-  def getNumberWithLinks() : Future[Int]
+  def getNumberWithLinks() : Future[Seq[(String,String,String,String)]]
 }
 
 @Singleton
@@ -115,22 +115,23 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
       doc.get("graduationDate").get.asString().getValue,
       doc.get("career").get.asString().getValue,
       doc.get("studentCode").get.asString().getValue,
-      nacionNews
-     )
+      nacionNews)
   }
 
   private def bsonToListLanacion(bson : BsonArray) : List[LaNacionNews] ={
     var news = List[LaNacionNews]()
+
     for(bsonV : BsonValue <- bson.getValues){
       var doc = bsonV.asDocument()
       news = news :+ LaNacionNews(doc.get("_id").asString().getValue,doc.get("url").asString().getValue,doc.get("title").asString().getValue,
         doc.get("date").asString().getValue,doc.get("tuft").asString().getValue,doc.get("author").asString().getValue)
     }
-    return news
+    news
   }
 
-  override def getNumberWithLinks() : Future[Int] = {
-    graduates.find().toFuture().map(doc => doc.count(x => x.get("linkedinUserProfile").isDefined))
+  override def getNumberWithLinks() : Future[Seq[(String, String, String, String)]] = {
+
+    graduates.find().toFuture().map(doc => doc.filter(x => x.get("linkedinUserProfile").isDefined).map(y => (y.get("_id").get.asString().getValue,y.get("firstName").get.asString().getValue,y.get("lastName").get.asString().getValue,y.get("linkedinUserProfile").get.asDocument().get("profileUrl").asString().getValue)))
   }
 
 }

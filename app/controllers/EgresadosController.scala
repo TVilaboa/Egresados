@@ -171,9 +171,9 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
     graduates = Await.result(all,Duration.Inf)
 
-    val links : Int = Await.result(graduateService.getNumberWithLinks, Duration.Inf)
+    val links : Seq[(String,String,String,String)] = Await.result(graduateService.getNumberWithLinks, Duration.Inf)
 
-    Ok(views.html.links(links,graduates.size))
+    Ok(views.html.links(links,graduates))
 
   }
 }
