@@ -187,10 +187,33 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         val entryDate = l.getOrElse("Año de Ingreso", "")
         val graduationDate = l.getOrElse("Fecha de Ingreso","")
         if(!documentId.equals("")) {
-//          val graduate : Future[Graduate] = graduateService.findByDocumentId(documentId)
+          try {
+            var graduateDB: Option[Graduate] = None
+            val result: Future[Graduate] = graduateService.findByDocumentId(documentId)
+            result onSuccess {
+              case grad: Graduate => {
+                println("Success")
+                graduateDB = Option(grad)
+                val isGraduteInDB : Boolean = graduateDB.isDefined
+                if(isGraduteInDB){
+                  graduateService.update(Graduate(graduateDB.get._id,firstName, lastName, documentId, birthDate, entryDate, graduationDate, "", "", List[LaNacionNews]()))
+                }
+                else {
+                  val graduate : Graduate = Graduate(UUID.randomUUID().toString, firstName, lastName, documentId, birthDate, entryDate, graduationDate, "", "", List[LaNacionNews]())
+                  graduateService.save(graduate)
+                }
 
-          val graduate : Graduate = Graduate(UUID.randomUUID().toString, firstName, lastName, documentId, birthDate, entryDate, graduationDate, "", "", List[LaNacionNews]())
-          graduateService.save(graduate)
+              }
+            }
+            result onFailure {
+              case _ => {
+                val graduate : Graduate = Graduate(UUID.randomUUID().toString, firstName, lastName, documentId, birthDate, entryDate, graduationDate, "", "", List[LaNacionNews]())
+                graduateService.save(graduate)
+              }
+            }
+            Await.ready(result, Duration.Inf)
+
+          }
         }
 
       }
