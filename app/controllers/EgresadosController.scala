@@ -179,6 +179,9 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       csv.ref.moveTo(new File(s"/tmp/$filename"),replace = true)
       val reader = CSVReader.open(new File(s"/tmp/$filename"))
       val info = reader.allWithHeaders()
+
+//      info.filter(_.get("DNI").isDefined).
+
       for(l <- info){
         val firstName = l.getOrElse("Nombre", "")
         val lastName = l.getOrElse("Apellido", "")
