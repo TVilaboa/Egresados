@@ -33,7 +33,7 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
       linkedinUserProfileService.save(linkedinUserProfile)
     }
 
-    graduate = graduate.copy(linkedinUserProfile = linkedinUserProfile)
+    graduate = graduate.copy(linkedinUserProfile = Option(linkedinUserProfile).get)
     var result = Await.result(graduateService.update(graduate),Duration.Inf)
 
     Ok
@@ -44,19 +44,26 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
     var graduates = Seq[Graduate]()
     val all: Future[Seq[Graduate]] = graduateService.all()
     graduates = Await.result(all,Duration.Inf)
-    for(grad <- graduates){
-      val link: List[String] = generator.getSearchedUrl(Option(grad.firstName + " " + grad.lastName),Option("Universidad Austral"))
-      val scraper : LinkedinUserProfileScraper = new LinkedinUserProfileScraper()
-      link.map{link : String =>
-        var linkedinUserProfile = scraper.getLinkedinProfile(link)
-        linkedinUserProfileService.save(linkedinUserProfile)
+    for(grad <- graduates) {
+      val link: List[String] = generator.getSearchedUrl(Option(grad.firstName + " " + grad.lastName), Option("Universidad Austral"))
+      val scraper: LinkedinUserProfileScraper = new LinkedinUserProfileScraper()
+      var linkedinUserProfile: LinkedinUserProfile = null
+      link.foreach { link: String =>
+        //var linkedinUserProfile = scraper.getLinkedinProfile(link)
+        //linkedinUserProfileService.save(linkedinUserProfile)
 
+        linkedinUserProfile = scraper.getLinkedinProfile(link)
+
+
+      }
+      if (linkedinUserProfile != null) {
+        var graduate = grad.copy(linkedinUserProfile = linkedinUserProfile)
+        var result = Await.result(graduateService.update(graduate), Duration.Inf)
       }
     }
 
 
-
-    Ok(views.html.index.render("Success"))
+      Ok(views.html.index.render("Success"))
   }
 
 }
