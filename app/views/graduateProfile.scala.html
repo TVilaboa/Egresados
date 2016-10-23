@@ -19,7 +19,7 @@
                     }else{
                         <div class="panel panel-default"> 
                             <div class="alert alert-info">
-                                Perfil de :<strong>@graduate.get.firstName @graduate.get.lastName</strong>
+                                Perfil de: <strong>@graduate.get.firstName @graduate.get.lastName</strong>
                             </div>
                                 <!-- /.panel-heading --> 
                             <div class="panel-body">
@@ -60,11 +60,30 @@
                                              <!-- /.panel --> 
                 </div>
                                      <!-- /.col-lg-12 --> 
-
+                <button onclick="validateLinks()" class="btn btn-default" type="submit" >Validar Links</button>
             </div>
                              <!-- /.row -->  
             <!-- /.row --> 
+
+
+
+
         </div>
+
+    <script>
+
+        function validateLinks(){
+            $.ajax({
+                type :  "POST",
+                dataType: 'json',
+                data: { id:@graduate.get._id },
+                url  :  "@routes.EgresadosController.renderValidate",
+                success: function(data){
+                    console.log(data);
+                }
+            });
+        }
+    </script>
 }
 
 

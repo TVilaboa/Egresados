@@ -99,7 +99,8 @@ class EgresadosController @Inject()(laNacionService: LaNacionNewsService, gradua
   }
 
   def renderValidate = Action { implicit request => {
-    val graduate: Graduate = Await.result(graduateService.find("456"),Duration.Inf)
+    val id = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("id").get(0)
+    val graduate: Graduate = Await.result(graduateService.find(id),Duration.Inf)
     Ok(views.html.validateGraduateLinks.render(Option(graduate)))
   }
   }
