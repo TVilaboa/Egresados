@@ -123,8 +123,13 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("entryday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("graduationday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("career").head,
-        null,
-        null
+        List[LaNacionNews](),
+        LinkedinUserProfile(UUID.randomUUID().toString,
+          "",
+          List[LinkedinJob](),
+          List[LinkedinEducation](),
+          ""
+        )
 
       )
 
