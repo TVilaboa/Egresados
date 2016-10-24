@@ -16,8 +16,9 @@ case class Graduate(  _id: String,
                       career: String,
                       studentCode: String,
                       laNacionNews: List[LaNacionNews],
+                      infobaeNews: List[InfobaeNews],
                       linkedinUserProfile: LinkedinUserProfile
-                    )
+                   )
 
 object Graduate {
 

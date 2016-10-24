@@ -112,6 +112,17 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
         println("Error: El egresado no tiene el usuario de linkedin generado")
       }
     }
+
+    var infobaeNews : List[InfobaeNews] =  List[InfobaeNews]()
+    try{
+      infobaeNews = bsonToListInfobae(doc.get("infobaeNews").get.asArray())
+    } catch {
+      case _ => {
+        println("Error: El egresado no tiene la lista de noticias generada")
+
+      }
+    }
+
     Graduate(
       doc.get("_id").get.asString().getValue,
       doc.get("firstName").get.asString().getValue,
@@ -123,8 +134,9 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
       doc.get("career").get.asString().getValue,
       doc.get("studentCode").get.asString().getValue,
       nacionNews,
+      infobaeNews,
       linkedinUserProfile
-     )
+    )
   }
 
   private def bsonToListLanacion(bson : BsonArray) : List[LaNacionNews] ={
@@ -135,6 +147,16 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
         doc.get("date").asString().getValue,doc.get("tuft").asString().getValue,doc.get("author").asString().getValue)
     }
     news
+  }
+
+  private def bsonToListInfobae(bson : BsonArray) : List[InfobaeNews] ={
+    var news = List[InfobaeNews]()
+    for(bsonV : BsonValue <- bson.getValues){
+      var doc = bsonV.asDocument()
+      news = news :+ InfobaeNews(doc.get("_id").asString().getValue,doc.get("url").asString().getValue,doc.get("title").asString().getValue,
+        doc.get("date").asString().getValue,doc.get("tuft").asString().getValue,doc.get("author").asString().getValue)
+    }
+    return news
   }
 
   private def bsonToLinkedinUserProfile(bson : BsonValue) : LinkedinUserProfile ={
