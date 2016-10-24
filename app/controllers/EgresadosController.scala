@@ -1,10 +1,12 @@
 package controllers
 
+import java.io.{File, FileReader}
 import java.util.UUID
 
 import actions.SecureAction
 import akka.actor.FSM.Failure
 import akka.actor.Status.Success
+import com.github.tototoshi.csv.CSVReader
 import com.google.inject.Inject
 import com.mongodb.MongoWriteException
 import forms.GraduateForms.GraduateData
@@ -20,6 +22,7 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
+
 import scala.util.Try
 
 /**
@@ -31,7 +34,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
   val graduateForm = Form(
     mapping(
-      "_id"-> text(),
+      "_id" -> text(),
       "firstName" -> text(),
       "lastName" -> text(),
       "documentId" -> text(),
@@ -77,8 +80,8 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     val all: Future[Seq[Graduate]] = graduateService.all()
 
 
-    graduates = Await.result(all,Duration.Inf)
-    Ok(views.html.search.render(graduates, graduateForm,true,null,null,null,null))
+    graduates = Await.result(all, Duration.Inf)
+    Ok(views.html.search.render(graduates, graduateForm, true, null, null, null, null))
   }
 
   def search = Action { implicit request => {
@@ -92,18 +95,18 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
     val all: Future[Seq[Graduate]] = graduateService.all()
 
-    graduates = Await.result(all,Duration.Inf)
+    graduates = Await.result(all, Duration.Inf)
 
-    if(firstname.nonEmpty)
+    if (firstname.nonEmpty)
       graduates = graduates.filter(x => x.firstName.toLowerCase.contains(firstname.toLowerCase))
-    if(lastname.nonEmpty)
+    if (lastname.nonEmpty)
       graduates = graduates.filter(x => x.lastName.toLowerCase.contains(lastname.toLowerCase))
-    if(gradDate.nonEmpty)
+    if (gradDate.nonEmpty)
       graduates = graduates.filter(x => x.graduationDate.toLowerCase.contains(gradDate.toLowerCase))
-    if(career.nonEmpty)
+    if (career.nonEmpty)
       graduates = graduates.filter(x => x.career.toLowerCase.contains(career.toLowerCase))
 
-    Ok(views.html.search.render(graduates, graduateForm, false,firstname,lastname,gradDate,career))
+    Ok(views.html.search.render(graduates, graduateForm, false, firstname, lastname, gradDate, career))
   }
   }
 
@@ -209,29 +212,29 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
   def update (id:String) = Action { implicit request =>
 
-      val graduate = Graduate(
-        id,
-        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("firstName").head,
-        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("lastName").head,
-        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("dni").head,
-        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("birthday").head,
-        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("entryday").head,
-        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("graduationday").head,
-        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("career").head,
-        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("studentcode").head,
-        List[LaNacionNews](),
-        List[InfobaeNews](),
-        LinkedinUserProfile(UUID.randomUUID().toString,
-          "",
-          List[LinkedinJob](),
-          List[LinkedinEducation](),
-          ""
-        )
+    val graduate = Graduate(
+      id,
+      request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("firstName").head,
+      request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("lastName").head,
+      request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("dni").head,
+      request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("birthday").head,
+      request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("entryday").head,
+      request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("graduationday").head,
+      request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("career").head,
+      request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("studentcode").head,
+      List[LaNacionNews](),
+      List[InfobaeNews](),
+      LinkedinUserProfile(UUID.randomUUID().toString,
+        "",
+        List[LinkedinJob](),
+        List[LinkedinEducation](),
+        ""
       )
-      val updatedGraduate: Graduate = mergeGraduate(graduate)
+    )
+    val updatedGraduate: Graduate = mergeGraduate(graduate)
 
-      Await.result(graduateService.update(updatedGraduate),Duration.Inf)
-      Redirect("/profile/" + graduate._id)
+    Await.result(graduateService.update(updatedGraduate),Duration.Inf)
+    Redirect("/profile/" + graduate._id)
 
 
   }
@@ -299,5 +302,74 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
     Ok(views.html.links(links,graduates))
 
+  }
+
+  def showimportCSV = secureAction { implicit request => {
+    Ok(views.html.importCSV.render(Seq[Graduate](),""))
+  }
+  }
+
+
+  def importCSV = Action(parse.multipartFormData) { implicit request => {
+    request.body.file("csv").map { csv =>
+      import java.io.File
+      val filename = csv.filename
+      val contentType = csv.contentType
+      val csvFile = csv.ref.file
+      //csv.ref.moveTo(new File(s"/tmp/$filename"),replace = true)
+      val reader = CSVReader.open(csvFile)
+      val info = reader.allWithHeaders()
+      var graduatesCSV : List[Graduate] = List[Graduate]()
+
+      var message : String = "You need to upload a file!"
+
+      if(info.nonEmpty)
+        message = ""
+      for(l <- info){
+        val firstName = l.getOrElse("Nombre", "")
+        val lastName = l.getOrElse("Apellido", "")
+        val documentId = l.getOrElse("DNI", "")
+        val birthDate = l.getOrElse("Fecha de nacimiento", "")
+        val studentCode = l.getOrElse("Legajo","")
+//        val entryDate = l.getOrElse("Año de Ingreso", "")
+//        val graduationDate = l.getOrElse("Fecha de Ingreso","")
+        if(!documentId.equals("")) {
+          graduatesCSV = Graduate("",firstName, lastName, documentId, birthDate, "", "", "", studentCode, List[LaNacionNews]()) :: graduatesCSV
+          try {
+            var graduateDB: Option[Graduate] = None
+            val result: Future[Graduate] = graduateService.findByDocumentId(documentId)
+            result onSuccess {
+              case grad: Graduate => {
+                graduateDB = Option(grad)
+                val isGraduteInDB : Boolean = graduateDB.isDefined
+                if(isGraduteInDB){
+                  graduateService.update(Graduate(graduateDB.get._id,firstName, lastName, documentId, birthDate, "", "", "", studentCode, List[LaNacionNews]()))
+                }
+                else {
+                  val graduate : Graduate = Graduate(UUID.randomUUID().toString, firstName, lastName, documentId, birthDate, "", "", "", studentCode, List[LaNacionNews]())
+                  graduateService.save(graduate)
+                }
+
+              }
+            }
+            result onFailure {
+              case _ => {
+                val graduate : Graduate = Graduate(UUID.randomUUID().toString, firstName, lastName, documentId, birthDate, "", "", "", studentCode, List[LaNacionNews]())
+                graduateService.save(graduate)
+              }
+            }
+            Await.ready(result, Duration.Inf)
+
+          }
+        }
+
+      }
+      Ok(views.html.importCSV.render(graduatesCSV,message))
+      //Ok("File uploaded")
+    }.getOrElse {
+      Redirect(routes.Application.index()).flashing(
+        "error" -> "Missing file")
+    }
+  }
   }
 }

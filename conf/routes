@@ -31,6 +31,8 @@ POST        /add                          controllers.EgresadosController.addGra
 GET         /profile/:id                  controllers.EgresadosController.showProfile(id : String)
 GET         /update/:id                   controllers.EgresadosController.showUpdatingForm(id : String)
 POST        /update/:id                   controllers.EgresadosController.update(id : String)
+GET         /egresados/upload       controllers.EgresadosController.showimportCSV
+POST        /egresados/upload        controllers.EgresadosController.importCSV
 
 GET         /stats                        controllers.EgresadosController.getLinkedInUrlStats
 
