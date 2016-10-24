@@ -2,7 +2,7 @@ package controllers
 
 import actions.SecureAction
 import com.google.inject.Inject
-import models.{Graduate, InfobaeNews}
+import models.{LinkedinUserProfile, LaNacionNews, Graduate, InfobaeNews}
 import play.api.http.ContentTypes
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
@@ -45,4 +45,20 @@ class RestApiController @Inject()(graduateService: GraduateService,
     info = Await.result(all,Duration.Inf)
     Ok(Json.prettyPrint(Json.toJson(info)))
   }}
+
+  def getAllLaNacionData = Action { implicit request => {
+    var info = Seq[LaNacionNews]()
+    val all: Future[Seq[LaNacionNews]] = newsLaNacionService.all()
+    info = Await.result(all,Duration.Inf)
+    Ok(Json.prettyPrint(Json.toJson(info)))
+  }}
+
+  def getAllLinkedInnData = Action { implicit request => {
+    var info = Seq[LinkedinUserProfile]()
+    val all: Future[Seq[LinkedinUserProfile]] = linkedinUserProfileService.all()
+    info = Await.result(all,Duration.Inf)
+    Ok(Json.prettyPrint(Json.toJson(info)))
+  }}
+
+
 }
