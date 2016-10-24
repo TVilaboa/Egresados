@@ -77,13 +77,12 @@ class LinkedinUserProfileScraper () {
         } else {
           instituto = school.text()
         }
-        val degreeName = el.getElementsByClass("item-subtitle")
-        val degree = getText(degreeName)
+        val degreeName = el.getElementsByClass("item-subtitle").get(0).text()
         val dateRange = el.getElementsByClass("date-range")
         val date = getText(dateRange)
         val description = el.getElementsByClass("description")
         val desc = getText(description)
-        listEducation = LinkedinEducation(UUID.randomUUID().toString,instituto,urlInstituto,degree,date,desc) :: listEducation
+        listEducation = LinkedinEducation(UUID.randomUUID().toString,instituto,urlInstituto,degreeName,date,desc) :: listEducation
       }
     }
     LinkedinUserProfile(UUID.randomUUID().toString,posicionActual, listJobs,listEducation , url, new Date())
