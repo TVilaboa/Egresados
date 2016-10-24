@@ -166,7 +166,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
 
   def showimportCSV = secureAction { implicit request => {
-    Ok(views.html.importCSV.render())
+    Ok(views.html.importCSV.render(Seq[Graduate]()))
   }
   }
 
@@ -180,8 +180,9 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       //csv.ref.moveTo(new File(s"/tmp/$filename"),replace = true)
       val reader = CSVReader.open(csvFile)
       val info = reader.allWithHeaders()
+      var graduatesCSV : List[Graduate] = List[Graduate]()
 
-//      info.filter(_.get("DNI").isDefined).
+//      info.filter(_.get("DNI").isDefined)
 
       for(l <- info){
         val firstName = l.getOrElse("Nombre", "")
@@ -192,6 +193,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 //        val entryDate = l.getOrElse("Año de Ingreso", "")
 //        val graduationDate = l.getOrElse("Fecha de Ingreso","")
         if(!documentId.equals("")) {
+          graduatesCSV = Graduate("",firstName, lastName, documentId, birthDate, "", "", "", studentCode, List[LaNacionNews]()) :: graduatesCSV
           try {
             var graduateDB: Option[Graduate] = None
             val result: Future[Graduate] = graduateService.findByDocumentId(documentId)
@@ -221,8 +223,8 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         }
 
       }
-
-      Ok("File uploaded")
+      Ok(views.html.importCSV.render(graduatesCSV))
+      //Ok("File uploaded")
     }.getOrElse {
       Redirect(routes.Application.index()).flashing(
         "error" -> "Missing file")
