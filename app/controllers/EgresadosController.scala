@@ -119,7 +119,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
   def addGraduate = Action.async { implicit request =>
     try {
-
       val graduate = Graduate(
         UUID.randomUUID().toString,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("firstName").head,
@@ -139,7 +138,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
           ""
         )
       )
-
 
       graduateService.save(graduate).map((_) => {
 //        val name = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("firstName").get(0)
@@ -170,6 +168,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
 
   def showProfile(id:String) = Action {
+    try {
       var graduate: Option[Graduate] = None
       val result: Future[Graduate] = graduateService.find(id)
       result onSuccess {
@@ -186,6 +185,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       }
       graduate = Option(Await.result(result, Duration.Inf))
       Ok(views.html.graduateProfile.render(graduate))
+    }
   }
 
   def showUpdatingForm (id:String) = Action {
@@ -219,7 +219,14 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("graduationday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("career").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("studentcode").head,
-        null
+        List[LaNacionNews](),
+        List[InfobaeNews](),
+        LinkedinUserProfile(UUID.randomUUID().toString,
+          "",
+          List[LinkedinJob](),
+          List[LinkedinEducation](),
+          ""
+        )
       )
       val updatedGraduate: Graduate = mergeGraduate(graduate)
 
@@ -246,6 +253,8 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
     val original: Graduate = Await.result(graduateService.find(id), Duration.Inf)
     var laNacionNews = original.laNacionNews
+    var infobaeNews = original.infobaeNews
+    var linkedInData = original.linkedinUserProfile
 
     if(name == "") name = original.firstName
     if(lastName == "") lastName = original.lastName
@@ -266,7 +275,9 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       gday,
       career,
       code,
-      laNacionNews
+      laNacionNews,
+      infobaeNews,
+      linkedInData
     )
     return updatedGraduate
   }

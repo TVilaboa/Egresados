@@ -29,17 +29,17 @@ POST        /egresados/search             controllers.EgresadosController.search
 GET         /add                          controllers.EgresadosController.showGraduateForm
 POST        /add                          controllers.EgresadosController.addGraduate
 GET         /profile/:id                  controllers.EgresadosController.showProfile(id : String)
-GET         /update/:id         controllers.EgresadosController.showUpdatingForm(id : String)
-POST        /update/:id         controllers.EgresadosController.update(id : String)
+GET         /update/:id                   controllers.EgresadosController.showUpdatingForm(id : String)
+POST        /update/:id                   controllers.EgresadosController.update(id : String)
 
 GET         /stats                        controllers.EgresadosController.getLinkedInUrlStats
 
 #LinkedInScraper
-GET          /linkedin/search/:id       controllers.LinkedinUserProfileController.saveLinkedinUserProfile(id:String)
-GET          /linkedin/searchAll        controllers.LinkedinUserProfileController.saveAllLinkedinUserProfile
+GET          /linkedin/search/:id         controllers.LinkedinUserProfileController.saveLinkedinUserProfile(id:String)
+GET          /linkedin/searchAll          controllers.LinkedinUserProfileController.saveAllLinkedinUserProfile
 
 #LaNacionController
-GET         /lanacion/search/:id     controllers.LaNacionNewsController.saveNews(id : String)
+GET         /lanacion/search/:id          controllers.LaNacionNewsController.saveNews(id : String)
 
 #InfobaeController
-GET         /infobae/search/:id     controllers.InfobaeNewsController.saveNews(id : String)
+GET         /infobae/search/:id           controllers.InfobaeNewsController.saveNews(id : String)

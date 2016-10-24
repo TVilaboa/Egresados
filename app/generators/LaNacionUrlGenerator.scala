@@ -78,8 +78,9 @@ class LaNacionUrlGenerator extends BasicUrlGenerator{
       val split : Array[String] = url.split("http://")
       val aux = split.filter(x => x.contains("www.lanacion.com.ar/"))
       if(aux.nonEmpty)
-        return aux.head.substring(0, aux.head.indexOf("-"))
-      ""
+        "http://" + aux.head.substring(0, aux.head.indexOf("-"))
+      else
+        ""
     }
 
     private def selectProfileUrl(username : Array[String], list : List[String]) : List[String] = list.filter(isCorrect(username,_))

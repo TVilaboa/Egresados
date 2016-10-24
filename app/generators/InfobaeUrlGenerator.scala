@@ -79,8 +79,9 @@ class InfobaeUrlGenerator extends BasicUrlGenerator{
     val split : Array[String] = url.split("http://")
     val aux = split.filter(x => !x.contains(":infobae") && x.contains("www.infobae.com/"))
     if(aux.nonEmpty)
-      return aux.head
-    ""
+      "http://" + aux.head
+    else
+      ""
   }
 
 }

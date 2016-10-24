@@ -2,9 +2,12 @@ package scrapers
 
 import java.io.IOException
 import java.util.UUID
+
 import models.InfobaeNews
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
+
 import scala.collection.JavaConversions._
 
 /**
@@ -23,30 +26,21 @@ class InfobaeScraper {
       case e: IOException => e.printStackTrace()
     }
     val header = document.get.getElementsByTag("header")
-    var titulo: Option[String] = None
-    var copete: Option[String] = None
-    for (e <- header if e.getElementsByClass("article-header").size == 1) {
-      val elementsTitulo = e.getElementsByTag("h1")
-      if (elementsTitulo.size > 0) {
-        titulo = Option(e.getElementsByTag("h1").get(0).text())
-      }
-      val elementsCopete = e.getElementsByClass("subheadline")
-      if (elementsCopete.size > 0) {
-        copete = Option(e.getElementsByClass("subheadline").get(0).text())
-      }
-      //break
-    }
-    val elementAutorFecha = document.get.getElementsByClass("byline-author").get(0)
-    val elementsAutor = elementAutorFecha.getElementsByClass("author-name")
-    var autor: Option[String] = None
-    if (elementsAutor.size > 0) {
-      autor = Option(elementsAutor.get(0).text())
-    }
-    val fecha = elementAutorFecha.getElementsByClass("byline-date")
-      .get(0)
-      .text()
+    var titulo: Option[String] = getString(document.get.getElementsByClass("entry-title"))
+    var copete: Option[String] = getString(document.get.getElementsByClass("preview"))
+
+    var autor: Option[String] = getString(document.get.getElementsByClass("author-name"))
+
+    val fecha = getString(document.get.getElementsByClass("byline-date"))
 
 
-    return new InfobaeNews(UUID.randomUUID().toString, url, titulo.get, fecha, copete.get, autor.get)
+    InfobaeNews(UUID.randomUUID().toString, url, titulo.get, fecha.get, copete.get, autor.get)
+  }
+
+  private def getString(elements : Elements) : Option[String] ={
+    if(elements.isEmpty)
+      Some("")
+    else
+      Option(elements(0).text())
   }
 }
