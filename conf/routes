@@ -34,3 +34,4 @@ GET         /profile/:id        controllers.EgresadosController.showProfile(id :
 GET          /linkedin/search    controllers.LinkedinUserProfileController.saveLinkedinUserProfile
 #LaNacionController
 GET         /lanacion/search    controllers.LaNacionNewsController.saveNews
+GET         /linkedin           controllers.LinkedinUserProfileController.saveLinkedinUserProfile

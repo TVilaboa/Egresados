@@ -77,7 +77,7 @@ class LinkedinUserProfileScraper () {
         } else {
           instituto = school.text()
         }
-        val degreeName = el.getElementsByClass("item-subtitle").get(0).text()
+        val degreeName = el.getElementsByClass("item-subtitle").get(0).getElementsByClass("original").text()
         val dateRange = el.getElementsByClass("date-range")
         val date = getText(dateRange)
         val description = el.getElementsByClass("description")
