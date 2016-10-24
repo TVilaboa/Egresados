@@ -188,6 +188,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         val lastName = l.getOrElse("Apellido", "")
         val documentId = l.getOrElse("DNI", "")
         val birthDate = l.getOrElse("Fecha de nacimiento", "")
+        val studentCode = l.getOrElse("Legajo","")
 //        val entryDate = l.getOrElse("Año de Ingreso", "")
 //        val graduationDate = l.getOrElse("Fecha de Ingreso","")
         if(!documentId.equals("")) {
@@ -199,10 +200,10 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
                 graduateDB = Option(grad)
                 val isGraduteInDB : Boolean = graduateDB.isDefined
                 if(isGraduteInDB){
-                  graduateService.update(Graduate(graduateDB.get._id,firstName, lastName, documentId, birthDate, "", "", "", "", List[LaNacionNews]()))
+                  graduateService.update(Graduate(graduateDB.get._id,firstName, lastName, documentId, birthDate, "", "", "", studentCode, List[LaNacionNews]()))
                 }
                 else {
-                  val graduate : Graduate = Graduate(UUID.randomUUID().toString, firstName, lastName, documentId, birthDate, "", "", "", "", List[LaNacionNews]())
+                  val graduate : Graduate = Graduate(UUID.randomUUID().toString, firstName, lastName, documentId, birthDate, "", "", "", studentCode, List[LaNacionNews]())
                   graduateService.save(graduate)
                 }
 
@@ -210,7 +211,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
             }
             result onFailure {
               case _ => {
-                val graduate : Graduate = Graduate(UUID.randomUUID().toString, firstName, lastName, documentId, birthDate, "", "", "", "", List[LaNacionNews]())
+                val graduate : Graduate = Graduate(UUID.randomUUID().toString, firstName, lastName, documentId, birthDate, "", "", "", studentCode, List[LaNacionNews]())
                 graduateService.save(graduate)
               }
             }
