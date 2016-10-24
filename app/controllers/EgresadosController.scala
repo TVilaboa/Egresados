@@ -212,10 +212,13 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
   def deleteGraduate(id:String) = Action {
     //Get graduate from DB.
+    println("Estoy")
+    println(id)
     val graduate : Graduate = Await.result(graduateService.find(id),Duration.Inf)
     val laNacionNewsList: List[LaNacionNews] = graduate.laNacionNews
     val linkedinUserProfile: LinkedinUserProfile = graduate.linkedinUserProfile
     val infobaeNewsList: List[InfobaeNews] = graduate.infobaeNews
+
     //Delete La Nacion News from DB.
     for(laNacionNews <- laNacionNewsList) {
       Await.result(laNacionNewsService.drop(laNacionNews), Duration.Inf)
