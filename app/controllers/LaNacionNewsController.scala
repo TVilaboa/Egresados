@@ -20,13 +20,13 @@ import scala.concurrent.duration.Duration
   */
 class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService,graduateService: GraduateService, secureAction: SecureAction) extends Controller{
 
-  def saveNews = secureAction {
+  def saveNews(id : String) = secureAction {
     val generator: LaNacionUrlGenerator = new LaNacionUrlGenerator()
-    val links = LaNacionUrlGeneratorObject.search(Option("lopez gabeiras"),Option("Universidad Austral"))
+    var graduate : Graduate = Await.result(graduateService.find(id),Duration.Inf)
+    val links = LaNacionUrlGeneratorObject.search(Option(graduate.firstName + " " +graduate.lastName),Option("Universidad Austral"))
     val scraper: LaNacionScraper = new LaNacionScraper()
     var news: List[LaNacionNews] = List[LaNacionNews]()
     var element: LaNacionNews = null
-    var graduate : Graduate = Await.result(graduateService.findByLastName("Testori"),Duration.Inf)
     for(link <- links) {
       element = scraper.getArticleData(link)
       newsLaNacionService.save(element)
@@ -37,7 +37,8 @@ class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService
     graduate = graduate.copy(laNacionNews = news)
     var result = Await.result(graduateService.update(graduate),Duration.Inf)
 
-    Ok
+    Redirect("/profile/" + graduate._id)
+
   }
 
 }

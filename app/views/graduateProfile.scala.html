@@ -55,6 +55,11 @@
                                         <div class="form-group">
                                             <label>Noticias Diario La Nacion:</label>
                                             No hay noticias
+                                            <div>
+                                                <form action="/lanacion/search/@graduate.get._id">
+                                                    <input type="submit" value="Generate LaNacion Data" class="btn btn-info btn-lg"/>
+                                                </form>
+                                            </div>
                                         </div>
                                     } else {
                                         <div class="form-group">
@@ -70,6 +75,11 @@
                                         <div class="form-group">
                                             <label>Noticias Diario Infobae:</label>
                                             No hay noticias
+                                            <div>
+                                                <form action="/infobae/search/@graduate.get._id">
+                                                    <input type="submit" value="Generate Infobae Data" class="btn btn-info btn-lg"/>
+                                                </form>
+                                            </div>
                                         </div>
                                     } else {
                                         <div class="form-group">
@@ -82,10 +92,15 @@
                                         </div>
                                     }
 
-                                @if(graduate.get.linkedinUserProfile == null){
+                                @if(graduate.get.linkedinUserProfile.profileUrl.isEmpty){
                                     <div class="form-group">
                                         <label>Perfil de Linkedin:</label>
                                         No tiene un usuario en Linkedin
+                                        <div>
+                                            <form action="/linkedin/search/@graduate.get._id">
+                                                <input type="submit" value="Generate LinkedIn Data" class="btn btn-info btn-lg"/>
+                                            </form>
+                                        </div>
                                     </div>
                                 } else {
                                     <div class="form-group">

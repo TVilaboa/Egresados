@@ -1,6 +1,8 @@
 package daos
 
 
+import java.util.UUID
+
 import com.google.inject.{ImplementedBy, Inject, Singleton}
 import models._
 import org.bson.{BsonArray, BsonValue}
@@ -10,8 +12,8 @@ import org.mongodb.scala.result.UpdateResult
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Json
 import services.Mongo
-import collection.JavaConversions._
 
+import collection.JavaConversions._
 import scala.concurrent.Future
 
 
@@ -97,7 +99,17 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
 
   private def documentToGraduate(doc: Document): Graduate = {
     var nacionNews : List[LaNacionNews] =  List[LaNacionNews]()
-    var linkedinUserProfile: LinkedinUserProfile = null
+
+    var infobaeNews : List[InfobaeNews] =  List[InfobaeNews]()
+
+    var linkedinUserProfile: LinkedinUserProfile = LinkedinUserProfile(
+                                                      UUID.randomUUID().toString,
+                                                      "",
+                                                      List[LinkedinJob](),
+                                                      List[LinkedinEducation](),
+                                                      ""
+                                                    )
+
     try{
       nacionNews = bsonToListLanacion(doc.get("laNacionNews").get.asArray())
     } catch {
@@ -105,21 +117,22 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
         println("Error: El egresado no tiene la lista de noticias generada")
       }
     }
-    try{
-      linkedinUserProfile = bsonToLinkedinUserProfile(doc.get("linkedinUserProfile").get)
-    } catch {
-      case _ => {
-        println("Error: El egresado no tiene el usuario de linkedin generado")
-      }
-    }
 
-    var infobaeNews : List[InfobaeNews] =  List[InfobaeNews]()
     try{
       infobaeNews = bsonToListInfobae(doc.get("infobaeNews").get.asArray())
     } catch {
       case _ => {
         println("Error: El egresado no tiene la lista de noticias generada")
 
+      }
+    }
+
+
+    try{
+      linkedinUserProfile = bsonToLinkedinUserProfile(doc.get("linkedinUserProfile").get)
+    } catch {
+      case _ => {
+        println("Error: El egresado no tiene el usuario de linkedin generado")
       }
     }
 

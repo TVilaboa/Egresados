@@ -31,10 +31,10 @@ class LaNacionUrlGenerator extends BasicUrlGenerator{
         var searcher = "lanacion"
 
         for(splitVal : String <- splittedName)
-          searcher = searcher + "%20" + splitVal
+          searcher = searcher + "+" + splitVal
 
         for(splitVal : String <- splittedQuery)
-          searcher = searcher + "%20" + splitVal
+          searcher = searcher + "+" + splitVal
 
         val urls = getGoogleSearchRegisters(searcher)
         result = selectProfileUrl(splittedName, urls)

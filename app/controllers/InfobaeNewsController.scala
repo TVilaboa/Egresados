@@ -19,13 +19,13 @@ import scala.concurrent.duration.Duration
   */
 class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,graduateService: GraduateService) extends Controller{
 
-  def saveNews = Action {
+  def saveNews(id : String) = Action {
     val generator: InfobaeUrlGenerator = new InfobaeUrlGenerator()
-    val links = InfobaeUrlGeneratorObject.search(Option("lopez gabeiras"),Option("Universidad Austral"))
+    var graduate : Graduate = Await.result(graduateService.find(id),Duration.Inf)
+    val links = InfobaeUrlGeneratorObject.search(Option(graduate.firstName + " " +graduate.lastName),Option("Universidad Austral"))
     val scraper: InfobaeScraper = new InfobaeScraper()
     var news: List[InfobaeNews] = List[InfobaeNews]()
     var element: InfobaeNews = null
-    var graduate : Graduate = Await.result(graduateService.findByLastName("Testori"),Duration.Inf)
     for(link <- links) {
       element = scraper.scrape(link)
       newsInfobaeService.save(element)
@@ -42,7 +42,8 @@ class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,gr
       println(news.author)
       println("*********************************")
     }
-    Ok
+    Redirect("/profile/" + graduate._id)
+
   }
 
 }

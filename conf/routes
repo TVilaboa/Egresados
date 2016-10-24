@@ -32,7 +32,11 @@ GET         /profile/:id                  controllers.EgresadosController.showPr
 GET         /stats                        controllers.EgresadosController.getLinkedInUrlStats
 
 #LinkedInScraper
-GET          /linkedin/search       controllers.LinkedinUserProfileController.saveLinkedinUserProfile
-GET          /linkedin/searchAll    controllers.LinkedinUserProfileController.saveAllLinkedinUserProfile
+GET          /linkedin/search/:id       controllers.LinkedinUserProfileController.saveLinkedinUserProfile(id:String)
+GET          /linkedin/searchAll        controllers.LinkedinUserProfileController.saveAllLinkedinUserProfile
+
 #LaNacionController
-GET         /lanacion/search     controllers.LaNacionNewsController.saveNews
+GET         /lanacion/search/:id     controllers.LaNacionNewsController.saveNews(id : String)
+
+#InfobaeController
+GET         /infobae/search/:id     controllers.InfobaeNewsController.saveNews(id : String)
