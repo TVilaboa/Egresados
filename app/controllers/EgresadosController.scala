@@ -130,13 +130,13 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("graduationday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("career").head,
         List[LaNacionNews](),
+        List[InfobaeNews](),
         LinkedinUserProfile(UUID.randomUUID().toString,
           "",
           List[LinkedinJob](),
           List[LinkedinEducation](),
           ""
         )
-
       )
 
       graduateService.save(graduate).map((_) => {

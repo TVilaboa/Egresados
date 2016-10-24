@@ -66,6 +66,21 @@
                                             </ul>
                                         </div>
                                     }
+                                    @if(graduate.get.infobaeNews.isEmpty){
+                                        <div class="form-group">
+                                            <label>Noticias Diario Infobae:</label>
+                                            No hay noticias
+                                        </div>
+                                    } else {
+                                        <div class="form-group">
+                                            <label>Noticias Diario Infobae:</label>
+                                            <ul>
+                                            @for(news : InfobaeNews <- graduate.get.infobaeNews){
+                                                <li>Titulo: "@news.title"  -->  URL: <a href=@news.url>@news.url</a></li>
+                                            }
+                                            </ul>
+                                        </div>
+                                    }
 
                                 @if(graduate.get.linkedinUserProfile == null){
                                     <div class="form-group">

@@ -9,7 +9,7 @@ GET         /                    controllers.Application.index
 #GET         /layout                    controllers.Application.layout
 
 # Tables
-GET         /tables                    controllers.Application.tables
+GET         /tables              controllers.Application.tables
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file        controllers.Assets.at(path="/public", file)
@@ -26,13 +26,13 @@ GET         /secure              controllers.AuthController.securedSampleAction
 #EgresadosController
 GET         /egresados/search             controllers.EgresadosController.showSearchForm
 POST        /egresados/search             controllers.EgresadosController.search
-GET         /add                controllers.EgresadosController.showGraduateForm
-POST        /add                controllers.EgresadosController.addGraduate
-GET         /profile/:id        controllers.EgresadosController.showProfile(id : String)
-GET         /stats          controllers.EgresadosController.getLinkedInUrlStats
+GET         /add                          controllers.EgresadosController.showGraduateForm
+POST        /add                          controllers.EgresadosController.addGraduate
+GET         /profile/:id                  controllers.EgresadosController.showProfile(id : String)
+GET         /stats                        controllers.EgresadosController.getLinkedInUrlStats
 
 #LinkedInScraper
-GET          /linkedin/search    controllers.LinkedinUserProfileController.saveLinkedinUserProfile
+GET          /linkedin/search       controllers.LinkedinUserProfileController.saveLinkedinUserProfile
 GET          /linkedin/searchAll    controllers.LinkedinUserProfileController.saveAllLinkedinUserProfile
 #LaNacionController
 GET         /lanacion/search     controllers.LaNacionNewsController.saveNews
