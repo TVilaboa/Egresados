@@ -15,7 +15,7 @@ import play.api.libs.json.JsValue
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
-import services.{GraduateService, SessionService, UserService}
+import services._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 import scala.concurrent.duration.Duration
@@ -26,7 +26,9 @@ import scala.util.Try
   * Created by Ignacio Vazquez on 28/08/2016.
   */
 class EgresadosController @Inject()(graduateService: GraduateService,sessionService: SessionService,
-                                    secureAction: SecureAction,
+                                    secureAction: SecureAction, laNacionNewsService: LaNacionNewsService,
+                                    linkedinUserProfileService: LinkedinUserProfileService,
+                                    infobaeNewsService: InfobaeNewsService,
                                     val messagesApi: MessagesApi) extends Controller {
 
   val graduateForm = Form(
@@ -206,5 +208,26 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
     Ok(views.html.links(links,graduates))
 
+  }
+
+  def deleteGraduate(id:String) = Action {
+    //Get graduate from DB.
+    val graduate : Graduate = Await.result(graduateService.find(id),Duration.Inf)
+    val laNacionNewsList: List[LaNacionNews] = graduate.laNacionNews
+    val linkedinUserProfile: LinkedinUserProfile = graduate.linkedinUserProfile
+    val infobaeNewsList: List[InfobaeNews] = graduate.infobaeNews
+    //Delete La Nacion News from DB.
+    for(laNacionNews <- laNacionNewsList) {
+      Await.result(laNacionNewsService.drop(laNacionNews), Duration.Inf)
+    }
+    //Delete Linkedin User Profile from DB.
+    Await.result(linkedinUserProfileService.drop(linkedinUserProfile), Duration.Inf)
+    //Delete Infoabe News from DB.
+    for(infobaeNews <- infobaeNewsList) {
+      Await.result(infobaeNewsService.drop(infobaeNews), Duration.Inf)
+    }
+    //Delete Graduate from DB.
+    Await.result(graduateService.drop(graduate),Duration.Inf)
+    Ok(views.html.index.render(""))
   }
 }
