@@ -40,3 +40,6 @@ GET         /lanacion/search/:id     controllers.LaNacionNewsController.saveNews
 
 #InfobaeController
 GET         /infobae/search/:id     controllers.InfobaeNewsController.saveNews(id : String)
+
+#RestApi
+#GET         /api/infobae
