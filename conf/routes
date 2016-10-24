@@ -43,4 +43,7 @@ GET         /infobae/search/:id     controllers.InfobaeNewsController.saveNews(i
 
 #RestApi
 GET         /api/infobae            controllers.RestApiController.getAllInfobaeData()
-GET         /api/egresado           controllers.RestApiController.getAllEgresadosData()
+GET         /api/egresados          controllers.RestApiController.getAllEgresadosData()
+GET         /api/lanacion           controllers.RestApiController.getAllLaNacionData()
+GET         /api/linkedin           controllers.RestApiController.getAllLinkedInData()
+GET         /api/infobae/:id        controllers.RestApiController.getOneInfobaeData(id : String)

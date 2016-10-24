@@ -32,7 +32,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
     }
   }
 
-  def getInfobaeData(id:String){
+  def getOneInfobaeData(id:String){
     val find: Future[InfobaeNews] = newsInfobaeService.find(id)
     var one = Await.result(find,Duration.Inf)
     Ok(Json.prettyPrint(Json.toJson(one)))
@@ -53,7 +53,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
     Ok(Json.prettyPrint(Json.toJson(info)))
   }}
 
-  def getAllLinkedInnData = Action { implicit request => {
+  def getAllLinkedInData = Action { implicit request => {
     var info = Seq[LinkedinUserProfile]()
     val all: Future[Seq[LinkedinUserProfile]] = linkedinUserProfileService.all()
     info = Await.result(all,Duration.Inf)
