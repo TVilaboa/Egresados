@@ -166,7 +166,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
 
   def showimportCSV = secureAction { implicit request => {
-    Ok(views.html.importCSV.render(Seq[Graduate]()))
+    Ok(views.html.importCSV.render(Seq[Graduate](),""))
   }
   }
 
@@ -182,8 +182,10 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       val info = reader.allWithHeaders()
       var graduatesCSV : List[Graduate] = List[Graduate]()
 
-//      info.filter(_.get("DNI").isDefined)
+      var message : String = "You need to upload a file!"
 
+      if(info.nonEmpty)
+        message = ""
       for(l <- info){
         val firstName = l.getOrElse("Nombre", "")
         val lastName = l.getOrElse("Apellido", "")
@@ -223,7 +225,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         }
 
       }
-      Ok(views.html.importCSV.render(graduatesCSV))
+      Ok(views.html.importCSV.render(graduatesCSV,message))
       //Ok("File uploaded")
     }.getOrElse {
       Redirect(routes.Application.index()).flashing(
