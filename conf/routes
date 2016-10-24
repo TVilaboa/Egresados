@@ -42,4 +42,5 @@ GET         /lanacion/search/:id     controllers.LaNacionNewsController.saveNews
 GET         /infobae/search/:id     controllers.InfobaeNewsController.saveNews(id : String)
 
 #RestApi
-#GET         /api/infobae
+GET         /api/infobae            controllers.RestApiController.getAllInfobaeData()
+GET         /api/egresado           controllers.RestApiController.getAllEgresadosData()
