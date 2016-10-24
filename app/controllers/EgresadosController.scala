@@ -176,8 +176,9 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       import java.io.File
       val filename = csv.filename
       val contentType = csv.contentType
-      csv.ref.moveTo(new File(s"/tmp/$filename"),replace = true)
-      val reader = CSVReader.open(new File(s"/tmp/$filename"))
+      val csvFile = csv.ref.file
+      //csv.ref.moveTo(new File(s"/tmp/$filename"),replace = true)
+      val reader = CSVReader.open(csvFile)
       val info = reader.allWithHeaders()
 
 //      info.filter(_.get("DNI").isDefined).
@@ -187,22 +188,21 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         val lastName = l.getOrElse("Apellido", "")
         val documentId = l.getOrElse("DNI", "")
         val birthDate = l.getOrElse("Fecha de nacimiento", "")
-        val entryDate = l.getOrElse("Año de Ingreso", "")
-        val graduationDate = l.getOrElse("Fecha de Ingreso","")
+//        val entryDate = l.getOrElse("Año de Ingreso", "")
+//        val graduationDate = l.getOrElse("Fecha de Ingreso","")
         if(!documentId.equals("")) {
           try {
             var graduateDB: Option[Graduate] = None
             val result: Future[Graduate] = graduateService.findByDocumentId(documentId)
             result onSuccess {
               case grad: Graduate => {
-                println("Success")
                 graduateDB = Option(grad)
                 val isGraduteInDB : Boolean = graduateDB.isDefined
                 if(isGraduteInDB){
-                  graduateService.update(Graduate(graduateDB.get._id,firstName, lastName, documentId, birthDate, entryDate, graduationDate, "", "", List[LaNacionNews]()))
+                  graduateService.update(Graduate(graduateDB.get._id,firstName, lastName, documentId, birthDate, "", "", "", "", List[LaNacionNews]()))
                 }
                 else {
-                  val graduate : Graduate = Graduate(UUID.randomUUID().toString, firstName, lastName, documentId, birthDate, entryDate, graduationDate, "", "", List[LaNacionNews]())
+                  val graduate : Graduate = Graduate(UUID.randomUUID().toString, firstName, lastName, documentId, birthDate, "", "", "", "", List[LaNacionNews]())
                   graduateService.save(graduate)
                 }
 
@@ -210,7 +210,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
             }
             result onFailure {
               case _ => {
-                val graduate : Graduate = Graduate(UUID.randomUUID().toString, firstName, lastName, documentId, birthDate, entryDate, graduationDate, "", "", List[LaNacionNews]())
+                val graduate : Graduate = Graduate(UUID.randomUUID().toString, firstName, lastName, documentId, birthDate, "", "", "", "", List[LaNacionNews]())
                 graduateService.save(graduate)
               }
             }
