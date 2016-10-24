@@ -117,7 +117,7 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
     } catch {
       case e: SocketException => e.printStackTrace()
       case e: IOException => if (e.getMessage == "HTTP error fetching URL") {
-        Thread.sleep(10000)
+        //Thread.sleep(10000)
       }
     }
     result
