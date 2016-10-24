@@ -119,6 +119,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
   def addGraduate = Action.async { implicit request =>
     try {
+
       val graduate = Graduate(
         UUID.randomUUID().toString,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("firstName").head,
@@ -138,6 +139,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
           ""
         )
       )
+
 
       graduateService.save(graduate).map((_) => {
 //        val name = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("firstName").get(0)
@@ -168,7 +170,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
 
   def showProfile(id:String) = Action {
-    try{
       var graduate: Option[Graduate] = None
       val result: Future[Graduate] = graduateService.find(id)
       result onSuccess {
@@ -185,8 +186,89 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       }
       graduate = Option(Await.result(result, Duration.Inf))
       Ok(views.html.graduateProfile.render(graduate))
+  }
 
-    }
+  def showUpdatingForm (id:String) = Action {
+      var graduate: Option[Graduate] = None
+      val result: Future[Graduate] = graduateService.find(id)
+      result onSuccess {
+        case grad: Graduate => {
+          println("Success")
+          graduate = Option(grad)
+        }
+      }
+      result onFailure {
+        case _ => {
+          println("Error")
+
+        }
+      }
+      graduate = Option(Await.result(result, Duration.Inf))
+      Ok(views.html.updateGraduate.render(graduate.get))
+  }
+
+  def update (id:String) = Action { implicit request =>
+
+      val graduate = Graduate(
+        id,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("firstName").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("lastName").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("dni").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("birthday").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("entryday").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("graduationday").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("career").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("studentcode").head,
+        null
+      )
+      val updatedGraduate: Graduate = mergeGraduate(graduate)
+
+      Await.result(graduateService.update(updatedGraduate),Duration.Inf)
+      Redirect("/profile/" + graduate._id)
+
+
+  }
+
+
+  def mergeGraduate (graduate: Graduate): Graduate ={
+
+
+    var id = graduate._id
+    var name = graduate.firstName
+    var lastName = graduate.lastName
+    var dni = graduate.documentId
+    var code = graduate.studentCode
+    var bday = graduate.birthDate
+    var eday = graduate.entryDate
+    var gday = graduate.graduationDate
+    var career = graduate.career
+
+
+    val original: Graduate = Await.result(graduateService.find(id), Duration.Inf)
+    var laNacionNews = original.laNacionNews
+
+    if(name == "") name = original.firstName
+    if(lastName == "") lastName = original.lastName
+    if(dni == "") dni = original.documentId
+    if(code == "") code = original.studentCode
+    if(bday == "") bday = original.birthDate
+    if(eday == "") eday = original.entryDate
+    if(gday == "") gday = original.graduationDate
+    if(career == "") career = original.career
+
+    val updatedGraduate = Graduate(
+      id,
+      name,
+      lastName,
+      dni,
+      bday,
+      eday,
+      gday,
+      career,
+      code,
+      laNacionNews
+    )
+    return updatedGraduate
   }
 
   def showProfileTest = Action {

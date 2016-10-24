@@ -29,6 +29,9 @@ POST        /egresados/search             controllers.EgresadosController.search
 GET         /add                          controllers.EgresadosController.showGraduateForm
 POST        /add                          controllers.EgresadosController.addGraduate
 GET         /profile/:id                  controllers.EgresadosController.showProfile(id : String)
+GET         /update/:id         controllers.EgresadosController.showUpdatingForm(id : String)
+POST        /update/:id         controllers.EgresadosController.update(id : String)
+
 GET         /stats                        controllers.EgresadosController.getLinkedInUrlStats
 
 #LinkedInScraper

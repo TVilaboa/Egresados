@@ -19,8 +19,17 @@
                     }else{
                         <div class="panel panel-default"> 
                             <div class="alert alert-info">
-                                Perfil de :<strong>@graduate.get.firstName @graduate.get.lastName</strong>
+                                Perfil de:<strong>@graduate.get.firstName @graduate.get.lastName</strong>
+                                    @helper.form(action = routes.EgresadosController.showUpdatingForm(graduate.get._id)){
+
+                                        <div align="right">
+                                        <button type="submit" class="btn-info">Edit</button>
+                                    </div>
+
+                                    }
+
                             </div>
+
                                 <!-- /.panel-heading --> 
                             <div class="panel-body">
                                 <div class="form-group">
