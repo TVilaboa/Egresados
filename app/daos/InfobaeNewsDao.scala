@@ -94,7 +94,7 @@ class MongoInfobaeNewsDao @Inject()(mongo: Mongo) extends InfobaeNewsDao {
   }
 
   override def drop(infobaeNews: InfobaeNews) : Future[InfobaeNews] = {
-    newsInfobae.findOneAndDelete(equal("_id", infobaeNews)).head().map[InfobaeNews]((doc: Document) => {
+    newsInfobae.findOneAndDelete(equal("_id", infobaeNews._id)).head().map[InfobaeNews]((doc: Document) => {
       documentToInfobaeNews(doc)
     })
   }

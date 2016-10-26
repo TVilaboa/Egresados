@@ -88,7 +88,7 @@ class MongoLinkedinUserProfileDao @Inject()(mongo: Mongo) extends LinkedinUserPr
   }
 
   override def drop(linkedinProfile: LinkedinUserProfile) : Future[LinkedinUserProfile] = {
-    linkedinUserProfile.findOneAndDelete(equal("_id", linkedinProfile)).head().map[LinkedinUserProfile]((doc: Document) => {
+    linkedinUserProfile.findOneAndDelete(equal("_id", linkedinProfile._id)).head().map[LinkedinUserProfile]((doc: Document) => {
       documentToLinkedinUserProfile(doc)
     })
   }

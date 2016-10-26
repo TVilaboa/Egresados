@@ -92,7 +92,7 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
   }
 
   override def drop(graduateId: Graduate) : Future[Graduate] = {
-    graduates.findOneAndDelete(equal("_id", graduateId)).head().map[Graduate]((doc: Document) => {
+    graduates.findOneAndDelete(equal("_id", graduateId._id)).head().map[Graduate]((doc: Document) => {
       documentToGraduate(doc)
     })
   }
