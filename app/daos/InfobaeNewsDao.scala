@@ -84,7 +84,7 @@ class MongoInfobaeNewsDao @Inject()(mongo: Mongo) extends InfobaeNewsDao {
   }
 
   override def update(infobaeNews: InfobaeNews): Future[UpdateResult] = {
-    newsInfobae.updateOne(equal("_id", infobaeNews._id), Document(Json.toJson(infobaeNews).toString)).head()
+    newsInfobae.updateOne(equal("_id", infobaeNews._id), Document(Json .toJson(infobaeNews).toString)).head()
   }
 
   override def save(infobaeNews: InfobaeNews): Future[Completed] = {

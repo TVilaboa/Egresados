@@ -30,11 +30,12 @@ GET         /add                          controllers.EgresadosController.showGr
 POST        /add                          controllers.EgresadosController.addGraduate
 GET         /profile/:id                  controllers.EgresadosController.showProfile(id : String)
 GET         /stats                        controllers.EgresadosController.getLinkedInUrlStats
-GET         /delete/:id                  controllers.EgresadosController.deleteGraduate(id: String)
+GET         /delete/:id                   controllers.EgresadosController.deleteGraduate(id: String)
 
 #LinkedInScraper
 GET          /linkedin/search/:id       controllers.LinkedinUserProfileController.saveLinkedinUserProfile(id:String)
 GET          /linkedin/searchAll        controllers.LinkedinUserProfileController.saveAllLinkedinUserProfile
+GET          /linkedin/delete/:id       controllers.LinkedinUserProfileController.deleteProfile(id:String)
 
 #LaNacionController
 GET         /lanacion/search/:id     controllers.LaNacionNewsController.saveNews(id : String)

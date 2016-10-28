@@ -1,6 +1,6 @@
 package daos
 
-import java.util.Date
+import java.util
 
 import com.google.inject.{ImplementedBy, Inject, Singleton}
 import models.{LinkedinEducation, LinkedinJob, LinkedinUserProfile}
@@ -9,7 +9,6 @@ import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.result.UpdateResult
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Json
-import play.data.format.Formats.DateTime
 import services.Mongo
 import scala.concurrent.Future
 
@@ -94,11 +93,14 @@ class MongoLinkedinUserProfileDao @Inject()(mongo: Mongo) extends LinkedinUserPr
   }
 
   private def documentToLinkedinUserProfile(doc: Document): LinkedinUserProfile = {
+
+    import collection.JavaConverters._
+
     LinkedinUserProfile(
       doc.get("_id").get.asString().getValue,
       doc.get("actualPosition").get.asString().getValue,
-      doc.get("jobList").get.asArray().getValues.asInstanceOf[List[LinkedinJob]],
-      doc.get("educationList").get.asArray().getValues.asInstanceOf[List[LinkedinEducation]],
+      doc.get("jobList").get.asArray().getValues.asScala.toList.asInstanceOf[List[LinkedinJob]],
+      doc.get("educationList").get.asArray().getValues.asScala.toList.asInstanceOf[List[LinkedinEducation]],
       doc.get("profileUrl").get.asString().getValue
     )
   }

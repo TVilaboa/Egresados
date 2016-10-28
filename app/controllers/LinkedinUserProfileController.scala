@@ -68,4 +68,11 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
       Ok(views.html.index.render("Success"))
   }
 
+  def deleteProfile(id:String) = Action {
+    //Get graduate from DB.
+    val profile : LinkedinUserProfile = Await.result(linkedinUserProfileService.find(id),Duration.Inf)
+    linkedinUserProfileService.drop(profile)
+    Redirect("/")
+  }
+
 }
