@@ -5,9 +5,10 @@ import com.google.inject.Inject
 import models.{LinkedinUserProfile, LaNacionNews, Graduate, InfobaeNews}
 import play.api.http.ContentTypes
 import play.api.i18n.MessagesApi
-import play.api.libs.json.Json
+import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
 import services._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
@@ -55,20 +56,28 @@ class RestApiController @Inject()(graduateService: GraduateService,
 
   def getOneInfobaeData(id:String) = Action {implicit request =>{
     val find = graduateService.find(id)
-    var one = Await.result(find,Duration.Inf)
-    Ok(Json.prettyPrint(Json.toJson(one.infobaeNews)))
+    try {
+      val one = Await.result(find, Duration.Inf)
+      if(one.infobaeNews.isEmpty){
+        Ok("{ \"type\" : \" error \" , \" value\" : \" the graduate exists, but there is no data regarding infobaeNews\" }")
+      }else{
+        Ok("{ \"type\" : \" error \" , \" value\" : " + Json.prettyPrint(Json.toJson(find.value.get.get.infobaeNews)) + "}")
+      }
+    }catch{
+      case e: Exception => Ok("{ \"type\" : \" error \" , \" value\" : \" the graduate couldn't be found\" }")
+    }
   }}
 
   def getOneLaNacionData(id:String) = Action {implicit request =>{
     val find= graduateService.find(id)
-    var one = Await.result(find,Duration.Inf)
+    val one = Await.result(find, Duration.Inf)
     Ok(Json.prettyPrint(Json.toJson(one.laNacionNews)))
   }}
 
 
   def getOneLinkedinData(id:String) = Action {implicit request =>{
     val find= graduateService.find(id)
-    var one = Await.result(find,Duration.Inf)
+    val one = Await.result(find, Duration.Inf)
     Ok(Json.prettyPrint(Json.toJson(one.linkedinUserProfile)))
   }}
 
