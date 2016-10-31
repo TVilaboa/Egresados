@@ -1,19 +1,13 @@
 package controllers
 
-import java.io.{File, FileReader}
 import java.util.UUID
 
 import actions.SecureAction
-import akka.actor.FSM.Failure
-import akka.actor.Status.Success
 import com.github.tototoshi.csv.CSVReader
 import com.google.inject.Inject
 import com.mongodb.MongoWriteException
-import forms.GraduateForms.GraduateData
-import io.netty.util.Mapping
 import models._
 import play.api.i18n.MessagesApi
-import play.api.libs.json.JsValue
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
@@ -22,8 +16,6 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
-
-import scala.util.Try
 
 /**
   * Created by Ignacio Vazquez on 28/08/2016.
@@ -129,11 +121,11 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("firstName").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("lastName").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("dni").head,
-        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("studentcode").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("birthday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("entryday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("graduationday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("career").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("studentcode").head,
         List[LaNacionNews](),
         List[InfobaeNews](),
         LinkedinUserProfile(UUID.randomUUID().toString,
@@ -145,16 +137,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       )
 
       graduateService.save(graduate).map((_) => {
-//        val name = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("firstName").get(0)
-//        val surname = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("lastName").get(0)
-//        val dni = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("dni").get(0)
-//        val code = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("studentcode").get(0)
-//        val bday = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("birthday").get(0)
-//        val eday = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("entryday").get(0)
-//        val gday = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("graduationday").get(0)
-//        val career = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("career").get(0)
         Redirect("/profile/" + graduate._id)
-//        Ok(views.html.graduateProfile.render(name,surname,dni,code,bday,eday,gday,career,"Graduado creado correctamente!"))
       }).recoverWith {
         case e: MongoWriteException => Future {
 
@@ -166,7 +149,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       }
     } catch {
       case e: Exception => Future {
-        //Ok(e.toString)
         BadRequest
       }
     }
@@ -245,7 +227,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   def mergeGraduate (graduate: Graduate): Graduate ={
 
 
-    var id = graduate._id
+    val id = graduate._id
     var name = graduate.firstName
     var lastName = graduate.lastName
     var dni = graduate.documentId
@@ -257,9 +239,9 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
 
     val original: Graduate = Await.result(graduateService.find(id), Duration.Inf)
-    var laNacionNews = original.laNacionNews
-    var infobaeNews = original.infobaeNews
-    var linkedInData = original.linkedinUserProfile
+    val laNacionNews = original.laNacionNews
+    val infobaeNews = original.infobaeNews
+    val linkedInData = original.linkedinUserProfile
 
     if(name == "") name = original.firstName
     if(lastName == "") lastName = original.lastName
@@ -284,7 +266,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       infobaeNews,
       linkedInData
     )
-    return updatedGraduate
+    updatedGraduate
   }
 
   def showProfileTest = Action {
@@ -293,17 +275,11 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
   def getLinkedInUrlStats = secureAction{
     var graduates = Seq[Graduate]()
-
-
     val all: Future[Seq[Graduate]] = graduateService.all()
-
-
     graduates = Await.result(all,Duration.Inf)
-
     val links : Seq[(String,String,String,String)] = Await.result(graduateService.getNumberWithLinks, Duration.Inf)
 
     Ok(views.html.links(links,graduates))
-
   }
 
   def showimportCSV = secureAction { implicit request => {
@@ -313,11 +289,10 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
   def importCSV = Action(parse.multipartFormData) { implicit request => {
     request.body.file("csv").map { csv =>
-      import java.io.File
       val filename = csv.filename
       val contentType = csv.contentType
       val csvFile = csv.ref.file
-      //csv.ref.moveTo(new File(s"/tmp/$filename"),replace = true)
+
       val reader = CSVReader.open(csvFile)
       val info = reader.allWithHeaders()
       var graduatesCSV : List[Graduate] = List[Graduate]()
@@ -332,8 +307,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         val documentId = l.getOrElse("DNI", "")
         val birthDate = l.getOrElse("Fecha de nacimiento", "")
         val studentCode = l.getOrElse("Legajo","")
-        //        val entryDate = l.getOrElse("Año de Ingreso", "")
-        //        val graduationDate = l.getOrElse("Fecha de Ingreso","")
+
         if(!documentId.equals("")) {
           graduatesCSV = Graduate("",
             firstName,
@@ -384,7 +358,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
       }
       Ok(views.html.importCSV.render(graduatesCSV,message))
-      //Ok("File uploaded")
     }.getOrElse {
       Redirect(routes.Application.index()).flashing(
         "error" -> "Missing file")
