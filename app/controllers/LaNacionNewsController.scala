@@ -31,11 +31,9 @@ class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService
       element = scraper.getArticleData(link)
       newsLaNacionService.save(element)
       news = element :: news
-
-      //news = scraper.getArticleData(link) :: news
     }
     graduate = graduate.copy(laNacionNews = news)
-    var result = Await.result(graduateService.update(graduate),Duration.Inf)
+    Await.result(graduateService.update(graduate),Duration.Inf)
 
     Redirect("/profile/" + graduate._id)
 
