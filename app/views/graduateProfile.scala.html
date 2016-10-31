@@ -74,10 +74,12 @@
 
         function validateLinks(){
             $.ajax({
-                type :  "POST",
+                type :  'POST',
                 dataType: 'json',
-                data: { id:@graduate.get._id },
-                url  :  "@routes.EgresadosController.renderValidate",
+                data: {
+                    id:'@graduate.get._id'
+                },
+                url  :  '@routes.EgresadosController.renderValidate',
                 success: function(data){
                     console.log(data);
                 }
