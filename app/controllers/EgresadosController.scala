@@ -231,6 +231,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     }
     //Delete Graduate from DB.
     graduateService.drop(graduate)
-    Redirect("/")
+    Redirect("/egresados/search")
   }
 }
