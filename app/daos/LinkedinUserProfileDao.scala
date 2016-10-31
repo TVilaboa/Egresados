@@ -93,12 +93,14 @@ class MongoLinkedinUserProfileDao @Inject()(mongo: Mongo) extends LinkedinUserPr
     })
   }
 
+  import collection.JavaConverters._
+
   private def documentToLinkedinUserProfile(doc: Document): LinkedinUserProfile = {
     LinkedinUserProfile(
       doc.get("_id").get.asString().getValue,
       doc.get("actualPosition").get.asString().getValue,
-      doc.get("jobList").get.asArray().getValues.asInstanceOf[List[LinkedinJob]],
-      doc.get("educationList").get.asArray().getValues.asInstanceOf[List[LinkedinEducation]],
+      doc.get("jobList").get.asArray().getValues.asScala.toList.asInstanceOf[List[LinkedinJob]],
+      doc.get("educationList").get.asArray().getValues.asScala.toList.asInstanceOf[List[LinkedinEducation]],
       doc.get("profileUrl").get.asString().getValue
     )
   }

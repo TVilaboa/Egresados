@@ -28,7 +28,11 @@ class RestApiController @Inject()(graduateService: GraduateService,
     var info= Seq[InfobaeNews]()
     val all: Future[Seq[InfobaeNews]] = newsInfobaeService.all()
     info = Await.result(all,Duration.Inf)
-    Ok(Json.prettyPrint(Json.toJson(info)))
+    if(info.isEmpty){
+      Ok("{\"type\":\"success\",\"value\": \"There is no data\" }")
+    }else{
+      Ok("{\"type\":\"success\",\"value\": " + Json.prettyPrint(Json.toJson(info)) + "}")
+    }
     }
   }
 
@@ -36,21 +40,33 @@ class RestApiController @Inject()(graduateService: GraduateService,
     var info = Seq[Graduate]()
     val all: Future[Seq[Graduate]] = graduateService.all()
     info = Await.result(all,Duration.Inf)
-    Ok(Json.prettyPrint(Json.toJson(info)))
+    if(info.isEmpty){
+      Ok("{\"type\":\"success\",\"value\": \"There is no data\" }")
+    }else{
+      Ok("{\"type\":\"success\",\"value\": " + Json.prettyPrint(Json.toJson(info)) + "}")
+    }
   }}
 
   def getAllLaNacionData = Action { implicit request => {
     var info = Seq[LaNacionNews]()
     val all: Future[Seq[LaNacionNews]] = newsLaNacionService.all()
     info = Await.result(all,Duration.Inf)
-    Ok(Json.prettyPrint(Json.toJson(info)))
+    if(info.isEmpty){
+      Ok("{\"type\":\"success\",\"value\": \"There is no data\" }")
+    }else{
+      Ok("{\"type\":\"success\",\"value\": " + Json.prettyPrint(Json.toJson(info)) + "}")
+    }
   }}
 
   def getAllLinkedInData = Action { implicit request => {
     var info = Seq[LinkedinUserProfile]()
     val all: Future[Seq[LinkedinUserProfile]] = linkedinUserProfileService.all()
-    info = Await.result(all,Duration.Inf)
-    Ok(Json.prettyPrint(Json.toJson(info)))
+    info = Await.result(all, Duration.Inf)
+    if(info.isEmpty){
+      Ok("{\"type\":\"success\",\"value\": \"There is no data\" }")
+    }else{
+      Ok("{\"type\":\"success\",\"value\": " + Json.prettyPrint(Json.toJson(info)) + "}")
+    }
   }}
 
 
@@ -59,26 +75,42 @@ class RestApiController @Inject()(graduateService: GraduateService,
     try {
       val one = Await.result(find, Duration.Inf)
       if(one.infobaeNews.isEmpty){
-        Ok("{ \"type\" : \" error \" , \" value\" : \" the graduate exists, but there is no data regarding infobaeNews\" }")
+        Ok("{\"type\":\"success\",\"value\": \"The graduate exists, but there is no data\" }")
       }else{
-        Ok("{ \"type\" : \" error \" , \" value\" : " + Json.prettyPrint(Json.toJson(find.value.get.get.infobaeNews)) + "}")
+        Ok("{\"type\":\"success\",\"value\": " + Json.prettyPrint(Json.toJson(find.value.get.get.infobaeNews)) + "}")
       }
     }catch{
-      case e: Exception => Ok("{ \"type\" : \" error \" , \" value\" : \" the graduate couldn't be found\" }")
+      case e: Exception => Ok("{\"type\":\"error\",\"value\": \"The graduate couldn't be found\" }")
     }
   }}
 
   def getOneLaNacionData(id:String) = Action {implicit request =>{
     val find= graduateService.find(id)
-    val one = Await.result(find, Duration.Inf)
-    Ok(Json.prettyPrint(Json.toJson(one.laNacionNews)))
+    try {
+      val one = Await.result(find, Duration.Inf)
+      if(one.laNacionNews.isEmpty){
+        Ok("{\"type\":\"success\",\"value\": \"The graduate exists, but there is no data\" }")
+      }else{
+        Ok("{\"type\":\"success\",\"value\": " + Json.prettyPrint(Json.toJson(find.value.get.get.laNacionNews)) + "}")
+      }
+    }catch{
+      case e: Exception => Ok("{\"type\":\"error\",\"value\": \"The graduate couldn't be found\" }")
+    }
   }}
 
 
   def getOneLinkedinData(id:String) = Action {implicit request =>{
     val find= graduateService.find(id)
-    val one = Await.result(find, Duration.Inf)
-    Ok(Json.prettyPrint(Json.toJson(one.linkedinUserProfile)))
+    try {
+      val one = Await.result(find, Duration.Inf)
+      if(one.linkedinUserProfile == null){
+        Ok("{\"type\":\"success\",\"value\": \"The graduate exists, but there is no data\" }")
+      }else{
+        Ok("{\"type\":\"success\",\"value\": " + Json.prettyPrint(Json.toJson(find.value.get.get.linkedinUserProfile)) + "}")
+      }
+    }catch{
+      case e: Exception => Ok("{\"type\":\"error\",\"value\": \"The graduate couldn't be found\" }")
+    }
   }}
 
 
@@ -86,7 +118,12 @@ class RestApiController @Inject()(graduateService: GraduateService,
     var info= Seq[Graduate]()
     val all: Future[Seq[Graduate]] = graduateService.all()
     info = Await.result(all,Duration.Inf)
-    Ok(Json.prettyPrint(Json.toJson(info.filter(_.career.equals(career)))))
+    val selectInfo = info.filter(_.career.toLowerCase.contains(career.toLowerCase))
+    if(selectInfo.isEmpty) {
+      Ok("{\"type\":\"success\",\"value\": \"There is no data\" }")
+    } else {
+      Ok("{\"type\":\"success\",\"value\": " + Json.prettyPrint(Json.toJson(selectInfo)) + "}")
+    }
   }
   }
 }
