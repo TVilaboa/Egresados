@@ -1,8 +1,5 @@
 package controllers
 
-import java.sql.Timestamp
-import java.util.Date
-import play.data.format.Formats.DateTime
 
 import com.google.inject.Inject
 import generators.LinkedInUrlGenerator
