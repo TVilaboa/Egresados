@@ -17,7 +17,7 @@ import play.api.libs.json.JsValue
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
-import services.{GraduateService, SessionService, UserService}
+import services._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 import scala.concurrent.duration.Duration
@@ -29,7 +29,9 @@ import scala.util.Try
   * Created by Ignacio Vazquez on 28/08/2016.
   */
 class EgresadosController @Inject()(graduateService: GraduateService,sessionService: SessionService,
-                                    secureAction: SecureAction,
+                                    secureAction: SecureAction, laNacionNewsService: LaNacionNewsService,
+                                    linkedinUserProfileService: LinkedinUserProfileService,
+                                    infobaeNewsService: InfobaeNewsService,
                                     val messagesApi: MessagesApi) extends Controller {
 
   val graduateForm = Form(
@@ -309,7 +311,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
   }
 
-
   def importCSV = Action(parse.multipartFormData) { implicit request => {
     request.body.file("csv").map { csv =>
       import java.io.File
@@ -331,8 +332,8 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         val documentId = l.getOrElse("DNI", "")
         val birthDate = l.getOrElse("Fecha de nacimiento", "")
         val studentCode = l.getOrElse("Legajo","")
-//        val entryDate = l.getOrElse("Año de Ingreso", "")
-//        val graduationDate = l.getOrElse("Fecha de Ingreso","")
+        //        val entryDate = l.getOrElse("Año de Ingreso", "")
+        //        val graduationDate = l.getOrElse("Fecha de Ingreso","")
         if(!documentId.equals("")) {
           graduatesCSV = Graduate("",
             firstName,
@@ -389,5 +390,29 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         "error" -> "Missing file")
     }
   }
+  }
+
+  def deleteGraduate(id:String) = Action {
+    //Get graduate from DB.
+    val graduate : Graduate = Await.result(graduateService.find(id),Duration.Inf)
+    val laNacionNewsList: List[LaNacionNews] = graduate.laNacionNews
+    val linkedinUserProfile: LinkedinUserProfile = graduate.linkedinUserProfile
+    val infobaeNewsList: List[InfobaeNews] = graduate.infobaeNews
+
+    //Delete Linkedin User Profile from DB.
+    linkedinUserProfileService.drop(linkedinUserProfile)
+
+    //Delete La Nacion News from DB.
+    for(laNacionNews <- laNacionNewsList) {
+      laNacionNewsService.drop(laNacionNews)
+    }
+
+    //Delete Infoabe News from DB.
+    for(infobaeNews <- infobaeNewsList) {
+      infobaeNewsService.drop(infobaeNews)
+    }
+    //Delete Graduate from DB.
+    graduateService.drop(graduate)
+    Redirect("/egresados/search")
   }
 }

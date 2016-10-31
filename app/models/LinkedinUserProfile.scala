@@ -8,6 +8,7 @@ import play.data.format.Formats.DateTime
 /**
   * Created by Nacho on 20/9/16.
   */
+
 case class LinkedinUserProfile(
                               _id: String,
                               actualPosition: String,
