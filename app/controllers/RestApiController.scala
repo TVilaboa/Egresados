@@ -27,17 +27,9 @@ class RestApiController @Inject()(graduateService: GraduateService,
     var info= Seq[InfobaeNews]()
     val all: Future[Seq[InfobaeNews]] = newsInfobaeService.all()
     info = Await.result(all,Duration.Inf)
-//    Ok(Json.toJson(info))
-    Ok(info.toString)
+    Ok(Json.prettyPrint(Json.toJson(info)))
     }
   }
-
-  def getOneInfobaeData(id:String){
-    val find: Future[InfobaeNews] = newsInfobaeService.find(id)
-    var one = Await.result(find,Duration.Inf)
-    Ok(Json.prettyPrint(Json.toJson(one)))
-  }
-
 
   def getAllEgresadosData = Action { implicit request => {
     var info = Seq[Graduate]()
@@ -61,4 +53,31 @@ class RestApiController @Inject()(graduateService: GraduateService,
   }}
 
 
+  def getOneInfobaeData(id:String) = Action {implicit request =>{
+    val find = graduateService.find(id)
+    var one = Await.result(find,Duration.Inf)
+    Ok(Json.prettyPrint(Json.toJson(one.infobaeNews)))
+  }}
+
+  def getOneLaNacionData(id:String) = Action {implicit request =>{
+    val find= graduateService.find(id)
+    var one = Await.result(find,Duration.Inf)
+    Ok(Json.prettyPrint(Json.toJson(one.laNacionNews)))
+  }}
+
+
+  def getOneLinkedinData(id:String) = Action {implicit request =>{
+    val find= graduateService.find(id)
+    var one = Await.result(find,Duration.Inf)
+    Ok(Json.prettyPrint(Json.toJson(one.linkedinUserProfile)))
+  }}
+
+
+  def getAllEgresadosByCareer(career : String)= Action { implicit request => {
+    var info= Seq[Graduate]()
+    val all: Future[Seq[Graduate]] = graduateService.all()
+    info = Await.result(all,Duration.Inf)
+    Ok(Json.prettyPrint(Json.toJson(info.filter(_.career.equals(career)))))
+  }
+  }
 }

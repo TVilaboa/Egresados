@@ -47,3 +47,6 @@ GET         /api/egresados          controllers.RestApiController.getAllEgresado
 GET         /api/lanacion           controllers.RestApiController.getAllLaNacionData()
 GET         /api/linkedin           controllers.RestApiController.getAllLinkedInData()
 GET         /api/infobae/:id        controllers.RestApiController.getOneInfobaeData(id : String)
+GET         /api/lanacion/:id       controllers.RestApiController.getOneLaNacionData(id : String)
+GET         /api/linkedin/:id       controllers.RestApiController.getOneLinkedinData(id : String)
+GET         /api/egresados/carrera/:career controllers.RestApiController.getAllEgresadosByCareer(career : String)
