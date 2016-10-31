@@ -19,7 +19,7 @@
                     <table class="table table-hover">
                     @for(news <- graduate.get.laNacionNews) {
                         <tr>
-                            <td> <input type="checkbox" name="urlLaNacion" value="@news.url" id="@news._id"> </td> <td><a href="@news.url">@news.url</a></td>
+                            <td> <input type="checkbox" name="urlLaNacion" value="@news.url" id="@news._id"> </td> <td>@news.title</td> <td><a href="@news.url">@news.url</a></td>
                         </tr>
                     }
                     </table>
@@ -39,7 +39,7 @@
                     <table class="table table-hover">
 @*//                    @for(news <- graduate.get.infobaeNews) {*@
                         <tr>
-                            @*<td> <input type="checkbox" name="urlInfobae" id="@news._id"> </td> <td><a href="@news.url">@news.url</a></td>*@
+                            @*<td> <input type="checkbox" name="urlInfobae" id="@news._id"> </td> <td>@news.title</td> <td><a href="@news.url">@news.url</a></td>*@
                         </tr>
 @*//                    }*@
                     </table>
@@ -59,7 +59,7 @@
                     <tabgitle class="table table-hover">
 @*//                    @for(news <- graduate.get.linkedInNews) {*@
                         <tr>
-                            @*<td> <input type="checkbox" name="urlLinkedIn" id="@news._id"> </td> <td><a href="@news.url">@news.url</a></td>*@
+                            @*<td> <input type="checkbox" name="urlLinkedIn" id="@news._id"> </td> <td>@news.title</td> <td><a href="@news.url">@news.url</a></td>*@
                         </tr>
 @*//                    }*@
                     </tabgitle>
@@ -129,13 +129,18 @@
                 $.ajax({
                     type :  "POST",
                     dataType: 'json',
-                    data: { id:@graduate.get._id , infobaeLinks:[], laNacionLinks:laNacionLinks, linkedInLinks:[]},
+                    data: { id:'@graduate.get._id' , infobaeLinks:[], laNacionLinks:laNacionLinks, linkedInLinks:[]},
                     url  :  "@routes.EgresadosController.validateLinks",
                     success: function(data){
                         console.log(data);
+                        window.location = '@routes.EgresadosController.showProfile(graduate.get._id)'
                     }
                 });
 
             }
     </script>
+
+    <form>
+
+    </form>
 }

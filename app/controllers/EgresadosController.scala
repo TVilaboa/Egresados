@@ -98,12 +98,35 @@ class EgresadosController @Inject()(laNacionService: LaNacionNewsService, gradua
   }
   }
 
-  def renderValidate = Action { implicit request => {
-    val id = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("id").get(0)
-    val graduate: Graduate = Await.result(graduateService.find(id),Duration.Inf)
-    Ok(views.html.validateGraduateLinks.render(Option(graduate)))
+//  def renderValidate = Action { implicit request => {
+//    val id = graduateForm.bindFromRequest.data("id")
+//    val graduate: Graduate = Await.result(graduateService.find(id),Duration.Inf)
+//    Ok(views.html.validateGraduateLinks.render(Option(graduate)))
+//  }
+//  }
+
+  def renderValidate(id:String) = Action {
+    try{
+      var graduate: Option[Graduate] = None
+      val result: Future[Graduate] = graduateService.find(id)
+      result onSuccess {
+        case grad: Graduate => {
+          println("Success")
+          graduate = Option(grad)
+        }
+      }
+      result onFailure {
+        case _ => {
+          println("Error")
+
+        }
+      }
+      Await.ready(result, Duration.Inf)
+      Ok(views.html.validateGraduateLinks.render(graduate))
+
+    }
   }
-  }
+
 
   def addGraduate = Action.async { implicit request =>
     try {
@@ -172,7 +195,7 @@ class EgresadosController @Inject()(laNacionService: LaNacionNewsService, gradua
   }
 
 
-  def validateLinks = Action.async { implicit request =>
+  def validateLinks = Action { implicit request =>
     val laNacionLinks = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("laNacionLinks[]")
     val infobaeLinks = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("infobaeLinks[]")
     val linkedInLinks = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("linkedInLinks[]")
@@ -181,7 +204,7 @@ class EgresadosController @Inject()(laNacionService: LaNacionNewsService, gradua
     val graduate: Graduate = Await.result(graduateService.find(id),Duration.Inf)
 
     var laNacionNews = List[LaNacionNews]()
-    for(a <- 0 until laNacionLinks.size){
+    for(a <- 0 until laNacionLinks.get.size){
       val news: List[LaNacionNews] = List(Await.result(laNacionService.findByUrl(request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("laNacionLinks[]").get(a)),Duration.Inf))
       laNacionNews = laNacionNews.++(news)
     }
@@ -198,17 +221,10 @@ class EgresadosController @Inject()(laNacionService: LaNacionNewsService, gradua
       graduate.career,
       laNacionNews
     )
-    graduateService.update(newGraduate).map((_) => {
-      Redirect("/profile/" + newGraduate._id)
-    }).recoverWith {
-      case e: MongoWriteException => Future {
-
-        Forbidden
-      }
-      case e => Future {
-        Forbidden
-      }
-    }
+    Await.result(graduateService.update(newGraduate), Duration.Inf)
+    //Ok(views.html.graduateProfile.render(Option(newGraduate)))
+//    Redirect(routes.EgresadosController.showProfile(newGraduate._id))
+    Ok(Json.obj("status" -> "success"))
   }
 
 }

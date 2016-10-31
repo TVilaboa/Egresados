@@ -34,7 +34,7 @@ GET          /linkedin/search    controllers.LinkedinUserProfileController.saveL
 #LaNacionController
 GET         /lanacion/search    controllers.LaNacionNewsController.saveNews
 
-GET         /validate           controllers.EgresadosController.renderValidate
-POST        /validate           controllers.EgresadosController.renderValidate
+GET         /validate/:id           controllers.EgresadosController.renderValidate(id: String)
+#POST        /validate           controllers.EgresadosController.renderValidate
 
 POST        /valid              controllers.EgresadosController.validateLinks
