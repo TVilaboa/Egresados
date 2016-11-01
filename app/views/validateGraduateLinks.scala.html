@@ -134,6 +134,9 @@
                     success: function(data){
                         console.log(data);
                         window.location = '@routes.EgresadosController.showProfile(graduate.get._id)'
+                    },
+                    error: function(data){
+                        console.log(data);
                     }
                 });
 

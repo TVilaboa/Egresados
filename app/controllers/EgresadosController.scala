@@ -188,7 +188,7 @@ class EgresadosController @Inject()(laNacionService: LaNacionNewsService, gradua
 
         }
       }
-      Await.ready(result, Duration.Inf)
+      Await.result(result, Duration.Inf)
       Ok(views.html.graduateProfile.render(graduate))
 
     }

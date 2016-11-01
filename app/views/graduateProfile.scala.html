@@ -55,15 +55,15 @@
 
                             <!-- /.panel-body --> 
                         </div>
-
+                        @helper.form(action = routes.EgresadosController.renderValidate(graduate.get._id)) {
+                            @*<input id="id" name="id" value="@graduate.get._id" hidden>*@
+                            <input type="submit" value="Validar links" class="btn btn-info btn-lg">
+                        }
                     }
                                              <!-- /.panel --> 
                 </div>
                                      <!-- /.col-lg-12 --> 
-                @helper.form(action = routes.EgresadosController.renderValidate(graduate.get._id)) {
-                    @*<input id="id" name="id" value="@graduate.get._id" hidden>*@
-                    <input type="submit" value="Validar links" class="btn btn-info btn-lg">
-                }
+
 
 
                 @*<button onclick="validateLinks()" class="btn btn-default" type="submit" >Validar Links</button>*@
