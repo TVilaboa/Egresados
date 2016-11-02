@@ -134,9 +134,9 @@
             }
 
             function validateBirthDate() {
+                document.getElementById('birthSpan').style.display = 'none'; //Para que no vuelva a aparecer
                 var parts = document.getElementById('birthday').value.split("-");
-                //var day = parseInt(parts[2], 10);
-                //var month = parseInt(parts[1], 10);
+
                 var year = parseInt(parts[0], 10);
                 var actualYear = new Date().getFullYear();
                 if(actualYear - year < 22) {
@@ -147,9 +147,9 @@
             }
 
             function validateEntryDate() {
+                document.getElementById('entrySpan').style.display = 'none'; //Para que no vuelva a aparecer
                 var parts = document.getElementById('entryday').value.split("-");
-                //var day = parseInt(parts[2], 10);
-                //var month = parseInt(parts[1], 10);
+
                 var year = parseInt(parts[0], 10);
                 var actualYear = new Date().getFullYear();
                 if(actualYear - year < 6) {
@@ -160,12 +160,16 @@
             }
 
             function validateGraduateDate() {
+                document.getElementById('graduationSpan').style.display = 'none'; //Para que no vuelva a aparecer
                 var parts = document.getElementById('graduationday').value.split("-");
-                //var day = parseInt(parts[2], 10);
-                //var month = parseInt(parts[1], 10);
+
+                var day = parseInt(parts[2], 10);
+                var month = parseInt(parts[1], 10);
                 var year = parseInt(parts[0], 10);
                 var actualYear = new Date().getFullYear();
-                if(actualYear < year) {
+                var actualMonth = (new Date().getMonth()) + 1;
+                var actualDay = new Date().getDate();
+                if(actualYear < year || (actualYear == year && actualMonth < month) || (actualYear == year && actualMonth == month && actualDay < day)) {
                     document.getElementById('graduationSpan').style.display = 'block';
                     return false;
                 }
@@ -173,7 +177,14 @@
             }
 
             function validation() {
-                return (validateBirthDate() && validateEntryDate() && validateGraduateDate());
+                var validateBirth = false;
+                var validateEntry = false;
+                var validateGraduate = false;
+                if(validateBirthDate()) validateBirth = true;
+                if(validateEntryDate()) validateEntry = true;
+                if(validateGraduateDate()) validateGraduate = true;
+
+                return (validateBirth && validateEntry && validateGraduate);
             }
 
     </script>
