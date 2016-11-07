@@ -256,7 +256,7 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
   }
   override def getNumberWithLinks() : Future[Seq[(String, String, String, String)]] = {
 
-    graduates.find().toFuture().map(doc => doc.filter(x => x.get("linkedinUserProfile").isDefined).map(y => (y.get("_id").get.asString().getValue,y.get("firstName").get.asString().getValue,y.get("lastName").get.asString().getValue,y.get("linkedinUserProfile").get.asDocument().get("profileUrl").asString().getValue)))
+    graduates.find().toFuture().map(doc => doc.filter(x => x.get("linkedinUserProfile").isDefined).filter(x => x.get("linkedinUserProfile").get.asDocument().get("profileUrl").asString().getValue.nonEmpty).map(y => (y.get("_id").get.asString().getValue,y.get("firstName").get.asString().getValue,y.get("lastName").get.asString().getValue,y.get("linkedinUserProfile").get.asDocument().get("profileUrl").asString().getValue)))
   }
 }
 

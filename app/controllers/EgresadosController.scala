@@ -431,13 +431,13 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     val laNacionLinks = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("laNacionLinks[]")
     val infobaeLinks = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("infobaeLinks[]")
     val linkedInLinks = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("linkedInLinks[]")
-    val id = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("id").get(0)
+    val id = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("id").head
 
     val graduate: Graduate = Await.result(graduateService.find(id),Duration.Inf)
 
     var laNacionNews = List[LaNacionNews]()
-    for(a <- 0 until laNacionLinks.get.size){
-      val news: List[LaNacionNews] = List(Await.result(laNacionService.findByUrl(request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("laNacionLinks[]").get(a)),Duration.Inf))
+    for(a <- laNacionLinks.get.indices){
+      val news: List[LaNacionNews] = List(Await.result(laNacionNewsService.findByUrl(request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("laNacionLinks[]").get(a)),Duration.Inf))
       laNacionNews = laNacionNews.++(news)
     }
 
@@ -446,13 +446,19 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       graduate.firstName,
       graduate.lastName,
       graduate.documentId,
-      graduate.studentCode,
       graduate.birthDate,
       graduate.entryDate,
       graduate.graduationDate,
       graduate.career,
-      laNacionNews
-    )
+      graduate.studentCode,
+      laNacionNews,
+      List[InfobaeNews](),
+      LinkedinUserProfile(UUID.randomUUID().toString,
+        "",
+        List[LinkedinJob](),
+        List[LinkedinEducation](),
+        ""
+    ))
     Await.result(graduateService.update(newGraduate), Duration.Inf)
     //Ok(views.html.graduateProfile.render(Option(newGraduate)))
     //    Redirect(routes.EgresadosController.showProfile(newGraduate._id))
