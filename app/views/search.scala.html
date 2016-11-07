@@ -11,6 +11,8 @@
         <!-- Social Buttons CSS -->
     <link href="@routes.Assets.at("bower_components/bootstrap-social/bootstrap-social.css")" rel="stylesheet">
 
+        <!-- Application Style CSS -->
+    <link href="@routes.Assets.at("stylesheets/applicationStyle.css")" rel="stylesheet">
 }
 
 @scripts = {
@@ -75,7 +77,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-8">
-                                        <button type="submit" class="btn-info" style="margin-left: 70%;margin-top: 4%;">Hit Me!</button>
+                                        <button type="submit" id="hitMeSearch" class="btn-info">Hit Me!</button>
                                     </div>
                                 </div>
                             }
@@ -147,7 +149,7 @@
                                         }else{
                                             @if(!condition){
                                                 <tr>
-                                                    <td colspan="7" style="background-color: #D4A190;"> No se encontraron Egresados para la busqueda seleccionada</td>
+                                                    <td id="searchError" colspan="7"> No se encontraron Egresados para la busqueda seleccionada</td>
                                                 </tr>
                                             }
                                         }
