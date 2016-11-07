@@ -49,7 +49,6 @@ class AuthController @Inject()(userService: UserService,
       }
     } catch {
       case e: Exception => Future {
-        //Ok(e.toString)
         BadRequest
       }
     }

@@ -62,8 +62,6 @@ class UserAuthController @Inject()(userService: UserService,
           )
           sessionService.save(session)
           val response = Map("sessionId" -> sessionId)
-//          Ok(Json.toJson(response)).withCookies(Cookie("sessionId", sessionId))
-//          Redirect("/").withCookies(Cookie("sessionId", sessionId))
 
           Ok(views.html.index.render("")).withCookies(Cookie("sessionId", sessionId))
         }else
@@ -124,7 +122,6 @@ class UserAuthController @Inject()(userService: UserService,
       }
     } catch {
       case e: Exception => Future {
-        //Ok(e.toString)
         BadRequest
       }
     }}

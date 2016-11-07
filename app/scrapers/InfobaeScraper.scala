@@ -26,10 +26,10 @@ class InfobaeScraper {
       case e: IOException => e.printStackTrace()
     }
     val header = document.get.getElementsByTag("header")
-    var titulo: Option[String] = getString(document.get.getElementsByClass("entry-title"))
-    var copete: Option[String] = getString(document.get.getElementsByClass("preview"))
+    val titulo: Option[String] = getString(document.get.getElementsByClass("entry-title"))
+    val copete: Option[String] = getString(document.get.getElementsByClass("preview"))
 
-    var autor: Option[String] = getString(document.get.getElementsByClass("author-name"))
+    val autor: Option[String] = getString(document.get.getElementsByClass("author-name"))
 
     val fecha = getString(document.get.getElementsByClass("byline-date"))
 

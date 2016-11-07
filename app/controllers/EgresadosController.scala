@@ -260,7 +260,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   def mergeGraduate (graduate: Graduate): Graduate ={
 
 
-    var id = graduate._id
+    val id = graduate._id
     var name = graduate.firstName
     var lastName = graduate.lastName
     var dni = graduate.documentId
@@ -272,9 +272,9 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
 
     val original: Graduate = Await.result(graduateService.find(id), Duration.Inf)
-    var laNacionNews = original.laNacionNews
-    var infobaeNews = original.infobaeNews
-    var linkedInData = original.linkedinUserProfile
+    val laNacionNews = original.laNacionNews
+    val infobaeNews = original.infobaeNews
+    val linkedInData = original.linkedinUserProfile
 
     if(name == "") name = original.firstName
     if(lastName == "") lastName = original.lastName
@@ -460,8 +460,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         ""
     ))
     Await.result(graduateService.update(newGraduate), Duration.Inf)
-    //Ok(views.html.graduateProfile.render(Option(newGraduate)))
-    //    Redirect(routes.EgresadosController.showProfile(newGraduate._id))
     Ok(Json.obj("status" -> "success"))
   }
 }
