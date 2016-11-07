@@ -27,7 +27,7 @@ class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,gr
     var news: List[InfobaeNews] = List[InfobaeNews]()
     var element: InfobaeNews = null
     for(link <- links) {
-      element = scraper.scrape(link)
+      element = scraper.scrape(link,0)
       newsInfobaeService.save(element)
       news = element :: news
     }
