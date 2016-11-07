@@ -1,0 +1,149 @@
+@(graduate: Option[Graduate])
+@layout(title = "Validate Links") {
+    <div id="page-wrapper">
+                     <div class="row"> 
+        <div class="col-lg-12">
+            <h1 class="page-header">Validación de Links</h1> 
+            <h3 style="margin-top: 0 ;"> Graduado: @graduate.get.firstName @graduate.get.lastName </h3>
+            <h4>Selecciona los links que deseas validar para tu perfil</h4>
+        </div>
+            <!-- /.col-lg-12 -->
+    </div>
+            <!-- /.row --> 
+        <div class="row"> 
+            <div class="col-lg-12">
+                <div class="panel panel-default"> 
+                    <div class="alert alert-info">
+                        La Nación
+                    </div>
+                    <table class="table table-hover">
+                    @for(news <- graduate.get.laNacionNews) {
+                        <tr>
+                            <td> <input type="checkbox" name="urlLaNacion" value="@news.url" id="@news._id"> </td> <td>@news.title</td> <td><a href="@news.url">@news.url</a></td>
+                        </tr>
+                    }
+                    </table>
+                </div>
+                                         <!-- /.panel --> 
+            </div>
+
+                                 <!-- /.col-lg-12 --> 
+
+        </div>
+        <div class="row"> 
+            <div class="col-lg-12">
+                <div class="panel panel-default"> 
+                    <div class="alert alert-info">
+                        Infobae
+                    </div>
+                    <table class="table table-hover">
+@*//                    @for(news <- graduate.get.infobaeNews) {*@
+                        <tr>
+                            @*<td> <input type="checkbox" name="urlInfobae" id="@news._id"> </td> <td>@news.title</td> <td><a href="@news.url">@news.url</a></td>*@
+                        </tr>
+@*//                    }*@
+                    </table>
+                </div>
+                                         <!-- /.panel --> 
+            </div>
+
+                                 <!-- /.col-lg-12 --> 
+
+        </div>
+        <div class="row"> 
+            <div class="col-lg-12">
+                <div class="panel panel-default"> 
+                    <div class="alert alert-info">
+                        LinkedIn
+                    </div>
+                    <tabgitle class="table table-hover">
+@*//                    @for(news <- graduate.get.linkedInNews) {*@
+                        <tr>
+                            @*<td> <input type="checkbox" name="urlLinkedIn" id="@news._id"> </td> <td>@news.title</td> <td><a href="@news.url">@news.url</a></td>*@
+                        </tr>
+@*//                    }*@
+                    </tabgitle>
+                </div>
+                                         <!-- /.panel --> 
+            </div>
+
+                                 <!-- /.col-lg-12 --> 
+            <button onclick="validateLinks()" class="btn btn-default" type="submit">Validar Links</button>
+        </div>
+    </div>
+     
+    <script>
+
+            function validateLinks(){
+                //var linkedInLinks = [];
+                var laNacionLinks = [];
+               // var infobaeLinks = [];
+                validateLaNacion(laNacionLinks);
+                //validateLinkedIn(linkedInLinks);
+                //validateInfobae(infobaeLinks);
+                //sendPost(linkedInLinks, laNacionLinks, infobaeLinks);
+                sendPost(laNacionLinks);
+            }
+
+            function validateLaNacion(array){
+                var buttons = document.getElementsByName('urlLaNacion');
+                for (var i = 0; i < buttons.length; i++) {
+                    if (buttons[i].checked) {
+                        array.push(buttons[i].value);
+                    }
+                }
+            }
+
+
+            function validateLinkedIn(array){
+                var buttons = document.getElementsByName('urlLinkedIn');
+                for (var i = 0; i < buttons.length; i++) {
+                    if (buttons[i].checked) {
+                        array.push(buttons[i].value);
+                    }
+                }
+            }
+            function validateInfobae(array){
+                var buttons = document.getElementsByName('urlInfobae');
+                for (var i = 0; i < buttons.length; i++) {
+                    if (buttons[i].checked) {
+                        array.push(buttons[i].value);
+                    }
+                }
+            }
+
+            @*function sendPost(linkedInLinks, laNacionLinks, infobaeLinks){*@
+                @*$.ajax({*@
+                @*type :  "POST",*@
+                @*dataType: 'json',*@
+                @*data: { id:@graduate.get._id , infobaeLinks:infobaeLinks, laNacionLinks:laNacionLinks, linkedInLinks:linkedInLinks},*@
+                @*url  :  "@routes.EgresadosController.validateLinks",*@
+                @*success: function(data){*@
+                    @*console.log(data);*@
+                @*}*@
+            @*});*@
+
+            @*}*@
+
+            function sendPost(laNacionLinks){
+                $.ajax({
+                    type :  "POST",
+                    dataType: 'json',
+                    data: { id:'@graduate.get._id' , infobaeLinks:[], laNacionLinks:laNacionLinks, linkedInLinks:[]},
+                    url  :  "@routes.EgresadosController.validateLinks",
+                    success: function(data){
+                        console.log(data);
+                        window.location = '@routes.EgresadosController.showProfile(graduate.get._id)'
+                    },
+                    error: function(data){
+                        console.log(data);
+                    }
+                });
+
+            }
+    </script>
+
+    <form>
+
+    </form>
+}

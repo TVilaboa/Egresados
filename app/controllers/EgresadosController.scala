@@ -6,8 +6,12 @@ import actions.SecureAction
 import com.github.tototoshi.csv.CSVReader
 import com.google.inject.Inject
 import com.mongodb.MongoWriteException
+import forms.AuthForms.{SignupData, LoginData}
+import forms.GraduateForms.GraduateData
+import io.netty.util.Mapping
 import models._
 import play.api.i18n.MessagesApi
+import play.api.libs.json.{Json, JsValue}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
@@ -114,6 +118,36 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
   }
 
+//  def renderValidate = Action { implicit request => {
+//    val id = graduateForm.bindFromRequest.data("id")
+//    val graduate: Graduate = Await.result(graduateService.find(id),Duration.Inf)
+//    Ok(views.html.validateGraduateLinks.render(Option(graduate)))
+//  }
+//  }
+
+  def renderValidate(id:String) = Action {
+    try{
+      var graduate: Option[Graduate] = None
+      val result: Future[Graduate] = graduateService.find(id)
+      result onSuccess {
+        case grad: Graduate => {
+          println("Success")
+          graduate = Option(grad)
+        }
+      }
+      result onFailure {
+        case _ => {
+          println("Error")
+
+        }
+      }
+      Await.ready(result, Duration.Inf)
+      Ok(views.html.validateGraduateLinks.render(graduate))
+
+    }
+  }
+
+
   def addGraduate = Action.async { implicit request =>
     try {
       val graduate = Graduate(
@@ -161,7 +195,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       result onSuccess {
         case grad: Graduate => {
           println("Success")
-
         }
       }
       result onFailure {
@@ -176,22 +209,22 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
 
   def showUpdatingForm (id:String) = Action {
-      var graduate: Option[Graduate] = None
-      val result: Future[Graduate] = graduateService.find(id)
-      result onSuccess {
-        case grad: Graduate => {
-          println("Success")
-          graduate = Option(grad)
-        }
+    var graduate: Option[Graduate] = None
+    val result: Future[Graduate] = graduateService.find(id)
+    result onSuccess {
+      case grad: Graduate => {
+        println("Success")
+        graduate = Option(grad)
       }
-      result onFailure {
-        case _ => {
-          println("Error")
+    }
+    result onFailure {
+      case _ => {
+        println("Error")
 
-        }
       }
-      graduate = Option(Await.result(result, Duration.Inf))
-      Ok(views.html.updateGraduate.render(graduate.get))
+    }
+    graduate = Option(Await.result(result, Duration.Inf))
+    Ok(views.html.updateGraduate.render(graduate.get))
   }
 
   def update (id:String) = Action { implicit request =>
@@ -227,7 +260,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   def mergeGraduate (graduate: Graduate): Graduate ={
 
 
-    val id = graduate._id
+    var id = graduate._id
     var name = graduate.firstName
     var lastName = graduate.lastName
     var dni = graduate.documentId
@@ -239,9 +272,9 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
 
     val original: Graduate = Await.result(graduateService.find(id), Duration.Inf)
-    val laNacionNews = original.laNacionNews
-    val infobaeNews = original.infobaeNews
-    val linkedInData = original.linkedinUserProfile
+    var laNacionNews = original.laNacionNews
+    var infobaeNews = original.infobaeNews
+    var linkedInData = original.linkedinUserProfile
 
     if(name == "") name = original.firstName
     if(lastName == "") lastName = original.lastName
@@ -266,7 +299,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       infobaeNews,
       linkedInData
     )
-    updatedGraduate
+    return updatedGraduate
   }
 
   def showProfileTest = Action {
@@ -275,11 +308,17 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
   def getLinkedInUrlStats = secureAction{
     var graduates = Seq[Graduate]()
+
+
     val all: Future[Seq[Graduate]] = graduateService.all()
+
+
     graduates = Await.result(all,Duration.Inf)
+
     val links : Seq[(String,String,String,String)] = Await.result(graduateService.getNumberWithLinks, Duration.Inf)
 
     Ok(views.html.links(links,graduates))
+
   }
 
   def showimportCSV = secureAction { implicit request => {
@@ -292,7 +331,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       val filename = csv.filename
       val contentType = csv.contentType
       val csvFile = csv.ref.file
-
       val reader = CSVReader.open(csvFile)
       val info = reader.allWithHeaders()
       var graduatesCSV : List[Graduate] = List[Graduate]()
@@ -387,5 +425,43 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     //Delete Graduate from DB.
     graduateService.drop(graduate)
     Redirect("/egresados/search")
+  }
+
+  def validateLinks = Action { implicit request =>
+    val laNacionLinks = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("laNacionLinks[]")
+    val infobaeLinks = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("infobaeLinks[]")
+    val linkedInLinks = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("linkedInLinks[]")
+    val id = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("id").head
+
+    val graduate: Graduate = Await.result(graduateService.find(id),Duration.Inf)
+
+    var laNacionNews = List[LaNacionNews]()
+    for(a <- laNacionLinks.get.indices){
+      val news: List[LaNacionNews] = List(Await.result(laNacionNewsService.findByUrl(request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("laNacionLinks[]").get(a)),Duration.Inf))
+      laNacionNews = laNacionNews.++(news)
+    }
+
+    val newGraduate = Graduate(
+      graduate._id,
+      graduate.firstName,
+      graduate.lastName,
+      graduate.documentId,
+      graduate.birthDate,
+      graduate.entryDate,
+      graduate.graduationDate,
+      graduate.career,
+      graduate.studentCode,
+      laNacionNews,
+      List[InfobaeNews](),
+      LinkedinUserProfile(UUID.randomUUID().toString,
+        "",
+        List[LinkedinJob](),
+        List[LinkedinEducation](),
+        ""
+    ))
+    Await.result(graduateService.update(newGraduate), Duration.Inf)
+    //Ok(views.html.graduateProfile.render(Option(newGraduate)))
+    //    Redirect(routes.EgresadosController.showProfile(newGraduate._id))
+    Ok(Json.obj("status" -> "success"))
   }
 }
