@@ -44,6 +44,8 @@ GET          /linkedin/delete/:id         controllers.LinkedinUserProfileControl
 
 #LaNacionController
 GET         /lanacion/search/:id          controllers.LaNacionNewsController.saveNews(id : String)
+GET         /validate/:id           controllers.EgresadosController.renderValidate(id: String)
+POST        /valid              controllers.EgresadosController.validateLinks
 
 #InfobaeController
 GET         /infobae/search/:id           controllers.InfobaeNewsController.saveNews(id : String)
