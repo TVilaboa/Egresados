@@ -29,8 +29,10 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
     val scraper : LinkedinUserProfileScraper = new LinkedinUserProfileScraper()
     var linkedinUserProfile: LinkedinUserProfile = null
     link.map{link : String =>
-      linkedinUserProfile = scraper.getLinkedinProfile(link)
-      linkedinUserProfileService.save(linkedinUserProfile)
+      if (!scraper.getLinkedinProfile(link).equals(None)) {
+        linkedinUserProfile = scraper.getLinkedinProfile(link).get
+        linkedinUserProfileService.save(linkedinUserProfile)
+      }
     }
     if(Option(linkedinUserProfile).isDefined){
       graduate = graduate.copy(linkedinUserProfile = Option(linkedinUserProfile).get)
@@ -51,7 +53,11 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
       val scraper: LinkedinUserProfileScraper = new LinkedinUserProfileScraper()
       var linkedinUserProfile: LinkedinUserProfile = null
       link.foreach { link: String =>
-        linkedinUserProfile = scraper.getLinkedinProfile(link)
+
+        var opLinkedinUserProfile = scraper.getLinkedinProfile(link)
+        if (!opLinkedinUserProfile.equals(None)){
+          linkedinUserProfile = opLinkedinUserProfile.get
+        }
       }
       if (linkedinUserProfile != null) {
         val graduate = grad.copy(linkedinUserProfile = linkedinUserProfile)

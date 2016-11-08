@@ -28,9 +28,13 @@ class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService
     var news: List[LaNacionNews] = List[LaNacionNews]()
     var element: LaNacionNews = null
     for(link <- links) {
-      element = scraper.getArticleData(link)
-      newsLaNacionService.save(element)
-      news = element :: news
+      if (!link.equals(null)) {
+        element = scraper.getArticleData(link).get
+      }
+      if (!element.equals(None)) {
+        newsLaNacionService.save(element)
+        news = element :: news
+      }
     }
     graduate = graduate.copy(laNacionNews = news)
     Await.result(graduateService.update(graduate),Duration.Inf)

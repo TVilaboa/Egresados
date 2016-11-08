@@ -27,9 +27,11 @@ class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,gr
     var news: List[InfobaeNews] = List[InfobaeNews]()
     var element: InfobaeNews = null
     for(link <- links) {
-      element = scraper.scrape(link)
-      newsInfobaeService.save(element)
-      news = element :: news
+        element = scraper.scrape(link).get
+      if (!element.equals(None)) {
+        newsInfobaeService.save(element)
+        news = element :: news
+      }
     }
     graduate = graduate.copy(infobaeNews = news)
     var result = Await.result(graduateService.update(graduate),Duration.Inf)

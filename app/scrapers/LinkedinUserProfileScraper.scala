@@ -6,7 +6,9 @@ package scrapers
 
 import java.util.{UUID, ArrayList, Date}
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import play.api.Logger
 import scala.collection.JavaConversions._
 import models.{LinkedinUserProfile, LinkedinEducation, LinkedinJob}
 import play.data.format.Formats.DateTime
@@ -22,9 +24,15 @@ class LinkedinUserProfileScraper () {
 //    val userProfile5 = getLinkedinProfile("https://ar.linkedin.com/in/kevstessens?trk=pub-pbmap")
 //  }
 
-  def getLinkedinProfile(url: String): LinkedinUserProfile = {
+  def getLinkedinProfile(url: String): Option[LinkedinUserProfile] = {
     val userAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
-    val doc = Jsoup.connect(url).userAgent(userAgentString).get
+    val successLogger: Logger = Logger("successLogger")
+    val errorLogger: Logger = Logger("errorLogger")
+    var doc: Document = null
+
+    try {
+      doc = Jsoup.connect(url).userAgent(userAgentString).get()
+      successLogger.info(url)
 
     val title = doc.select("#profile")(0)
       .getElementsByClass("profile-overview-content")(0)
@@ -85,7 +93,13 @@ class LinkedinUserProfileScraper () {
         listEducation = LinkedinEducation(UUID.randomUUID().toString,instituto,urlInstituto,degreeName,date,desc) :: listEducation
       }
     }
-    LinkedinUserProfile(UUID.randomUUID().toString,posicionActual, listJobs,listEducation , url)
+    Some(LinkedinUserProfile(UUID.randomUUID().toString,posicionActual, listJobs,listEducation , url))
+  } catch {
+      case  e: Exception =>
+        errorLogger.info(url + " - " + e.toString)
+
+        None
+    }
   }
 
   private def getText(e: Elements): String = {
