@@ -24,7 +24,7 @@ class LaNacionScraper () {
     try{
      author = article.get(0).select("a[itemprop = author]").get(0).text()
     } catch {
-      case  e: Exception =>
+      case  e: IllegalStateException =>
     }
 
     //armo la lista con todos los datos
