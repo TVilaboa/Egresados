@@ -9,14 +9,14 @@
   </appender>
 
   <appender name="ACIERTO" class="ch.qos.logback.core.FileAppender">
-    <file>success.log</file>
+    <file>logs/success.log</file>
     <encoder>
       <pattern>%date{yyyy-MM-dd HH:mm:ss} - [SUCCESS] - %message%n%xException</pattern>
     </encoder>
   </appender>
 
   <appender name="ERROR" class="ch.qos.logback.core.FileAppender">
-    <file>error.log</file>
+    <file>logs/error.log</file>
     <encoder>
       <pattern>%date{yyyy-MM-dd HH:mm:ss} - [ERROR] - %message%n%xException</pattern>
     </encoder>
