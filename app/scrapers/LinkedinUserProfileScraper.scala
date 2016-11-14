@@ -34,15 +34,7 @@ class LinkedinUserProfileScraper () {
     var doc: Option[Document] = None
     try {
       doc = Option(Jsoup.connect(url).userAgent(userAgentString).get)
-      successLogger.info(url
-    } catch {
-      case  e: ReadTimeoutException =>
-        if (cycle == 0) getLinkedinProfile(url, cycle + 1)
-        else e.printStackTrace()
-
-      case e : IOException => e.printStackTrace()
-    }
-    //val doc = Jsoup.connect(url).userAgent(userAgentString).get
+      successLogger.info(url)
 
     val title = doc.get.select("#profile")(0)
       .getElementsByClass("profile-overview-content")(0)
@@ -104,10 +96,20 @@ class LinkedinUserProfileScraper () {
       }
     }
     Some(LinkedinUserProfile(UUID.randomUUID().toString,posicionActual, listJobs,listEducation , url))
-  } catch {
+    }
+
+    catch {
+      case  e: ReadTimeoutException =>
+        if (cycle == 0) getLinkedinProfile(url, cycle + 1)
+        else {
+          errorLogger.info(url + " - " + e.toString)
+          None
+        }
+      case e : IOException =>
+        errorLogger.info(url + " - " + e.toString)
+        None
       case  e: Exception =>
         errorLogger.info(url + " - " + e.toString)
-
         None
     }
   }

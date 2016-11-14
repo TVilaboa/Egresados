@@ -25,12 +25,12 @@ class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,gr
     val links = InfobaeUrlGeneratorObject.search(Option(graduate.firstName + " " +graduate.lastName),Option("Universidad Austral"))
     val scraper: InfobaeScraper = new InfobaeScraper()
     var news: List[InfobaeNews] = List[InfobaeNews]()
-    var element: InfobaeNews = null
+    var element: Option[InfobaeNews] = null
     for(link <- links) {
       element = scraper.scrape(link,0)
-      if (!element.equals(None)) {
-        newsInfobaeService.save(element)
-        news = element :: news
+      if (element.isDefined) {
+        newsInfobaeService.save(element.get)
+        news = element.get :: news
       }
     }
     graduate = graduate.copy(infobaeNews = news)

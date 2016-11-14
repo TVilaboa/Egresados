@@ -31,7 +31,7 @@ class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService
       if (!link.equals(null)) {
         element = scraper.getArticleData(link,0)
       }
-      if (!element.equals(None)) {
+      if (element.isDefined) {
         newsLaNacionService.save(element.get)
         news = element.get :: news
       }
