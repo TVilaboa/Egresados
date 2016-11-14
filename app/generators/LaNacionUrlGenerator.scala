@@ -68,7 +68,7 @@ class LaNacionUrlGenerator extends BasicUrlGenerator{
         Thread.sleep(10000)
       }
     }
-    result
+    result.distinct
   }
 
     /**
