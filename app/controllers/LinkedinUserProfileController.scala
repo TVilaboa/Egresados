@@ -27,7 +27,8 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
     var linkedinUserProfile: Option[LinkedinUserProfile] = None
     link.map{link : String =>
       linkedinUserProfile = scraper.getLinkedinProfile(link,0)
-      linkedinUserProfileService.save(linkedinUserProfile.get)
+      if(linkedinUserProfile.isDefined)
+        linkedinUserProfileService.save(linkedinUserProfile.get)
     }
     if(linkedinUserProfile.isDefined){
       graduate = graduate.copy(linkedinUserProfile = linkedinUserProfile.get)

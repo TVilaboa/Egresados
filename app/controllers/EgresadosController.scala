@@ -81,7 +81,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
 
     graduates = Await.result(all, Duration.Inf)
-    Ok(views.html.search.render(graduates, graduateForm, true, null, null, null, null))
+    Ok(views.html.search.render(graduates, graduateForm, true, null, null, null, null, null, null))
   }
 
   def search = Action { implicit request => {
@@ -126,13 +126,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     Ok(views.html.index.render(""))
   }
   }
-
-  //  def renderValidate = Action { implicit request => {
-  //    val id = graduateForm.bindFromRequest.data("id")
-  //    val graduate: Graduate = Await.result(graduateService.find(id),Duration.Inf)
-  //    Ok(views.html.validateGraduateLinks.render(Option(graduate)))
-  //  }
-  //  }
 
   def renderValidate(id:String) = Action {
     try{

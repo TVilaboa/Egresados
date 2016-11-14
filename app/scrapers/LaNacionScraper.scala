@@ -34,25 +34,31 @@ class LaNacionScraper () {
       try{
        author = article.get(0).select("a[itemprop = author]").get(0).text()
        //armo la lista con todos los datos
-       val news: LaNacionNews = LaNacionNews(UUID.randomUUID().toString, url, title, date, tuft, author)
-
-       Some(news)
-
       }
-      catch {
-        case  e: ReadTimeoutException =>
-          if (cycle == 0) getArticleData(url, cycle + 1)
-          else {
-            errorLogger.info(url + " - " + e.toString)
-            None
-          }
-        case e : IOException =>
+      catch{
+        case e : IndexOutOfBoundsException =>
           errorLogger.info(url + " - " + e.toString)
-          None
-        case  e: Exception =>
-          errorLogger.info(url + " - " + e.toString)
-          None
       }
+
+      val news: LaNacionNews = LaNacionNews(UUID.randomUUID().toString, url, title, date, tuft, author)
+
+      Some(news)
+
     }
+    catch {
+      case  e: ReadTimeoutException =>
+        if (cycle == 0) getArticleData(url, cycle + 1)
+        else {
+          errorLogger.info(url + " - " + e.toString)
+          None
+        }
+      case e : IOException =>
+        errorLogger.info(url + " - " + e.toString)
+        None
+      case  e: Exception =>
+        errorLogger.info(url + " - " + e.toString)
+        None
+    }
+
   }
 }
