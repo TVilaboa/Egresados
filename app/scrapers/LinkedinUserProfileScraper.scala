@@ -4,8 +4,11 @@ package scrapers
   * Elaborado por Brian Re y Michele Re
  */
 
+import java.io.IOException
 import java.util.{UUID, ArrayList, Date}
+import io.netty.handler.timeout.ReadTimeoutException
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import scala.collection.JavaConversions._
 import models.{LinkedinUserProfile, LinkedinEducation, LinkedinJob}
@@ -22,16 +25,26 @@ class LinkedinUserProfileScraper () {
 //    val userProfile5 = getLinkedinProfile("https://ar.linkedin.com/in/kevstessens?trk=pub-pbmap")
 //  }
 
-  def getLinkedinProfile(url: String): LinkedinUserProfile = {
+  def getLinkedinProfile(url: String, cycle: Int): LinkedinUserProfile = {
     val userAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
-    val doc = Jsoup.connect(url).userAgent(userAgentString).get
+    var doc: Option[Document] = None
+    try {
+      doc = Option(Jsoup.connect(url).userAgent(userAgentString).get)
+    } catch {
+      case  e: ReadTimeoutException =>
+        if (cycle == 0) getLinkedinProfile(url, cycle + 1)
+        else e.printStackTrace()
 
-    val title = doc.select("#profile")(0)
+      case e : IOException => e.printStackTrace()
+    }
+    //val doc = Jsoup.connect(url).userAgent(userAgentString).get
+
+    val title = doc.get.select("#profile")(0)
       .getElementsByClass("profile-overview-content")(0)
       .getElementsByTag("p")
     val posicionActual = getText(title)
 
-    val experience = doc.select("#experience")
+    val experience = doc.get.select("#experience")
     var position : Elements = new Elements()
 
     if(experience.nonEmpty)
@@ -59,7 +72,7 @@ class LinkedinUserProfileScraper () {
     }
 
 
-    val education : Elements = doc.select("#education")
+    val education : Elements = doc.get.select("#education")
 
     var educationList : Elements = new Elements()
     if(education.nonEmpty)

@@ -3,6 +3,7 @@ package scrapers
 import java.io.IOException
 import java.util.UUID
 
+import io.netty.handler.timeout.ReadTimeoutException
 import models.InfobaeNews
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -17,13 +18,17 @@ import scala.collection.JavaConversions._
 
 class InfobaeScraper {
 
-  def scrape(url: String): InfobaeNews ={
+  def scrape(url: String, cycle: Int): InfobaeNews ={
     val userAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
     var document: Option[Document] = None
     try {
       document = Option(Jsoup.connect(url).userAgent(userAgentString).get)
     } catch {
-      case e: IOException => e.printStackTrace()
+      case  e: ReadTimeoutException =>
+        if (cycle == 0) scrape(url, cycle + 1)
+        else e.printStackTrace()
+
+      case e : IOException => e.printStackTrace()
     }
     val header = document.get.getElementsByTag("header")
     var titulo: Option[String] = getString(document.get.getElementsByClass("entry-title"))

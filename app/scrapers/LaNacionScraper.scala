@@ -1,14 +1,16 @@
 package scrapers
 
+import java.io.IOException
 import java.util.UUID
 
+import io.netty.handler.timeout.ReadTimeoutException
 import models.LaNacionNews
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
 class LaNacionScraper () {
 
-  def getArticleData(url : String): LaNacionNews ={
+  def getArticleData(url : String, cycle : Int): LaNacionNews ={
 
     val userAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
     val doc: Document = Jsoup.connect(url).userAgent(userAgentString).get()
@@ -24,7 +26,11 @@ class LaNacionScraper () {
     try{
      author = article.get(0).select("a[itemprop = author]").get(0).text()
     } catch {
-      case  e: Exception =>
+      case  e: ReadTimeoutException =>
+        if (cycle == 0) getArticleData(url, cycle + 1)
+        else e.printStackTrace()
+
+      case e : IOException => e.printStackTrace()
     }
 
     //armo la lista con todos los datos
