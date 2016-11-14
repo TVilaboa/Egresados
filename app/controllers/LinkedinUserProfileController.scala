@@ -60,7 +60,7 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
         Await.result(graduateService.update(graduate), Duration.Inf)
       }
     }
-      Ok(views.html.index.render("Success"))
+      Ok(views.html.index.render("", "", 0, "", 0))
   }
 
   def deleteProfile(id:String) = Action {

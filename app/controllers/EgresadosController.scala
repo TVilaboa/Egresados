@@ -123,7 +123,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
 
   def save = secureAction { implicit request => {
-    Ok(views.html.index.render(""))
+    Ok(views.html.index.render("", "", 0, "", 0))
   }
   }
 
@@ -394,7 +394,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       }
       Ok(views.html.importCSV.render(graduatesCSV,message))
     }.getOrElse {
-      Redirect(routes.Application.index()).flashing(
+      Redirect(routes.Application.homeFeed()).flashing(
         "error" -> "Missing file")
     }
   }
