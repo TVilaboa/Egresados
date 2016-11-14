@@ -25,9 +25,13 @@ class RestApiController @Inject()(graduateService: GraduateService,
                                   val messagesApi: MessagesApi) extends Controller {
 
   def getAllInfobaeData = Action { implicit request => {
-    var info= Seq[InfobaeNews]()
-    val all: Future[Seq[InfobaeNews]] = newsInfobaeService.all()
-    info = Await.result(all,Duration.Inf)
+    var info = List[InfobaeNews]()
+    var graduates = Seq[Graduate]()
+    val all: Future[Seq[Graduate]] = graduateService.all()
+    graduates = Await.result(all,Duration.Inf)
+    for(grad <- graduates){
+      info =  info ::: grad.infobaeNews
+    }
     if(info.isEmpty){
       Ok("{\"type\":\"success\",\"value\": \"There is no data\" }")
     }else{
@@ -48,9 +52,13 @@ class RestApiController @Inject()(graduateService: GraduateService,
   }}
 
   def getAllLaNacionData = Action { implicit request => {
-    var info = Seq[LaNacionNews]()
-    val all: Future[Seq[LaNacionNews]] = newsLaNacionService.all()
-    info = Await.result(all,Duration.Inf)
+    var info = List[LaNacionNews]()
+    var graduates = Seq[Graduate]()
+    val all: Future[Seq[Graduate]] = graduateService.all()
+    graduates = Await.result(all,Duration.Inf)
+    for(grad <- graduates){
+      info =  info ::: grad.laNacionNews
+    }
     if(info.isEmpty){
       Ok("{\"type\":\"success\",\"value\": \"There is no data\" }")
     }else{
@@ -59,9 +67,13 @@ class RestApiController @Inject()(graduateService: GraduateService,
   }}
 
   def getAllLinkedInData = Action { implicit request => {
-    var info = Seq[LinkedinUserProfile]()
-    val all: Future[Seq[LinkedinUserProfile]] = linkedinUserProfileService.all()
-    info = Await.result(all, Duration.Inf)
+    var info = List[LinkedinUserProfile]()
+    var graduates = Seq[Graduate]()
+    val all: Future[Seq[Graduate]] = graduateService.all()
+    graduates = Await.result(all,Duration.Inf)
+    for(grad <- graduates){
+      info =  grad.linkedinUserProfile :: info
+    }
     if(info.isEmpty){
       Ok("{\"type\":\"success\",\"value\": \"There is no data\" }")
     }else{
