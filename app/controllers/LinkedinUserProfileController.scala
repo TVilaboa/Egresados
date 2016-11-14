@@ -48,7 +48,11 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
       val scraper: LinkedinUserProfileScraper = new LinkedinUserProfileScraper()
       var linkedinUserProfile: LinkedinUserProfile = null
       link.foreach { link: String =>
-        linkedinUserProfile = scraper.getLinkedinProfile(link,0)
+
+        var opLinkedinUserProfile = scraper.getLinkedinProfile(link)
+        if (!opLinkedinUserProfile.equals(None)){
+          linkedinUserProfile = opLinkedinUserProfile.get
+        }
       }
       if (linkedinUserProfile != null) {
         val graduate = grad.copy(linkedinUserProfile = linkedinUserProfile)

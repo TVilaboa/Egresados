@@ -7,13 +7,21 @@ import io.netty.handler.timeout.ReadTimeoutException
 import models.LaNacionNews
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.Logger
 
 class LaNacionScraper () {
 
-  def getArticleData(url : String, cycle : Int): LaNacionNews ={
+  def getArticleData(url : String, cycle : Int): Option[LaNacionNews] ={
 
     val userAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
-    val doc: Document = Jsoup.connect(url).userAgent(userAgentString).get()
+    val successLogger: Logger = Logger("successLogger")
+    val errorLogger: Logger = Logger("errorLogger")
+    var doc: Document = null
+
+
+    try {
+      doc = Jsoup.connect(url).userAgent(userAgentString).get()
+      successLogger.info(url)
 
     val article = doc.select("#nota") //Para entrar en un tag <article id = "nota"/>
 
@@ -33,10 +41,16 @@ class LaNacionScraper () {
       case e : IOException => e.printStackTrace()
     }
 
-    //armo la lista con todos los datos
-    val news: LaNacionNews = LaNacionNews(UUID.randomUUID().toString,url, title, date, tuft, author)
+      //armo la lista con todos los datos
+      val news: LaNacionNews = LaNacionNews(UUID.randomUUID().toString, url, title, date, tuft, author)
 
-    news
+      Some(news)
+    } catch {
+    case  e: Exception =>
+      errorLogger.info(url + " - " + e.toString)
+
+      None
+  }
 
   }
 }

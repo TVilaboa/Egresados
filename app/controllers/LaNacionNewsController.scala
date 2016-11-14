@@ -26,11 +26,15 @@ class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService
     val links = LaNacionUrlGeneratorObject.search(Option(graduate.firstName + " " +graduate.lastName),Option("Universidad Austral"))
     val scraper: LaNacionScraper = new LaNacionScraper()
     var news: List[LaNacionNews] = List[LaNacionNews]()
-    var element: LaNacionNews = null
+    var element: Option[LaNacionNews] = None
     for(link <- links) {
-      element = scraper.getArticleData(link,0)
-      newsLaNacionService.save(element)
-      news = element :: news
+      if (!link.equals(null)) {
+        element = scraper.getArticleData(link,0)
+      }
+      if (!element.equals(None)) {
+        newsLaNacionService.save(element.get)
+        news = element.get :: news
+      }
     }
     graduate = graduate.copy(laNacionNews = news)
     Await.result(graduateService.update(graduate),Duration.Inf)

@@ -28,8 +28,10 @@ class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,gr
     var element: InfobaeNews = null
     for(link <- links) {
       element = scraper.scrape(link,0)
-      newsInfobaeService.save(element)
-      news = element :: news
+      if (!element.equals(None)) {
+        newsInfobaeService.save(element)
+        news = element :: news
+      }
     }
     graduate = graduate.copy(infobaeNews = news)
     var result = Await.result(graduateService.update(graduate),Duration.Inf)
