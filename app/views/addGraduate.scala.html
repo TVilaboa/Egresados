@@ -40,16 +40,31 @@
                                     <input type="text" class="form-control" name="studentcode" id="studentcode" placeholder="StudentCode">
                                 </div>
                                 <div class="form-group">
+                                    <div id="birthSpan" class="alert alert-danger" role="alert" style='display: none'>
+                                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="false"></span>
+                                        <span class="sr-only">Error:</span>
+                                        Fecha de Nacimiento, debe ser al menos 22 años menor al dia de la fecha.
+                                    </div>
                                     <label for="birthday">Fecha de nacimiento</label>
                                     <br>
                                     <input required type="date" name="birthday" id="birthday" placeholder="DD/MM/AAAA">
                                 </div>
                                 <div class="form-group">
+                                    <div id="entrySpan" class="alert alert-danger" role="alert" style='display: none'>
+                                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="false"></span>
+                                        <span class="sr-only">Error:</span>
+                                        Fecha de Ingreso Invalida, debe ser al menos 5 años menor al dia de la fecha.
+                                    </div>
                                     <label for="entryday">Fecha de ingreso a la facultad</label>
                                     <br>
                                     <input required type="date" name="entryday" id="entryday" placeholder="DD/MM/AAAA">
                                 </div>
                                 <div class="form-group">
+                                    <div id="graduationSpan" class="alert alert-danger" role="alert" style='display: none'>
+                                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="false"></span>
+                                        <span class="sr-only">Error:</span>
+                                        Fecha de Egreso Invalida, no debe superar la fecha del dia.
+                                    </div>
                                     <label for="graduationday">Fecha de graduacion</label>
                                     <br>
                                     <input type="date" name="graduationday" id="graduationday" placeholder="DD/MM/AAAA">
@@ -63,6 +78,27 @@
                             }
                              
                         </div> 
+
+                        <!-- Modal -->
+                        @*<div id="myModal" class="modal fade" role="dialog">*@
+                            @*<div class="modal-dialog">*@
+
+                                    @*<!-- Modal content-->*@
+                                @*<div class="modal-content">*@
+                                    @*<div class="modal-header">*@
+                                        @*<button type="button" class="close" data-dismiss="modal">&times;</button>*@
+                                        @*<h4 class="modal-title">Invalid Date!</h4>*@
+                                    @*</div>*@
+                                    @*<div class="modal-body">*@
+                                        @*<p>Some text in the modal.</p>*@
+                                    @*</div>*@
+                                    @*<div class="modal-footer">*@
+                                        @*<button type="button" class="btn btn-default" id="modalCloseButton" data-dismiss="modal">Close</button>*@
+                                    @*</div>*@
+                                @*</div>*@
+
+                            @*</div>*@
+                        @*</div>*@
 
                         <!-- /.panel-body --> 
                     </div>
@@ -101,6 +137,60 @@
                 if (charCode > 31 && (charCode < 48 || charCode > 57))
                     return false;
                 return true;
+            }
+
+            function validateBirthDate() {
+                document.getElementById('birthSpan').style.display = 'none'; //Para que no vuelva a aparecer
+                var parts = document.getElementById('birthday').value.split("-");
+
+                var year = parseInt(parts[0], 10);
+                var actualYear = new Date().getFullYear();
+                if(actualYear - year < 22) {
+                    document.getElementById('birthSpan').style.display = 'block';
+                    return false;
+                }
+                return true;
+            }
+
+            function validateEntryDate() {
+                document.getElementById('entrySpan').style.display = 'none'; //Para que no vuelva a aparecer
+                var parts = document.getElementById('entryday').value.split("-");
+
+                var year = parseInt(parts[0], 10);
+                var actualYear = new Date().getFullYear();
+                if(actualYear - year < 6) {
+                    document.getElementById('entrySpan').style.display = 'block';
+                    return false;
+                }
+                return true;
+            }
+
+            function validateGraduateDate() {
+                document.getElementById('graduationSpan').style.display = 'none'; //Para que no vuelva a aparecer
+                var parts = document.getElementById('graduationday').value.split("-");
+
+                var day = parseInt(parts[2], 10);
+                var month = parseInt(parts[1], 10);
+                var year = parseInt(parts[0], 10);
+                var actualYear = new Date().getFullYear();
+                var actualMonth = (new Date().getMonth()) + 1;
+                var actualDay = new Date().getDate();
+                if(actualYear < year || (actualYear == year && actualMonth < month) || (actualYear == year && actualMonth == month && actualDay < day)) {
+                    document.getElementById('graduationSpan').style.display = 'block';
+                    return false;
+                }
+                return true;
+            }
+
+            function validation() {
+                var validateBirth = false;
+                var validateEntry = false;
+                var validateGraduate = false;
+                if(validateBirthDate()) validateBirth = true;
+                if(validateEntryDate()) validateEntry = true;
+                if(validateGraduateDate()) validateGraduate = true;
+
+                return (validateBirth && validateEntry && validateGraduate);
             }
 
     </script>
