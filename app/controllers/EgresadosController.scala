@@ -227,7 +227,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   def mergeGraduate (graduate: Graduate): Graduate ={
 
 
-    var id = graduate._id
+    val id = graduate._id
     var name = graduate.firstName
     var lastName = graduate.lastName
     var dni = graduate.documentId
@@ -239,9 +239,9 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
 
     val original: Graduate = Await.result(graduateService.find(id), Duration.Inf)
-    var laNacionNews = original.laNacionNews
-    var infobaeNews = original.infobaeNews
-    var linkedInData = original.linkedinUserProfile
+    val laNacionNews = original.laNacionNews
+    val infobaeNews = original.infobaeNews
+    val linkedInData = original.linkedinUserProfile
 
     if(name == "") name = original.firstName
     if(lastName == "") lastName = original.lastName
@@ -266,7 +266,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       infobaeNews,
       linkedInData
     )
-    return updatedGraduate
+    updatedGraduate
   }
 
   def showProfileTest = Action {
@@ -275,17 +275,11 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
   def getLinkedInUrlStats = secureAction{
     var graduates = Seq[Graduate]()
-
-
     val all: Future[Seq[Graduate]] = graduateService.all()
-
-
     graduates = Await.result(all,Duration.Inf)
-
     val links : Seq[(String,String,String,String)] = Await.result(graduateService.getNumberWithLinks, Duration.Inf)
 
     Ok(views.html.links(links,graduates))
-
   }
 
   def showimportCSV = secureAction { implicit request => {
@@ -298,6 +292,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       val filename = csv.filename
       val contentType = csv.contentType
       val csvFile = csv.ref.file
+
       val reader = CSVReader.open(csvFile)
       val info = reader.allWithHeaders()
       var graduatesCSV : List[Graduate] = List[Graduate]()
