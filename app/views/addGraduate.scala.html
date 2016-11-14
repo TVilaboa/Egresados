@@ -1,4 +1,10 @@
-@layout(title = "Add Graduate") {
+
+@styles = {
+    <!-- Application Style CSS -->
+    <link href="@routes.Assets.at("stylesheets/applicationStyle.css")" rel="stylesheet">
+}
+
+@layout(title = "Add Graduate", styles) {
     <div id="page-wrapper">
                          <div class="row"> 
             <div class="col-lg-12">
@@ -16,7 +22,7 @@
                             <!-- /.panel-heading --> 
                         <div class="panel-body">
                             @helper.form(action = routes.EgresadosController.addGraduate()) {
-                                <input type="number" style="display : none" name="id" value="-1" class="form-control">
+                                <input id="inputIDAdd" type="number" name="id" value="-1" class="form-control">
                                 <div class="form-group">
                                     <label for="firstName">Nombre</label>
                                     <input onkeypress="return soloLetras(event)" required type="text" class="form-control" name="firstName" id="firstName" placeholder="Nombre">
