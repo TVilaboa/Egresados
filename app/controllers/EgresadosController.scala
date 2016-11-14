@@ -42,17 +42,17 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       "career" -> text(),
       "studentCode" -> text(),
       "lanacionNews" -> list(mapping("_id" -> text(),
-      "url" -> text(),
-      "title" -> text(),
-      "date" -> text(),
-      "tuft" -> text(),
-      "author" -> text())(LaNacionNews.apply)(LaNacionNews.unapply)),
+        "url" -> text(),
+        "title" -> text(),
+        "date" -> text(),
+        "tuft" -> text(),
+        "author" -> text())(LaNacionNews.apply)(LaNacionNews.unapply)),
       "infobaeNews" -> list(mapping("_id" -> text(),
-      "url" -> text(),
-      "title" -> text(),
-      "date" -> text(),
-      "tuft" -> text(),
-      "author" -> text())(InfobaeNews.apply)(InfobaeNews.unapply)),
+        "url" -> text(),
+        "title" -> text(),
+        "date" -> text(),
+        "tuft" -> text(),
+        "author" -> text())(InfobaeNews.apply)(InfobaeNews.unapply)),
       "linkedinUserProfile" -> mapping("_id" -> text(),
         "actualPosition" -> text(),
         "jobList" -> list(mapping("_id" -> text(),
@@ -89,6 +89,8 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     val lastname = graduateForm.bindFromRequest.data("lastName")
     val gradDate = graduateForm.bindFromRequest.data("graduationDate")
     val career = graduateForm.bindFromRequest.data("career")
+    val identification = graduateForm.bindFromRequest.data("identification")
+    val studentCode = graduateForm.bindFromRequest.data("studentCode")
 
 
     val all: Future[Seq[Graduate]] = graduateService.all()
@@ -103,8 +105,13 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       graduates = graduates.filter(x => x.graduationDate.toLowerCase.contains(gradDate.toLowerCase))
     if (career.nonEmpty)
       graduates = graduates.filter(x => x.career.toLowerCase.contains(career.toLowerCase))
+    if (identification.nonEmpty)
+      graduates = graduates.filter(x => x.documentId.toLowerCase.contains(identification.toLowerCase))
+    if (studentCode.nonEmpty)
+      graduates = graduates.filter(x => x.studentCode.toLowerCase.contains(studentCode.toLowerCase))
 
-    Ok(views.html.search.render(graduates, graduateForm, false, firstname, lastname, gradDate, career))
+
+    Ok(views.html.search.render(graduates, graduateForm, false, firstname, lastname, gradDate, career, identification, studentCode))
   }
   }
 
@@ -118,12 +125,12 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
   }
 
-//  def renderValidate = Action { implicit request => {
-//    val id = graduateForm.bindFromRequest.data("id")
-//    val graduate: Graduate = Await.result(graduateService.find(id),Duration.Inf)
-//    Ok(views.html.validateGraduateLinks.render(Option(graduate)))
-//  }
-//  }
+  //  def renderValidate = Action { implicit request => {
+  //    val id = graduateForm.bindFromRequest.data("id")
+  //    val graduate: Graduate = Await.result(graduateService.find(id),Duration.Inf)
+  //    Ok(views.html.validateGraduateLinks.render(Option(graduate)))
+  //  }
+  //  }
 
   def renderValidate(id:String) = Action {
     try{
@@ -453,7 +460,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         List[LinkedinJob](),
         List[LinkedinEducation](),
         ""
-    ))
+      ))
     Await.result(graduateService.update(newGraduate), Duration.Inf)
     //Ok(views.html.graduateProfile.render(Option(newGraduate)))
     //    Redirect(routes.EgresadosController.showProfile(newGraduate._id))
