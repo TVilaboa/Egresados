@@ -15,7 +15,7 @@ class ApplicationSpec extends Specification {
     }
 
     "check the service is alive" in new WithApplication {
-      val login = route(FakeRequest(GET, "/login")).get
+      val login = route(FakeRequest(GET, "/api/infobae")).get
 
       status(login) must equalTo(OK)
       
