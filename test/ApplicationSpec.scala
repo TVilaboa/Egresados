@@ -24,7 +24,7 @@ class ApplicationSpec extends Specification {
     "send 401 on a unauthorized request" in new WithApplication {
       val home = route(FakeRequest(GET, "/")).get
 
-      status(home) must equalTo(Unauthorized)
+      status(home) must equalTo(UNAUTHORIZED)
       contentAsBytes(home).length === 0
     }
   }
