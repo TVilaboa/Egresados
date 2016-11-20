@@ -92,6 +92,8 @@ class MongoLinkedinUserProfileDao @Inject()(mongo: Mongo) extends LinkedinUserPr
     })
   }
 
+  import collection.JavaConverters._
+
   private def documentToLinkedinUserProfile(doc: Document): LinkedinUserProfile = {
 
     import collection.JavaConverters._
