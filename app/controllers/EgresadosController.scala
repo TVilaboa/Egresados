@@ -1,8 +1,11 @@
 package controllers
 
+import java.io.{File, FileReader}
 import java.util.UUID
 
 import actions.SecureAction
+import akka.actor.FSM.Failure
+import akka.actor.Status.Success
 import com.github.tototoshi.csv.CSVReader
 import com.google.inject.Inject
 import com.mongodb.MongoWriteException
@@ -20,6 +23,8 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
+
+import scala.util.Try
 
 /**
   * Created by Ignacio Vazquez on 28/08/2016.
@@ -42,17 +47,17 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       "career" -> text(),
       "studentCode" -> text(),
       "lanacionNews" -> list(mapping("_id" -> text(),
-      "url" -> text(),
-      "title" -> text(),
-      "date" -> text(),
-      "tuft" -> text(),
-      "author" -> text())(LaNacionNews.apply)(LaNacionNews.unapply)),
+        "url" -> text(),
+        "title" -> text(),
+        "date" -> text(),
+        "tuft" -> text(),
+        "author" -> text())(LaNacionNews.apply)(LaNacionNews.unapply)),
       "infobaeNews" -> list(mapping("_id" -> text(),
-      "url" -> text(),
-      "title" -> text(),
-      "date" -> text(),
-      "tuft" -> text(),
-      "author" -> text())(InfobaeNews.apply)(InfobaeNews.unapply)),
+        "url" -> text(),
+        "title" -> text(),
+        "date" -> text(),
+        "tuft" -> text(),
+        "author" -> text())(InfobaeNews.apply)(InfobaeNews.unapply)),
       "linkedinUserProfile" -> mapping("_id" -> text(),
         "actualPosition" -> text(),
         "jobList" -> list(mapping("_id" -> text(),
@@ -89,6 +94,8 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     val lastname = graduateForm.bindFromRequest.data("lastName")
     val gradDate = graduateForm.bindFromRequest.data("graduationDate")
     val career = graduateForm.bindFromRequest.data("career")
+    val identification = graduateForm.bindFromRequest.data("identification")
+    val studentCode = graduateForm.bindFromRequest.data("studentCode")
 
 
     val all: Future[Seq[Graduate]] = graduateService.all()
@@ -103,6 +110,10 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       graduates = graduates.filter(x => x.graduationDate.toLowerCase.contains(gradDate.toLowerCase))
     if (career.nonEmpty)
       graduates = graduates.filter(x => x.career.toLowerCase.contains(career.toLowerCase))
+    if (identification.nonEmpty)
+      graduates = graduates.filter(x => x.documentId.toLowerCase.contains(identification.toLowerCase))
+    if (studentCode.nonEmpty)
+      graduates = graduates.filter(x => x.studentCode.toLowerCase.contains(studentCode.toLowerCase))
 
     Ok(views.html.search.render(graduates, graduateForm, false, firstname, lastname, gradDate, career))
   }
@@ -155,11 +166,11 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("firstName").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("lastName").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("dni").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("studentcode").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("birthday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("entryday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("graduationday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("career").head,
-        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("studentcode").head,
         List[LaNacionNews](),
         List[InfobaeNews](),
         LinkedinUserProfile(UUID.randomUUID().toString,
@@ -171,7 +182,16 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       )
 
       graduateService.save(graduate).map((_) => {
+//        val name = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("firstName").get(0)
+//        val surname = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("lastName").get(0)
+//        val dni = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("dni").get(0)
+//        val code = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("studentcode").get(0)
+//        val bday = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("birthday").get(0)
+//        val eday = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("entryday").get(0)
+//        val gday = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("graduationday").get(0)
+//        val career = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("career").get(0)
         Redirect("/profile/" + graduate._id)
+//        Ok(views.html.graduateProfile.render(name,surname,dni,code,bday,eday,gday,career,"Graduado creado correctamente!"))
       }).recoverWith {
         case e: MongoWriteException => Future {
 
@@ -183,6 +203,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       }
     } catch {
       case e: Exception => Future {
+        //Ok(e.toString)
         BadRequest
       }
     }
@@ -195,6 +216,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       result onSuccess {
         case grad: Graduate => {
           println("Success")
+
         }
       }
       result onFailure {
@@ -221,6 +243,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       case _ => {
         println("Error")
 
+        }
       }
     }
     graduate = Option(Await.result(result, Duration.Inf))
@@ -326,11 +349,14 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
   }
 
+
   def importCSV = Action(parse.multipartFormData) { implicit request => {
     request.body.file("csv").map { csv =>
+      import java.io.File
       val filename = csv.filename
       val contentType = csv.contentType
       val csvFile = csv.ref.file
+      //csv.ref.moveTo(new File(s"/tmp/$filename"),replace = true)
       val reader = CSVReader.open(csvFile)
       val info = reader.allWithHeaders()
       var graduatesCSV : List[Graduate] = List[Graduate]()
@@ -345,7 +371,8 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         val documentId = l.getOrElse("DNI", "")
         val birthDate = l.getOrElse("Fecha de nacimiento", "")
         val studentCode = l.getOrElse("Legajo","")
-
+//        val entryDate = l.getOrElse("Año de Ingreso", "")
+//        val graduationDate = l.getOrElse("Fecha de Ingreso","")
         if(!documentId.equals("")) {
           graduatesCSV = Graduate("",
             firstName,
@@ -396,6 +423,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
       }
       Ok(views.html.importCSV.render(graduatesCSV,message))
+      //Ok("File uploaded")
     }.getOrElse {
       Redirect(routes.Application.index()).flashing(
         "error" -> "Missing file")
