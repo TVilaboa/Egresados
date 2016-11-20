@@ -84,7 +84,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
 
     graduates = Await.result(all, Duration.Inf)
-    Ok(views.html.search.render(graduates, graduateForm, true, null, null, null, null))
+    Ok(views.html.search.render(graduates, graduateForm, true, null, null, null, null, null, null))
   }
 
   def search = Action { implicit request => {
@@ -115,7 +115,8 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     if (studentCode.nonEmpty)
       graduates = graduates.filter(x => x.studentCode.toLowerCase.contains(studentCode.toLowerCase))
 
-    Ok(views.html.search.render(graduates, graduateForm, false, firstname, lastname, gradDate, career))
+    Ok(views.html.search.render(graduates, graduateForm, false, firstname, lastname, gradDate, career,
+      identification, studentCode))
   }
   }
 
@@ -243,7 +244,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       case _ => {
         println("Error")
 
-        }
       }
     }
     graduate = Option(Await.result(result, Duration.Inf))
