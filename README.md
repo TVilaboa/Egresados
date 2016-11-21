@@ -1,4 +1,4 @@
-# Scalongo  [![Build Status](https://travis-ci.org/iozozturk/scalongo.svg)](https://travis-ci.org/iozozturk/scalongo)
+# Scalongo  [![Build Status](https://travis-ci.org/TVilaboa/Egresados.svg)](https://travis-ci.org/TVilaboa/Egresados)
 
 This is a sample seed project showcasing new scala driver for MongoDb on Play Framework 2.5.0
 

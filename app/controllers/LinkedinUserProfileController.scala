@@ -1,8 +1,5 @@
 package controllers
 
-import java.sql.Timestamp
-import java.util.Date
-import play.data.format.Formats.DateTime
 
 import com.google.inject.Inject
 import generators.LinkedInUrlGenerator
@@ -27,14 +24,15 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
     var graduate : Graduate = Await.result(graduateService.find(id),Duration.Inf)
     val link: List[String] = generator.getSearchedUrl(Option(graduate.firstName + " " +graduate.lastName),Option("Universidad Austral"))
     val scraper : LinkedinUserProfileScraper = new LinkedinUserProfileScraper()
-    var linkedinUserProfile: LinkedinUserProfile = null
+    var linkedinUserProfile: Option[LinkedinUserProfile] = None
     link.map{link : String =>
-      linkedinUserProfile = scraper.getLinkedinProfile(link)
-      linkedinUserProfileService.save(linkedinUserProfile)
+      linkedinUserProfile = scraper.getLinkedinProfile(link,0)
+      if(linkedinUserProfile.isDefined)
+        linkedinUserProfileService.save(linkedinUserProfile.get)
     }
-    if(Option(linkedinUserProfile).isDefined){
-      graduate = graduate.copy(linkedinUserProfile = Option(linkedinUserProfile).get)
-      var result = Await.result(graduateService.update(graduate),Duration.Inf)
+    if(linkedinUserProfile.isDefined){
+      graduate = graduate.copy(linkedinUserProfile = linkedinUserProfile.get)
+      Await.result(graduateService.update(graduate),Duration.Inf)
     }
 
     Redirect("/profile/" + graduate._id)
@@ -49,16 +47,20 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
     for(grad <- graduates) {
       val link: List[String] = generator.getSearchedUrl(Option(grad.firstName + " " + grad.lastName), Option("Universidad Austral"))
       val scraper: LinkedinUserProfileScraper = new LinkedinUserProfileScraper()
-      var linkedinUserProfile: LinkedinUserProfile = null
+      var linkedinUserProfile: Option[LinkedinUserProfile] = None
       link.foreach { link: String =>
-        linkedinUserProfile = scraper.getLinkedinProfile(link)
+        val opLinkedinUserProfile = scraper.getLinkedinProfile(link,0)
+
+        if (opLinkedinUserProfile.isDefined){
+          linkedinUserProfile = opLinkedinUserProfile
+        }
       }
-      if (linkedinUserProfile != null) {
-        val graduate = grad.copy(linkedinUserProfile = linkedinUserProfile)
+      if (linkedinUserProfile.isDefined) {
+        val graduate = grad.copy(linkedinUserProfile = linkedinUserProfile.get)
         Await.result(graduateService.update(graduate), Duration.Inf)
       }
     }
-      Ok(views.html.index.render("Success"))
+      Redirect("/")
   }
 
   def deleteProfile(id:String) = Action {

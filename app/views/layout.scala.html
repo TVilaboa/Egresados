@@ -90,7 +90,7 @@
                 <!-- /.navbar-header -->
             <div class="col-xs-6">
                 <ul class="nav nav-pills list">
-                    <li role="presentation"><a href="@routes.Application.index()"><i class="fa fa-home"></i> Home</a></li>
+                    <li role="presentation"><a href="@routes.Application.homeFeed()"><i class="fa fa-home"></i> Home</a></li>
                     <li role="presentation"><a href="@routes.EgresadosController.showSearchForm()"><i class="fa fa-graduation-cap"></i> Graduates</a></li>
                     <li role="presentation"><a href="@routes.EgresadosController.addGraduate()"><i class="fa fa-graduation-cap"></i> Add Graduate</a></li>
                     <li role="presentation"><a href="@routes.EgresadosController.getLinkedInUrlStats()"><i class="fa fa-link"></i>&nbsp Link Stats</a></li>
@@ -208,10 +208,10 @@
                                     <a href="@routes.LinkedinUserProfileController.saveAllLinkedinUserProfile()">Linkedin</a>
                                 </li>
                                 <li>
-                                    <a href="#">LaNacion</a>
+                                    <a href="@routes.LaNacionNewsController.saveAllLaNacionNews()">La Nacion</a>
                                 </li>
                                 <li>
-                                    <a href="#">Infobae</a>
+                                    <a href="@routes.InfobaeNewsController.saveAllInfobaeNews()">Infobae</a>
                                 </li>
                             </ul>
                                 <!-- /.nav-second-level -->

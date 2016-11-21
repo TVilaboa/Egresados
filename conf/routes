@@ -3,60 +3,61 @@
 # ~~~~
 
 # Home page
-GET         /                                     controllers.Application.index
+GET         /                    controllers.Application.homeFeed
 
 ## Layout
 #GET         /layout                    controllers.Application.layout
 
 # Tables
-GET         /tables                               controllers.Application.tables
+GET         /tables              controllers.Application.tables
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                         controllers.Assets.at(path="/public", file)
+GET         /assets/*file        controllers.Assets.at(path="/public", file)
 
 #Auth
-GET         /signup                               controllers.UserAuthController.signupView
-POST        /signup                               controllers.UserAuthController.signup
-GET         /login                                controllers.Application.login
-POST        /login                                controllers.UserAuthController.login
-POST        /logout                               controllers.AuthController.logout
-GET         /logout                               controllers.UserAuthController.logout
-GET         /secure                               controllers.AuthController.securedSampleAction
+GET         /signup              controllers.UserAuthController.signupView
+POST        /signup              controllers.UserAuthController.signup
+GET         /login               controllers.Application.login
+POST        /login               controllers.UserAuthController.login
+POST        /logout              controllers.AuthController.logout
+GET         /logout              controllers.UserAuthController.logout
+GET         /secure              controllers.AuthController.securedSampleAction
 
 #EgresadosController
-GET         /egresados/search                     controllers.EgresadosController.showSearchForm
-POST        /egresados/search                     controllers.EgresadosController.search
-GET         /add                                  controllers.EgresadosController.showGraduateForm
-POST        /add                                  controllers.EgresadosController.addGraduate
-GET         /profile/:id                          controllers.EgresadosController.showProfile(id : String)
-GET         /update/:id                           controllers.EgresadosController.showUpdatingForm(id : String)
-POST        /update/:id                           controllers.EgresadosController.update(id : String)
-GET         /egresados/upload                     controllers.EgresadosController.showimportCSV
-POST        /egresados/upload                     controllers.EgresadosController.importCSV
-GET         /delete/:id                           controllers.EgresadosController.deleteGraduate(id: String)
+GET         /egresados/search             controllers.EgresadosController.showSearchForm
+POST        /egresados/search             controllers.EgresadosController.search
+GET         /add                          controllers.EgresadosController.showGraduateForm
+POST        /add                          controllers.EgresadosController.addGraduate
+GET         /profile/:id                  controllers.EgresadosController.showProfile(id : String)
+GET         /update/:id                   controllers.EgresadosController.showUpdatingForm(id : String)
+POST        /update/:id                   controllers.EgresadosController.update(id : String)
+GET         /egresados/upload             controllers.EgresadosController.showimportCSV
+POST        /egresados/upload             controllers.EgresadosController.importCSV
+GET         /delete/:id                   controllers.EgresadosController.deleteGraduate(id: String)
 
-GET         /stats                                controllers.EgresadosController.getLinkedInUrlStats
+GET         /stats                        controllers.EgresadosController.getLinkedInUrlStats
 
 #LinkedInScraper
-GET         /linkedin/search/:id                  controllers.LinkedinUserProfileController.saveLinkedinUserProfile(id:String)
-GET         /linkedin/searchAll                   controllers.LinkedinUserProfileController.saveAllLinkedinUserProfile
-GET         /linkedin/delete/:id                  controllers.LinkedinUserProfileController.deleteProfile(id:String)
+GET          /linkedin/search/:id         controllers.LinkedinUserProfileController.saveLinkedinUserProfile(id:String)
+GET          /linkedin/searchAll          controllers.LinkedinUserProfileController.saveAllLinkedinUserProfile
+GET          /linkedin/delete/:id         controllers.LinkedinUserProfileController.deleteProfile(id:String)
 
 #LaNacionController
-GET         /lanacion/search/:id                  controllers.LaNacionNewsController.saveNews(id : String)
-GET         /validate/:id                         controllers.EgresadosController.renderValidate(id: String)
-POST        /valid                                controllers.EgresadosController.validateLinks
+GET         /lanacion/search/:id          controllers.LaNacionNewsController.saveNews(id : String)
+GET         /lanacion/searchAll          controllers.LaNacionNewsController.saveAllLaNacionNews
+GET         /validate/:id                 controllers.EgresadosController.renderValidate(id: String)
+POST        /valid                        controllers.EgresadosController.validateLinks
 
 #InfobaeController
-GET         /infobae/search/:id                   controllers.InfobaeNewsController.saveNews(id : String)
+GET         /infobae/search/:id           controllers.InfobaeNewsController.saveNews(id : String)
+GET         /infobae/searchAll            controllers.InfobaeNewsController.saveAllInfobaeNews
 
 #RestApi
-GET         /api/infobae                          controllers.RestApiController.getAllInfobaeData()
-GET         /api/egresados                        controllers.RestApiController.getAllEgresadosData()
-GET         /api/lanacion                         controllers.RestApiController.getAllLaNacionData()
-GET         /api/linkedin                         controllers.RestApiController.getAllLinkedInData()
-GET         /api/infobae/:id                      controllers.RestApiController.getOneInfobaeData(id : String)
-GET         /api/lanacion/:id                     controllers.RestApiController.getOneLaNacionData(id : String)
-GET         /api/linkedin/:id                     controllers.RestApiController.getOneLinkedinData(id : String)
-GET         /api/egresados/carrera/:career        controllers.RestApiController.getAllEgresadosByCareer(career : String)
-GET         /infobae/search/:id                   controllers.InfobaeNewsController.saveNews(id : String)
+GET         /api/infobae            controllers.RestApiController.getAllInfobaeData()
+GET         /api/egresados          controllers.RestApiController.getAllEgresadosData()
+GET         /api/lanacion           controllers.RestApiController.getAllLaNacionData()
+GET         /api/linkedin           controllers.RestApiController.getAllLinkedInData()
+GET         /api/infobae/:id        controllers.RestApiController.getOneInfobaeData(id : String)
+GET         /api/lanacion/:id       controllers.RestApiController.getOneLaNacionData(id : String)
+GET         /api/linkedin/:id       controllers.RestApiController.getOneLinkedinData(id : String)
+GET         /api/egresados/carrera/:career controllers.RestApiController.getAllEgresadosByCareer(career : String)

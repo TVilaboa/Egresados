@@ -1,5 +1,6 @@
 package controllers
 
+import java.io.IOException
 import java.util.UUID
 
 import actions.SecureAction
@@ -48,7 +49,8 @@ class AuthController @Inject()(userService: UserService,
         }
       }
     } catch {
-      case e: Exception => Future {
+      case e: IOException => Future {
+        //Ok(e.toString)
         BadRequest
       }
     }
@@ -84,7 +86,7 @@ class AuthController @Inject()(userService: UserService,
         }
       }
     } catch {
-      case e: Exception => Future {
+      case e: IOException => Future {
         BadRequest
       }
     }

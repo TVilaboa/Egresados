@@ -1,5 +1,6 @@
 package controllers
 
+import java.io.IOException
 import java.util.UUID
 
 import actions.SecureAction
@@ -62,8 +63,10 @@ class UserAuthController @Inject()(userService: UserService,
           )
           sessionService.save(session)
           val response = Map("sessionId" -> sessionId)
+//          Ok(Json.toJson(response)).withCookies(Cookie("sessionId", sessionId))
+//          Redirect("/").withCookies(Cookie("sessionId", sessionId))
 
-          Ok(views.html.index.render("")).withCookies(Cookie("sessionId", sessionId))
+          Redirect("/").withCookies(Cookie("sessionId", sessionId))
         }else
           Unauthorized(views.html.login.render(null,"Invalid Password" ,null))
 
@@ -121,7 +124,8 @@ class UserAuthController @Inject()(userService: UserService,
         }
       }
     } catch {
-      case e: Exception => Future {
+      case e: IOException => Future {
+        //Ok(e.toString)
         BadRequest
       }
     }}

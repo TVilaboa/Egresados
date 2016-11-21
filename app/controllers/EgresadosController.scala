@@ -1,6 +1,6 @@
 package controllers
 
-import java.io.{File, FileReader}
+import java.io.IOException
 import java.util.UUID
 
 import actions.SecureAction
@@ -20,6 +20,8 @@ import play.api.data.Forms._
 import play.api.mvc._
 import services._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.i18n.Messages.Implicits._
+import play.api.Play.current
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
@@ -115,8 +117,8 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     if (studentCode.nonEmpty)
       graduates = graduates.filter(x => x.studentCode.toLowerCase.contains(studentCode.toLowerCase))
 
-    Ok(views.html.search.render(graduates, graduateForm, false, firstname, lastname, gradDate, career,
-      identification, studentCode))
+
+    Ok(views.html.search.render(graduates, graduateForm, false, firstname, lastname, gradDate, career, identification, studentCode))
   }
   }
 
@@ -126,16 +128,9 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
 
   def save = secureAction { implicit request => {
-    Ok(views.html.index.render(""))
+    Redirect("/")
   }
   }
-
-//  def renderValidate = Action { implicit request => {
-//    val id = graduateForm.bindFromRequest.data("id")
-//    val graduate: Graduate = Await.result(graduateService.find(id),Duration.Inf)
-//    Ok(views.html.validateGraduateLinks.render(Option(graduate)))
-//  }
-//  }
 
   def renderValidate(id:String) = Action {
     try{
@@ -167,11 +162,11 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("firstName").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("lastName").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("dni").head,
-        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("studentcode").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("birthday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("entryday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("graduationday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("career").head,
+        request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("studentcode").head,
         List[LaNacionNews](),
         List[InfobaeNews](),
         LinkedinUserProfile(UUID.randomUUID().toString,
@@ -203,8 +198,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         }
       }
     } catch {
-      case e: Exception => Future {
-        //Ok(e.toString)
+      case e: IOException => Future {
         BadRequest
       }
     }
@@ -217,7 +211,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       result onSuccess {
         case grad: Graduate => {
           println("Success")
-
         }
       }
       result onFailure {
@@ -322,7 +315,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       infobaeNews,
       linkedInData
     )
-    return updatedGraduate
+    updatedGraduate
   }
 
   def showProfileTest = Action {
@@ -331,17 +324,11 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
   def getLinkedInUrlStats = secureAction{
     var graduates = Seq[Graduate]()
-
-
     val all: Future[Seq[Graduate]] = graduateService.all()
-
-
     graduates = Await.result(all,Duration.Inf)
-
     val links : Seq[(String,String,String,String)] = Await.result(graduateService.getNumberWithLinks, Duration.Inf)
 
     Ok(views.html.links(links,graduates))
-
   }
 
   def showimportCSV = secureAction { implicit request => {
@@ -349,14 +336,12 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
   }
 
-
   def importCSV = Action(parse.multipartFormData) { implicit request => {
     request.body.file("csv").map { csv =>
-      import java.io.File
       val filename = csv.filename
       val contentType = csv.contentType
       val csvFile = csv.ref.file
-      //csv.ref.moveTo(new File(s"/tmp/$filename"),replace = true)
+
       val reader = CSVReader.open(csvFile)
       val info = reader.allWithHeaders()
       var graduatesCSV : List[Graduate] = List[Graduate]()
@@ -371,8 +356,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         val documentId = l.getOrElse("DNI", "")
         val birthDate = l.getOrElse("Fecha de nacimiento", "")
         val studentCode = l.getOrElse("Legajo","")
-//        val entryDate = l.getOrElse("Año de Ingreso", "")
-//        val graduationDate = l.getOrElse("Fecha de Ingreso","")
+
         if(!documentId.equals("")) {
           graduatesCSV = Graduate("",
             firstName,
@@ -423,9 +407,8 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
       }
       Ok(views.html.importCSV.render(graduatesCSV,message))
-      //Ok("File uploaded")
     }.getOrElse {
-      Redirect(routes.Application.index()).flashing(
+      Redirect(routes.Application.homeFeed()).flashing(
         "error" -> "Missing file")
     }
   }
@@ -486,7 +469,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         List[LinkedinJob](),
         List[LinkedinEducation](),
         ""
-    ))
+      ))
     Await.result(graduateService.update(newGraduate), Duration.Inf)
     Ok(Json.obj("status" -> "success"))
   }
