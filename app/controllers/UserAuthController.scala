@@ -66,7 +66,7 @@ class UserAuthController @Inject()(userService: UserService,
 //          Ok(Json.toJson(response)).withCookies(Cookie("sessionId", sessionId))
 //          Redirect("/").withCookies(Cookie("sessionId", sessionId))
 
-          Ok(views.html.index.render("", "", 0, "", 0)).withCookies(Cookie("sessionId", sessionId))
+          Redirect("/").withCookies(Cookie("sessionId", sessionId))
         }else
           Unauthorized(views.html.login.render(null,"Invalid Password" ,null))
 

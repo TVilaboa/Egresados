@@ -13,8 +13,8 @@ import scala.io.Source
 class Application @Inject()(secureAction: SecureAction) extends Controller {
 
 
-  def index = secureAction {
-    Ok(views.html.index.render("", "", 0, "", 0))
+  def index = {
+    homeFeed
   }
 
   def tables = secureAction {
@@ -33,22 +33,22 @@ class Application @Inject()(secureAction: SecureAction) extends Controller {
     val successLines = Source.fromFile("logs/success.log").getLines.toList
 
     var errorDate : String = ""
-    var errorLogCount : Int = 0
+    var errorLogs: List[String] = List()
     var successDate : String = ""
-    var successLogCount : Int = 0
+    var successLogs: List[String] = List()
 
     if(errorLines.nonEmpty){
       errorDate = errorLines.last.substring(0,10)
       if(errorDate.nonEmpty)
-        errorLogCount = errorLines.count(_.contains(errorDate))
+        errorLogs = errorLines.filter(_.contains(errorDate)).map(_.split(" ").last)
     }
 
     if(successLines.nonEmpty){
       successDate = successLines.last.substring(0,10)
       if(successDate.nonEmpty)
-        successLogCount = successLines.count(_.contains(successDate))
+        successLogs = successLines.filter(_.contains(successDate)).map(_.split(" ").last)
     }
 
-    Ok(views.html.index.render("", errorDate, errorLogCount, successDate, successLogCount))
+    Ok(views.html.index.render("", errorDate, errorLogs, successDate, successLogs))
   }
 }

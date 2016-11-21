@@ -124,7 +124,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
 
   def save = secureAction { implicit request => {
-    Ok(views.html.index.render("", "", 0, "", 0))
+    Redirect("/")
   }
   }
 

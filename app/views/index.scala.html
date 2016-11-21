@@ -1,4 +1,4 @@
-@(message: String = "", dateError: String = "", qtyError: Int = 0, dateSuccess: String = "", qtySuccess: Int = 0)
+@(message: String = "", dateError: String = "", errorLogs: List[String], dateSuccess: String = "", successLogs: List[String])
 @layout(title = "Index"){
 
     <p>@message</p>
@@ -11,30 +11,60 @@
         <div class="">
 
             <span>
-                <div class="row">
-                    <div class="col-md-4 col-md-offset-4">
-                        <div class="login-panel panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">Ultimos scraps</h3>
-                            </div>
-
-                            @if(message.nonEmpty){
-                                <div class="alert alert-danger">
-                                    <strong>@message</strong>
+                <div class="col-lg-6 col-md-6">
+                    <div class="panel panel-red">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-tasks fa-5x"></i>
                                 </div>
-                            }
-
-                            <div class="panel-body">
-                                <p>Errores: @qtyError</p>
-                                <p>Fecha: @dateError</p>
-                                <p>
-
-                                </p>
-                                <p>Correctos: @qtySuccess</p>
-                                <p>Fecha: @dateSuccess</p>
-
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">@errorLogs.size</div>
+                                    <div>Scrap Errors</div>
+                                    <div>@dateError</div>
+                                </div>
                             </div>
                         </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">
+                                    <ul>
+                                        @for(item <- errorLogs){
+                                            <li>@item</li>
+                                        }
+                                    </ul>
+                                </span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-tasks fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">@successLogs.size</div>
+                                    <div>Successful Scraps</div>
+                                    <div>@dateSuccess</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">
+                                    <ul>
+                                    @for(item <- successLogs){
+                                        <li>@item</li>
+                                    }
+                                    </ul>
+                                </span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </span>
