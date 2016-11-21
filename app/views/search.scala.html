@@ -1,8 +1,13 @@
 @(graduates: Seq[Graduate], form : Form[Graduate], condition : Boolean, firstName : String = "",lastName : String = "",gradDate : String = "",carreer : String = "", identification : String = "", studentCode : String = "")
 
-    @styles = {
-        <!-- DataTables CSS -->
-        <link href="@routes.Assets.at("bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css")" rel="stylesheet">
+@styles = {
+    <!-- DataTables CSS -->
+    <link href="../../public/stylesheets/graduateSearch.css" rel="stylesheet">
+    <link href="@routes.Assets.at("bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css")" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="https://editor.datatables.net/extensions/Editor/css/editor.dataTables.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/select/1.2.2/css/select.dataTables.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/buttons/1.2.2/css/buttons.dataTables.min.css" rel="stylesheet">
 
             <!-- DataTables Responsive CSS -->
         <link href="@routes.Assets.at("bower_components/datatables-responsive/css/dataTables.responsive.css")" rel="stylesheet">
@@ -16,21 +21,52 @@
 
     @scripts = {
 
-            <!-- DataTables JavaScript -->
-        <script src="@routes.Assets.at("bower_components/datatables/media/js/jquery.dataTables.min.js")"></script>
-        <script src="@routes.Assets.at("bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js")"></script>
-        <script src="@routes.Assets.at("bower_components/datatables-responsive/js/dataTables.responsive.js")"></script>
+        <!-- DataTables JavaScript -->
+    <script src="https://code.jquery.com/jquery-1.12.3.js"></script>
+    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <script src="https://editor.datatables.net/extensions/Editor/js/dataTables.editor.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.2.0/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js"></script>
+    <script src="@routes.Assets.at("bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js")"></script>
+    <script src="@routes.Assets.at("bower_components/datatables-responsive/js/dataTables.responsive.js")"></script>
 
 
-            <!-- Page-Level Demo Scripts - Tables - Use for reference -->
-        <script>
-                $(document).ready(function() {
-                    $('#dataTables-example').DataTable({
-                        responsive: true
-                    });
+        <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+    <script>
+            $(document).ready(function() {
+                $('#dataTables-example').DataTable({
+                    dom: 'Bfrtip',
+                    responsive: true,
+                    select: true,
+                    buttons: [
+                        {
+                            extend: 'collection',
+                            text: 'Export',
+                            buttons: [
+                                'excel',
+                                'csv',
+                                {
+                                    text: 'JSON',
+                                    action: function ( e, dt, button, config ) {
+                                        var data = dt.buttons.exportData();
+
+                                        $.fn.dataTable.fileSave(
+                                                new Blob( [ JSON.stringify( data ) ] ),
+                                                'Export.json'
+                                        );
+                                    }
+                                }
+                            ]
+                        }
+                    ]
                 });
-        </script>
-    }
+                $('#dataTables-example').DataTable().buttons().container.appendTo($('.col-sm-0:eq(0)', table.table().container()))
+            });
+    </script>
+}
 
     @layout("Search",scripts,styles){
 
