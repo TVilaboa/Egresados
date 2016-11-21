@@ -133,7 +133,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
 
   def renderValidate(id:String) = Action {
-    try{
       var graduate: Option[Graduate] = None
       val result: Future[Graduate] = graduateService.find(id)
       result onSuccess {
@@ -150,8 +149,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       }
       Await.ready(result, Duration.Inf)
       Ok(views.html.validateGraduateLinks.render(graduate))
-
-    }
   }
 
 
@@ -205,7 +202,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
 
   def showProfile(id:String) = Action {
-    try {
       var graduate: Option[Graduate] = None
       val result: Future[Graduate] = graduateService.find(id)
       result onSuccess {
@@ -221,7 +217,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       }
       graduate = Option(Await.result(result, Duration.Inf))
       Ok(views.html.graduateProfile.render(graduate))
-    }
   }
 
   def showUpdatingForm (id:String) = Action {
@@ -377,7 +372,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
             )
           ) :: graduatesCSV
 
-          try {
             var graduateDB: Option[Graduate] = None
             val result: Future[Graduate] = graduateService.findByDocumentId(documentId)
             result onSuccess {
@@ -401,8 +395,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
               }
             }
             Await.ready(result, Duration.Inf)
-
-          }
         }
 
       }

@@ -23,13 +23,14 @@ class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService
   def saveNews(id : String) = secureAction {
     val generator: LaNacionUrlGenerator = new LaNacionUrlGenerator()
     var graduate : Graduate = Await.result(graduateService.find(id),Duration.Inf)
-    val links = LaNacionUrlGeneratorObject.search(Option(graduate.firstName + " " +graduate.lastName),Option("Universidad Austral"))
+    val fullName : Option[String]= Option(graduate.firstName + " " +graduate.lastName)
+    val links = LaNacionUrlGeneratorObject.search(fullName,Option("Universidad Austral"))
     val scraper: LaNacionScraper = new LaNacionScraper()
     var news: List[LaNacionNews] = List[LaNacionNews]()
     var element: Option[LaNacionNews] = None
     for(link <- links) {
       if (!link.equals(null)) {
-        element = scraper.getArticleData(link,0)
+        element = scraper.getArticleData(link,fullName,0)
       }
       if (element.isDefined) {
         newsLaNacionService.save(element.get)
@@ -57,11 +58,12 @@ class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService
     val graduates : Seq[Graduate] = Await.result(all,Duration.Inf)
     graduates.foreach{grad : Graduate =>
       var newsList: List[LaNacionNews] = List[LaNacionNews]()
-      val links = LaNacionUrlGeneratorObject.search(Option(grad.firstName + " " +grad.lastName),Option("Universidad Austral"))
+      val fullName : Option[String]= Option(grad.firstName + " " +grad.lastName)
+      val links = LaNacionUrlGeneratorObject.search(fullName,Option("Universidad Austral"))
       var element: Option[LaNacionNews] = null
       links.foreach{link : String =>
 
-        element = scraper.getArticleData(link,0)
+        element = scraper.getArticleData(link,fullName,0)
         if (element.isDefined) {
           newsLaNacionService.save(element.get)
           newsList = element.get :: newsList

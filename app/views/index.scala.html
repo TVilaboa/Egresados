@@ -7,60 +7,62 @@
         <div class="">
 
             <span>
-                <div class="col-lg-6 col-md-6">
-                    <div class="panel panel-red">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-xs-3">
-                                    <i class="fa fa-tasks fa-5x"></i>
-                                </div>
-                                <div class="col-xs-9 text-right">
-                                    <div class="huge">@errorLogs.size</div>
-                                    <div>Scrap Errors</div>
-                                    <div>@dateError</div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <div class="panel panel-red">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-tasks fa-5x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="huge">@errorLogs.size</div>
+                                        <div>Scrap Errors</div>
+                                        <div>@dateError</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <a href="#">
-                            <div class="panel-footer">
-                                <span class="pull-left">
-                                    <ul>
+                            <a href="#">
+                                <div class="panel-footer">
+                                    <span class="pull-left">
+                                        <ul>
                                         @for(item <- errorLogs){
                                             <li>@item</li>
                                         }
-                                    </ul>
-                                </span>
-                                <div class="clearfix"></div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-6">
-                    <div class="panel panel-green">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-xs-3">
-                                    <i class="fa fa-tasks fa-5x"></i>
+                                        </ul>
+                                    </span>
+                                    <div class="clearfix"></div>
                                 </div>
-                                <div class="col-xs-9 text-right">
-                                    <div class="huge">@successLogs.size</div>
-                                    <div>Successful Scraps</div>
-                                    <div>@dateSuccess</div>
-                                </div>
-                            </div>
+                            </a>
                         </div>
-                        <a href="#">
-                            <div class="panel-footer">
-                                <span class="pull-left">
-                                    <ul>
-                                    @for(item <- successLogs){
-                                        <li>@item</li>
-                                    }
-                                    </ul>
-                                </span>
-                                <div class="clearfix"></div>
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <div class="panel panel-green">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-tasks fa-5x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="huge">@successLogs.size</div>
+                                        <div>Successful Scraps</div>
+                                        <div>@dateSuccess</div>
+                                    </div>
+                                </div>
                             </div>
-                        </a>
+                            <a href="#">
+                                <div class="panel-footer">
+                                    <span class="pull-left">
+                                        <ul>
+                                        @for(item <- successLogs){
+                                            <li>@item</li>
+                                        }
+                                        </ul>
+                                    </span>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </span>

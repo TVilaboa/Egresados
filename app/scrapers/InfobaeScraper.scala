@@ -19,7 +19,7 @@ import scala.collection.JavaConversions._
 
 class InfobaeScraper {
 
-  def scrape(url: String, cycle: Int): Option[InfobaeNews] ={
+  def scrape(url: String, name : Option[String], cycle: Int): Option[InfobaeNews] ={
     val userAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
     var document: Option[Document] = None
     val successLogger: Logger = Logger("successLogger")
@@ -28,7 +28,6 @@ class InfobaeScraper {
 
     try {
       document = Option(Jsoup.connect(url).userAgent(userAgentString).get)
-      successLogger.info(url)
 
       val header = document.get.getElementsByTag("header")
       var titulo: Option[String] = getString(document.get.getElementsByClass("entry-title"))
@@ -38,12 +37,16 @@ class InfobaeScraper {
 
       val fecha = getString(document.get.getElementsByClass("byline-date"))
 
-      Some(InfobaeNews(UUID.randomUUID().toString, url, titulo.get, fecha.get, copete.get, autor.get))
-
+      if(name.isDefined && document.get.select("div:contains(" + name.get + ")").size() > 0){
+        successLogger.info(url)
+        Some(InfobaeNews(UUID.randomUUID().toString, url, titulo.get, fecha.get, copete.get, autor.get))
+      }
+      else
+        None
 
     } catch {
       case  e: ReadTimeoutException =>{
-        if (cycle == 0) scrape(url, cycle + 1)
+        if (cycle == 0) scrape(url, name, cycle + 1)
         else {
           errorLogger.info(url + " - " + e.toString)
           None
