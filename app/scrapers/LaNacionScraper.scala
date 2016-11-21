@@ -30,24 +30,18 @@ class LaNacionScraper () {
       val tuft = article.get(0).getElementsByTag("p").get(0).text()
       var author: String = "anonymus"
 
-      try{
-        val aux = article.get(0).select("a[itemprop = author]")
-        if(aux.size() > 0)
-          author = aux.get(0).text()
-       //armo la lista con todos los datos
-      }
-      catch{
-        case e : IndexOutOfBoundsException =>
-          errorLogger.info(url + " - " + e.toString)
-      }
+      val aux = article.get(0).select("a[itemprop = author]")
+      if(aux.size() > 0)
+        author = aux.get(0).text()
 
-      if(name.isDefined && doc.select("div:contains(" + name.get + ")").size() > 0){
-        successLogger.info(url)
-        Some(LaNacionNews(UUID.randomUUID().toString, url, title, date, tuft, author))
-      }
-      else
-        None
+      Some(LaNacionNews(UUID.randomUUID().toString, url, title, date, tuft, author))
 
+//      if(name.isDefined && article.toString.contains(name)){
+//        successLogger.info(url)
+//        Some(LaNacionNews(UUID.randomUUID().toString, url, title, date, tuft, author))
+//      }
+//      else
+//        None
     }
     catch {
       case  e: ReadTimeoutException =>
@@ -57,6 +51,9 @@ class LaNacionScraper () {
           None
         }
       case e : IOException =>
+        errorLogger.info(url + " - " + e.toString)
+        None
+      case e : IndexOutOfBoundsException =>
         errorLogger.info(url + " - " + e.toString)
         None
       case  e: Exception =>

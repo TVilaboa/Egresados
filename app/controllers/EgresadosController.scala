@@ -1,7 +1,8 @@
 package controllers
 
 import java.io.IOException
-import java.util.UUID
+import java.text.SimpleDateFormat
+import java.util.{Date, UUID}
 
 import actions.SecureAction
 import akka.actor.FSM.Failure
@@ -9,12 +10,13 @@ import akka.actor.Status.Success
 import com.github.tototoshi.csv.CSVReader
 import com.google.inject.Inject
 import com.mongodb.MongoWriteException
-import forms.AuthForms.{SignupData, LoginData}
+import forms.AuthForms.{LoginData, SignupData}
 import forms.GraduateForms.GraduateData
 import io.netty.util.Mapping
 import models._
+import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
-import play.api.libs.json.{Json, JsValue}
+import play.api.libs.json.{JsValue, Json}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
@@ -25,7 +27,6 @@ import play.api.Play.current
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
-
 import scala.util.Try
 
 /**
@@ -108,8 +109,11 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       graduates = graduates.filter(x => x.firstName.toLowerCase.contains(firstname.toLowerCase))
     if (lastname.nonEmpty)
       graduates = graduates.filter(x => x.lastName.toLowerCase.contains(lastname.toLowerCase))
-    if (gradDate.nonEmpty)
-      graduates = graduates.filter(x => x.graduationDate.toLowerCase.contains(gradDate.toLowerCase))
+    if (gradDate.nonEmpty){
+      val format = new SimpleDateFormat("dd/MM/yyyy")
+      val date = new DateTime(gradDate).toDate
+      graduates = graduates.filter(x => x.graduationDate.toLowerCase.contains(format.format(date).toLowerCase))
+    }
     if (career.nonEmpty)
       graduates = graduates.filter(x => x.career.toLowerCase.contains(career.toLowerCase))
     if (identification.nonEmpty)
