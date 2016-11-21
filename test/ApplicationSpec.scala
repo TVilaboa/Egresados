@@ -15,10 +15,17 @@ class ApplicationSpec extends Specification {
     }
 
     "check the service is alive" in new WithApplication {
+      val login = route(FakeRequest(GET, "/api/infobae")).get
+
+      status(login) must equalTo(OK)
+      
+    }
+    
+    "send 401 on a unauthorized request" in new WithApplication {
       val home = route(FakeRequest(GET, "/")).get
 
-      status(home) must equalTo(OK)
-      contentAsBytes(home).length === 0
+      status(home) must equalTo(401)
+     
     }
   }
 }
