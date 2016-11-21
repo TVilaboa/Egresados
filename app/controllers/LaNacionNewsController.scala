@@ -5,14 +5,14 @@ import java.util.Date
 
 import actions.SecureAction
 import com.google.inject.Inject
-import generators.{LaNacionUrlGeneratorObject, LaNacionUrlGenerator}
-import models.{Graduate, LaNacionUserNews, LaNacionNews}
+import generators.{InfobaeUrlGeneratorObject, LaNacionUrlGenerator, LaNacionUrlGeneratorObject}
+import models.{Graduate, InfobaeNews, LaNacionNews, LaNacionUserNews}
 import play.api.mvc.{Action, Controller}
-import scrapers.LaNacionScraper
+import scrapers.{InfobaeScraper, LaNacionScraper}
 import services.{GraduateService, LaNacionNewsService}
 
 import scala.collection.mutable.ListBuffer
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
 
 /**
@@ -43,8 +43,6 @@ class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService
 
   }
 
-
-
   def deleteNews(id:String) = Action {
     //Get graduate from DB.
     val news : LaNacionNews = Await.result(newsLaNacionService.find(id),Duration.Inf)
@@ -52,4 +50,27 @@ class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService
     Redirect("/")
   }
 
+
+  def saveAllLaNacionNews = Action {
+    val scraper : LaNacionScraper = new LaNacionScraper()
+    val all : Future[Seq[Graduate]] = graduateService.all()
+    val graduates : Seq[Graduate] = Await.result(all,Duration.Inf)
+    graduates.foreach{grad : Graduate =>
+      var newsList: List[LaNacionNews] = List[LaNacionNews]()
+      val links = LaNacionUrlGeneratorObject.search(Option(grad.firstName + " " +grad.lastName),Option("Universidad Austral"))
+      var element: Option[LaNacionNews] = null
+      links.foreach{link : String =>
+
+        element = scraper.getArticleData(link,0)
+        if (element.isDefined) {
+          newsLaNacionService.save(element.get)
+          newsList = element.get :: newsList
+        }
+      }
+      val graduate = grad.copy(laNacionNews = newsList)
+      Await.result(graduateService.update(graduate),Duration.Inf)
+    }
+
+    Redirect("/")
+  }
 }

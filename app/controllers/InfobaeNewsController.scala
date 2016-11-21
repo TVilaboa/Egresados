@@ -68,7 +68,7 @@ class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,gr
       Await.result(graduateService.update(graduate),Duration.Inf)
     }
 
-    Ok(views.html.index.render("", "", 0, "", 0))
+    Redirect("/")
   }
 
 

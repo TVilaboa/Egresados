@@ -40,13 +40,16 @@ class Application @Inject()(secureAction: SecureAction) extends Controller {
     if(errorLines.nonEmpty){
       errorDate = errorLines.last.substring(0,10)
       if(errorDate.nonEmpty)
-        errorLogs = errorLines.filter(_.contains(errorDate)).map(_.split(" ").last)
+        errorLogs = errorLines.filter(_.contains(errorDate)).map{log =>
+          val aux = log.split("ERROR").last
+          aux.substring(3,aux.length)
+        }.distinct
     }
 
     if(successLines.nonEmpty){
       successDate = successLines.last.substring(0,10)
       if(successDate.nonEmpty)
-        successLogs = successLines.filter(_.contains(successDate)).map(_.split(" ").last)
+        successLogs = successLines.filter(_.contains(successDate)).map(_.split(" ").last).distinct
     }
 
     Ok(views.html.index.render("", errorDate, errorLogs, successDate, successLogs))

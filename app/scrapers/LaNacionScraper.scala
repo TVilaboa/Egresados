@@ -32,7 +32,9 @@ class LaNacionScraper () {
       var author: String = "anonymus"
 
       try{
-       author = article.get(0).select("a[itemprop = author]").get(0).text()
+        val aux = article.get(0).select("a[itemprop = author]")
+        if(aux.size() > 0)
+          author = aux.get(0).text()
        //armo la lista con todos los datos
       }
       catch{
