@@ -29,12 +29,23 @@ class Application @Inject()(secureAction: SecureAction) extends Controller {
     val errorLines = Source.fromFile("logs/error.log").getLines.toList
     val successLines = Source.fromFile("logs/success.log").getLines.toList
 
-    val dateError = errorLines.last.substring(0, 10)
-    val dateSuccess = successLines.last.substring(0, 10)
+    var errorDate : String = ""
+    var errorLogCount : Int = 0
+    var successDate : String = ""
+    var successLogCount : Int = 0
 
-    val qtyError = errorLines.count(_.contains(dateError))
-    val qtySuccess = successLines.count(_.contains(dateSuccess))
+    if(errorLines.nonEmpty){
+      errorDate = errorLines.last.substring(0,10)
+      if(errorDate.nonEmpty)
+        errorLogCount = errorLines.count(_.contains(errorDate))
+    }
 
-    Ok(views.html.index.render("", dateError, qtyError, dateSuccess, qtySuccess))
+    if(successLines.nonEmpty){
+      successDate = successLines.last.substring(0,10)
+      if(successDate.nonEmpty)
+        successLogCount = successLines.count(_.contains(successDate))
+    }
+
+    Ok(views.html.index.render("", errorDate, errorLogCount, successDate, successLogCount))
   }
 }
