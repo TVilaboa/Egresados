@@ -11,7 +11,7 @@ import scrapers.{InfobaeScraper, LaNacionScraper}
 import services.{InfobaeNewsService, GraduateService, LaNacionNewsService}
 
 import scala.collection.mutable.ListBuffer
-import scala.concurrent.Await
+import scala.concurrent.{Future, Await}
 import scala.concurrent.duration.Duration
 
 /**
@@ -47,5 +47,25 @@ class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,gr
     Redirect("/profile/" + graduate._id)
 
   }
+
+  def saveAllInfobaeNews = Action {
+    val scraper : InfobaeScraper = new InfobaeScraper()
+    val all : Future[Seq[Graduate]] = graduateService.all()
+    val graduates : Seq[Graduate] = Await.result(all,Duration.Inf)
+    graduates.foreach{grad : Graduate =>
+      var newsList: List[InfobaeNews] = List[InfobaeNews]()
+      val links = InfobaeUrlGeneratorObject.search(Option(grad.firstName + " " +grad.lastName),Option("Universidad Austral"))
+      links.foreach{link : String =>
+        val news = scraper.scrape(link)
+        newsInfobaeService.save(news)
+        newsList = news :: newsList
+      }
+      val graduate = grad.copy(infobaeNews = newsList)
+      Await.result(graduateService.update(graduate),Duration.Inf)
+    }
+
+    Ok(views.html.index.render("Success"))
+  }
+
 
 }
