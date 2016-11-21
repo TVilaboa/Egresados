@@ -43,6 +43,8 @@ class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService
 
   }
 
+
+
   def deleteNews(id:String) = Action {
     //Get graduate from DB.
     val news : LaNacionNews = Await.result(newsLaNacionService.find(id),Duration.Inf)
