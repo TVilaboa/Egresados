@@ -448,25 +448,11 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       laNacionNews = laNacionNews.++(news)
     }
 
-    val newGraduate = Graduate(
-      graduate._id,
-      graduate.firstName,
-      graduate.lastName,
-      graduate.documentId,
-      graduate.birthDate,
-      graduate.entryDate,
-      graduate.graduationDate,
-      graduate.career,
-      graduate.studentCode,
-      laNacionNews,
-      List[InfobaeNews](),
-      LinkedinUserProfile(UUID.randomUUID().toString,
-        "",
-        List[LinkedinJob](),
-        List[LinkedinEducation](),
-        ""
-      ))
+    graduate.copy(laNacionNews = laNacionNews)
+    val newGraduate = graduate.copy(laNacionNews = laNacionNews)
+
     Await.result(graduateService.update(newGraduate), Duration.Inf)
+
     Ok(Json.obj("status" -> "success"))
   }
 }

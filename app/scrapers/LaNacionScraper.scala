@@ -20,7 +20,7 @@ class LaNacionScraper () {
 
 
     try {
-      doc = Jsoup.connect(url).userAgent(userAgentString).get()
+      doc = Jsoup.connect(url).timeout(5000).userAgent(userAgentString).get()
 
       val article = doc.select("#nota") //Para entrar en un tag <article id = "nota"/>
 
