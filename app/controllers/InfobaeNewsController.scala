@@ -55,16 +55,20 @@ class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,gr
     graduates.foreach{grad : Graduate =>
       var newsList: List[InfobaeNews] = List[InfobaeNews]()
       val links = InfobaeUrlGeneratorObject.search(Option(grad.firstName + " " +grad.lastName),Option("Universidad Austral"))
+      var element: Option[InfobaeNews] = null
       links.foreach{link : String =>
-        val news = scraper.scrape(link)
-        newsInfobaeService.save(news)
-        newsList = news :: newsList
+
+        element = scraper.scrape(link,0)
+        if (element.isDefined) {
+          newsInfobaeService.save(element.get)
+          newsList = element.get :: newsList
+        }
       }
       val graduate = grad.copy(infobaeNews = newsList)
       Await.result(graduateService.update(graduate),Duration.Inf)
     }
 
-    Ok(views.html.index.render("Success"))
+    Ok(views.html.index.render("", "", 0, "", 0))
   }
 
 
