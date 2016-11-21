@@ -25,6 +25,9 @@ class Application @Inject()(secureAction: SecureAction) extends Controller {
     Ok(views.html.login.render(null,"",null))
   }
 
+  /**
+    * Home Feed showing last scraping log result data
+    * */
   def homeFeed = secureAction {
     val errorLines = Source.fromFile("logs/error.log").getLines.toList
     val successLines = Source.fromFile("logs/success.log").getLines.toList
