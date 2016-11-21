@@ -113,7 +113,7 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
     try{
       nacionNews = bsonToListLanacion(doc.get("laNacionNews").get.asArray())
     } catch {
-      case _ => {
+      case e: IllegalStateException => {
         println("Error: El egresado no tiene la lista de noticias generada")
       }
     }
@@ -121,7 +121,7 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
     try{
       infobaeNews = bsonToListInfobae(doc.get("infobaeNews").get.asArray())
     } catch {
-      case _ => {
+      case e: IllegalStateException => {
         println("Error: El egresado no tiene la lista de noticias generada")
 
       }
@@ -131,7 +131,7 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
     try{
       linkedinUserProfile = bsonToLinkedinUserProfile(doc.get("linkedinUserProfile").get)
     } catch {
-      case _ => {
+      case e: IllegalStateException => {
         println("Error: El egresado no tiene el usuario de linkedin generado")
       }
     }

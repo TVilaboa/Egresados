@@ -1,5 +1,6 @@
 package controllers
 
+import java.io.IOException
 import java.util.UUID
 
 import actions.SecureAction
@@ -184,7 +185,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         }
       }
     } catch {
-      case e: Exception => Future {
+      case e: IOException => Future {
         BadRequest
       }
     }
