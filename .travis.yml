@@ -1,24 +1,25 @@
 language: scala
-
 scala:
-    - 2.11.7
-
+- 2.11.7
 jdk:
-    - oraclejdk8
-
+- oraclejdk8
 script:
-    - sbt compile test
-    
-# These directories are cached to S3 at the end of the build
+- sbt compile test
 cache:
   directories:
-    - $HOME/.ivy2/cache
-    - $HOME/.sbt/boot/
-    
+  - "$HOME/.ivy2/cache"
+  - "$HOME/.sbt/boot/"
 before_cache:
-  # Tricks to avoid unnecessary cache updates
-  - find $HOME/.ivy2 -name "ivydata-*.properties" -delete
-  - find $HOME/.sbt -name "*.lock" -delete    
-
+- find $HOME/.ivy2 -name "ivydata-*.properties" -delete
+- find $HOME/.sbt -name "*.lock" -delete
+deploy:
+  provider: heroku
+  api_key:
+    secure: hp2nyKDTlGDCjNn05jhgzg97kGyczybd1MF2Jm/+QEpAT+eJ+cGzuSlOG1kd+U1JVyVWAA5ghBj4/sOK1oNpMqXCKgTvfzbIHQoOuGFsKz8dBZV2bZzhyzLwVu0cpeWx1gBY6CxUE/pW2WDtn2+2Gi+i21o7EDxA5cXsnqAAhCPlDKyvvd5/c3jF+L1l7jbQPBi54QTTOGDP105Zho2v9W/BXNVwTVvdVNBrzReic1KpSXxujxPUUs65d/7tEKJveaGYWHHMgnXUMHHxqVs98EQg9YBpci+CNN1GlDY4aOkcxGlDKxgLmBlFbN/1hYZkdop7arTn6UoVkhilbYOmhJz18HTeoOCK5H3kZfBM6uoyTJjjoB+zOVhzgLnLVobM6BghKVvsvL8vCgLNSI0XesSUYMqbE5bXOd6h7zoPK0sOlhhvFpcxF3lDulQm3jj3ssTgFE0zTTEEGmBOE2pZ1JM7VnD233TkxOS1BC4ipiO8v/+ayMobRBS6CpnQVQ/5//0TNOzyH1y9GN7N6C5rywTRjJtya4zUx5jW1GxkwhnAf5QRjUWd2DCsMBos15uFbWRPNgyQvAMOMMFamVOHgnPK7FTnt/T0UvQrfdxCm+Ba36eTh7nQGrKxvQs00LVROAHCuc/VyqGQSNMnIN4kS1mSlSlbTVuH4BBql3sJsCY=
+  app:
+    master: graduate-tracker-austral
+    develop: graduate-tracker-austral-dev
 notifications:
-  slack: graduatetracker:W7bSHZ7BZkvHta86IVlzpTWf
+  slack:
+    rooms:
+      secure: YCYu4bxKUM0CcFapa4B9cjtRerxjiYogA3AUgGMWhcXnkZnj3zqgFFEEshXlBs7WpEiq29LMq3Zl9sm5cmpPeoeqrf1OtOHbXm6Cj1n+IAhY4VhpiPzvFuvHFBtU/ayBIzuycm/Q6dsTEcInk/lJi1JwevhJntPeSO6hXIGpry3ELhTt1jX3v33TTZxIgj3YBLbd8JYVY7KIsdxykLBrmE5JnOj6UB8Bi5J7ZrjCEaJBD9PzSCWDJjZihcXXFyDmwXGGew0NyMD0Oy7Zap6xKNedplYcEzmt4bkJoX8tR25NPFFzgnRva7LZxu0SIc+LAvDd+Zf0dSt1j5NyBnQgn4R0Khv7Lvv2DHZM2jR9E+4BjnMkGA8FspQXYYqoMBSuj6PTl64jfBTIV7X3tx0rgkGyjRhyKnlwlPuVYLLJZLyokVXM+6xoFowgxvHb7BRdiY9PFxso6VWGbueDeoDzwLlNzUp1j3lfR9jOQ91N6TfgOn2sp/CYepgjNuPOvwxQrE2ECINMRsilE4Kk0Rnz4MBwLSXihowNbLdtX3gR0mcr4cx9Weed6o5MBjCe7VEySgS928iIH8J1WW03F32IEyZ5tK0458iGi2s6RPHDa8Rr5grLL91EqZu/4X074dr/+crt75eHI6On9QMKkzFqrCOCpOOGwI7axGn1CpTQIpY=
