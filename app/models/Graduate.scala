@@ -17,6 +17,8 @@ case class Graduate(  _id: String,
                       studentCode: String,
                       laNacionNews: List[LaNacionNews],
                       infobaeNews: List[InfobaeNews],
+                      clarinNews: List[ClarinNews],
+                      elCronistaNews:List[ElCronistaNews],
                       linkedinUserProfile: LinkedinUserProfile
                    )
 

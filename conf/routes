@@ -48,6 +48,18 @@ GET         /lanacion/searchAll          controllers.LaNacionNewsController.save
 GET         /validate/:id                 controllers.EgresadosController.renderValidate(id: String)
 POST        /valid                        controllers.EgresadosController.validateLinks
 
+#ClarinController
+GET         /clarin/search/:id          controllers.ClarinNewsController.saveNews(id : String)
+GET         /clarin/searchAll          controllers.ClarinNewsController.saveAllClarinNews
+GET         /validate/:id                 controllers.EgresadosController.renderValidate(id: String)
+POST        /valid                        controllers.EgresadosController.validateLinks
+
+#ElCronistaController
+GET         /elCronista/search/:id          controllers.ElCronistaNewsController.saveNews(id : String)
+GET         /elCronista/searchAll          controllers.ElCronistaNewsController.saveAllElCronistaNews
+GET         /validate/:id                 controllers.EgresadosController.renderValidate(id: String)
+POST        /valid                        controllers.EgresadosController.validateLinks
+
 #InfobaeController
 GET         /infobae/search/:id           controllers.InfobaeNewsController.saveNews(id : String)
 GET         /infobae/searchAll            controllers.InfobaeNewsController.saveAllInfobaeNews
@@ -56,6 +68,8 @@ GET         /infobae/searchAll            controllers.InfobaeNewsController.save
 GET         /api/infobae            controllers.RestApiController.getAllInfobaeData()
 GET         /api/egresados          controllers.RestApiController.getAllEgresadosData()
 GET         /api/lanacion           controllers.RestApiController.getAllLaNacionData()
+GET         /api/clarin           controllers.RestApiController.getAllClarinData()
+GET         /api/elcronista           controllers.RestApiController.getAllElCronistaData()
 GET         /api/linkedin           controllers.RestApiController.getAllLinkedInData()
 GET         /api/infobae/:id        controllers.RestApiController.getOneInfobaeData(id : String)
 GET         /api/lanacion/:id       controllers.RestApiController.getOneLaNacionData(id : String)

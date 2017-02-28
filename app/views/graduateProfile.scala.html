@@ -1,224 +1,266 @@
-@(graduate : Option[Graduate])
-@layout(title = "Graduate Profile"){
+@(graduate: Option[Graduate])
+@layout(title = "Graduate Profile") {
 
     <div id="page-wrapper">
-            <div class="row"> 
-                <div class="col-lg-12">
-                    <h1 class="page-header">Graduate Profile</h1> 
-                </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Graduate Profile</h1>
+            </div>
                 <!-- /.col-lg-12 -->
-            </div>
-
-                <!-- /.row --> 
-            <div class="row"> 
-                <div class="col-lg-12">
-                    @if(graduate.isEmpty){
-                        <div class="alert alert-danger">
-                            <strong>No existe el perfil de graduado correspondiente</strong>
-                        </div>
-                    }else{
-                        <div class="panel panel-default"> 
-                            <div class="alert alert-info">
-                                Perfil de:<strong>@graduate.get.firstName @graduate.get.lastName</strong>
-                                    @helper.form(action = routes.EgresadosController.showUpdatingForm(graduate.get._id)){
-
-                                        <div align="right">
-                                        <button type="submit" class="btn-info">Edit</button>
-                                    </div>
-
-                                    }
-
-                            </div>
-                                <!-- /.panel-heading --> 
-                            <div class="panel-body">
-                                <div class="form-group">
-                                    <label>Nombre:</label>
-                                    @graduate.get.firstName
-                                </div>
-                                <div class="form-group">
-                                    <label>Apellido:</label>
-                                    @graduate.get.lastName
-                                </div>
-                                <div class="form-group">
-                                    <label>DNI:</label>
-                                    @graduate.get.documentId
-                                </div>
-                                <div class="form-group">
-                                    <label>Fecha de nacimiento:</label>
-                                    @graduate.get.birthDate
-                                </div>
-                                <div class="form-group">
-                                    <label>Fecha de ingreso:</label>
-                                    @graduate.get.entryDate
-                                </div>
-                                <div class="form-group">
-                                    <label>Fecha de graduacion:</label>
-                                    @graduate.get.graduationDate
-                                </div>
-                                <div class="form-group">
-                                    <label>Carrera:</label>
-                                    @graduate.get.career
-                                </div>
-                                    @if(graduate.get.laNacionNews.isEmpty){
-                                        <div class="form-group">
-                                            <label>Noticias Diario La Nacion:</label>
-                                            No hay noticias
-                                            <div>
-                                                <form action="/lanacion/search/@graduate.get._id">
-                                                    <input type="submit" value="Generate LaNacion Data" class="btn btn-info btn-lg"/>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    } else {
-                                        <div class="form-group">
-                                            <label>Noticias Diario La Nacion:</label>
-                                            <ul>
-                                            @for(news : LaNacionNews <- graduate.get.laNacionNews){
-                                                <li>Titulo: "@news.title"  -->  URL: <a href=@news.url>@news.url</a></li>
-                                            }
-                                            </ul>
-                                        </div>
-                                    }
-                                    @if(graduate.get.infobaeNews.isEmpty){
-                                        <div class="form-group">
-                                            <label>Noticias Diario Infobae:</label>
-                                            No hay noticias
-                                            <div>
-                                                <form action="/infobae/search/@graduate.get._id">
-                                                    <input type="submit" value="Generate Infobae Data" class="btn btn-info btn-lg"/>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    } else {
-                                        <div class="form-group">
-                                            <label>Noticias Diario Infobae:</label>
-                                            <ul>
-                                            @for(news : InfobaeNews <- graduate.get.infobaeNews){
-                                                <li>Titulo: "@news.title"  -->  URL: <a href=@news.url>@news.url</a></li>
-                                            }
-                                            </ul>
-                                        </div>
-                                    }
-
-                                @if(graduate.get.linkedinUserProfile.profileUrl.isEmpty){
-                                    <div class="form-group">
-                                        <label>Perfil de Linkedin:</label>
-                                        No tiene un usuario en Linkedin
-                                        <div>
-                                            <form action="/linkedin/search/@graduate.get._id">
-                                                <input type="submit" value="Generate LinkedIn Data" class="btn btn-info btn-lg"/>
-                                            </form>
-                                        </div>
-                                    </div>
-                                } else {
-                                    <div class="form-group">
-                                        <label>Perfil de Linkedin:</label>
-                                        <a href=@graduate.get.linkedinUserProfile.profileUrl>@graduate.get.linkedinUserProfile.profileUrl</a>
-                                    </div>
-                                    <div class = "form-group">
-                                        <label>Lista de Trabajos:</label>
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                    <!-- /.panel-heading -->
-                                                    <div class="panel-body">
-
-                                                            <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>Institucion</th>
-                                                                        <th>Rol</th>
-                                                                        <th>Periodo</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <ul>
-                                                                        @for(job : LinkedinJob <- graduate.get.linkedinUserProfile.jobList){
-                                                                            <tr class="graduate">
-                                                                                <td>@job.workplace</td>
-                                                                                <td>@job.position</td>
-                                                                                <td>@job.activityPeriod</td>
-                                                                            </tr>
-                                                                        }
-                                                                    </ul>
-                                                                </tbody>
-                                                            </table>
-                                                    </div>
-                                                        <!-- /.panel-body -->
-                                            </div>
-                                                <!-- /.col-lg-12 -->
-                                        </div>
-                                    </div>
-                                    <div class = "form-group">
-                                        <label>Educacion:</label>
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                    <!-- /.panel-heading -->
-                                                <div class="panel-body">
-
-                                                    <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Institucion</th>
-                                                                <th>Titulo</th>
-                                                                <th>Periodo</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <ul>
-                                                            @for(education : LinkedinEducation <- graduate.get.linkedinUserProfile.educationList){
-                                                                <tr class="graduate">
-                                                                    <td>@education.institute</td>
-                                                                    <td>@education.title</td>
-                                                                    <td>@education.educationPeriod</td>
-                                                                </tr>
-                                                            }
-                                                            </ul>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                                    <!-- /.panel-body -->
-                                            </div>
-                                                <!-- /.col-lg-12 -->
-                                        </div>
-                                    </div>
-
-                                }
-                                <div class="form-group">
-                                    <div>
-                                        <button data-toggle="modal" data-target="#myModal" value="Delete graduate" class="btn btn-danger btn-lg">Delete graduate</button>
-                                    </div>
-                                </div> 
-                                    <!-- Modal -->
-                                    <div class="modal fade" id="myModal" role="dialog">
-                                        <div class="modal-dialog modal-sm">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                    <h4 class="modal-title">Delete graduate</h4>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <p>Are you sure you want to delete this graduate?</p>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <a href="/delete/@graduate.get._id" type="button" class="btn btn-danger">Delete</a>
-                                                    <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                            </div>
-
-                        </div>
-                        @helper.form(action = routes.EgresadosController.renderValidate(graduate.get._id)) {
-                            @*<input id="id" name="id" value="@graduate.get._id" hidden>*@
-                            <input type="submit" value="Validar links" class="btn btn-info btn-lg">
-                        }
-                    }
-                </div>
-            </div>
-
         </div>
+
+            <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+            @if(graduate.isEmpty) {
+                <div class="alert alert-danger">
+                    <strong>No existe el perfil de graduado correspondiente</strong>
+                </div>
+            } else {
+                <div class="panel panel-default">
+                    <div class="alert alert-info">
+                        Perfil de:<strong>@graduate.get.firstName @graduate.get.lastName</strong>
+                        @helper.form(action = routes.EgresadosController.showUpdatingForm(graduate.get._id)) {
+
+                            <div align="right">
+                                <button type="submit" class="btn-info">Edit</button>
+                            </div>
+
+                        }
+
+                    </div>
+                        <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label>Nombre:</label>
+                            @graduate.get.firstName
+                        </div>
+                        <div class="form-group">
+                            <label>Apellido:</label>
+                            @graduate.get.lastName
+                        </div>
+                        <div class="form-group">
+                            <label>DNI:</label>
+                            @graduate.get.documentId
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de nacimiento:</label>
+                            @graduate.get.birthDate
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de ingreso:</label>
+                            @graduate.get.entryDate
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de graduacion:</label>
+                            @graduate.get.graduationDate
+                        </div>
+                        <div class="form-group">
+                            <label>Carrera:</label>
+                            @graduate.get.career
+                        </div>
+                        @if(graduate.get.laNacionNews.isEmpty) {
+                            <div class="form-group">
+                                <label>Noticias Diario La Nacion:</label>
+                                No hay noticias
+                                <div>
+                                    <form action="/lanacion/search/@graduate.get._id">
+                                        <input type="submit" value="Generate La Nacion Data" class="btn btn-info btn-lg"/>
+                                    </form>
+                                </div>
+                            </div>
+                        } else {
+                            <div class="form-group">
+                                <label>Noticias Diario La Nacion:</label>
+                                <ul>
+                                @for(news: LaNacionNews <- graduate.get.laNacionNews) {
+                                    <li>Titulo: "@news.title"  -->  URL: <a href=@news.url>@news.url</a></li>
+                                }
+                                </ul>
+                            </div>
+                        }
+                        @if(graduate.get.clarinNews.isEmpty) {
+                            <div class="form-group">
+                                <label>Noticias Diario Clarin:</label>
+                                No hay noticias
+                                <div>
+                                    <form action="/clarin/search/@graduate.get._id">
+                                        <input type="submit" value="Generate Clarin Data" class="btn btn-info btn-lg"/>
+                                    </form>
+                                </div>
+                            </div>
+                        } else {
+                            <div class="form-group">
+                                <label>Noticias Diario Clarin:</label>
+                                <ul>
+                                @for(news: ClarinNews <- graduate.get.clarinNews) {
+                                    <li>Titulo: "@news.title"  -->  URL: <a href=@news.url>@news.url</a></li>
+                                }
+                                </ul>
+                            </div>
+                        }
+                        @if(graduate.get.elCronistaNews.isEmpty) {
+                            <div class="form-group">
+                                <label>Noticias Diario El Cronista:</label>
+                                No hay noticias
+                                <div>
+                                    <form action="/elCronista/search/@graduate.get._id">
+                                        <input type="submit" value="Generate El Cronista Data" class="btn btn-info btn-lg"/>
+                                    </form>
+                                </div>
+                            </div>
+                        } else {
+                            <div class="form-group">
+                                <label>Noticias Diario El Cronista:</label>
+                                <ul>
+                                @for(news: ElCronistaNews <- graduate.get.elCronistaNews) {
+                                    <li>Titulo: "@news.title"  -->  URL: <a href=@news.url>@news.url</a></li>
+                                }
+                                </ul>
+                            </div>
+                        }
+                        @if(graduate.get.infobaeNews.isEmpty) {
+                            <div class="form-group">
+                                <label>Noticias Diario Infobae:</label>
+                                No hay noticias
+                                <div>
+                                    <form action="/infobae/search/@graduate.get._id">
+                                        <input type="submit" value="Generate Infobae Data" class="btn btn-info btn-lg"/>
+                                    </form>
+                                </div>
+                            </div>
+                        } else {
+                            <div class="form-group">
+                                <label>Noticias Diario Infobae:</label>
+                                <ul>
+                                @for(news: InfobaeNews <- graduate.get.infobaeNews) {
+                                    <li>Titulo: "@news.title"  -->  URL: <a href=@news.url>@news.url</a></li>
+                                }
+                                </ul>
+                            </div>
+                        }
+
+                        @if(graduate.get.linkedinUserProfile.profileUrl.isEmpty) {
+                            <div class="form-group">
+                                <label>Perfil de Linkedin:</label>
+                                No tiene un usuario en Linkedin
+                                <div>
+                                    <form action="/linkedin/search/@graduate.get._id">
+                                        <input type="submit" value="Generate LinkedIn Data" class="btn btn-info btn-lg"/>
+                                    </form>
+                                </div>
+                            </div>
+                        } else {
+                            <div class="form-group">
+                                <label>Perfil de Linkedin:</label>
+                                <a href=@graduate.get.linkedinUserProfile.profileUrl>@graduate.get.linkedinUserProfile.profileUrl</a>
+                            </div>
+                            <div class = "form-group">
+                                <label>Lista de Trabajos:</label>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                            <!-- /.panel-heading -->
+                                        <div class="panel-body">
+
+                                            <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Institucion</th>
+                                                        <th>Rol</th>
+                                                        <th>Periodo</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <ul>
+                                                    @for(job: LinkedinJob <- graduate.get.linkedinUserProfile.jobList) {
+                                                        <tr class="graduate">
+                                                            <td>@job.workplace</td>
+                                                            <td>@job.position</td>
+                                                            <td>@job.activityPeriod</td>
+                                                        </tr>
+                                                    }
+                                                    </ul>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                            <!-- /.panel-body -->
+                                    </div>
+                                        <!-- /.col-lg-12 -->
+                                </div>
+                            </div>
+                            <div class = "form-group">
+                                <label>Educacion:</label>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                            <!-- /.panel-heading -->
+                                        <div class="panel-body">
+
+                                            <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Institucion</th>
+                                                        <th>Titulo</th>
+                                                        <th>Periodo</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <ul>
+                                                    @for(education: LinkedinEducation <- graduate.get.linkedinUserProfile.educationList) {
+                                                        <tr class="graduate">
+                                                            <td>@education.institute</td>
+                                                            <td>@education.title</td>
+                                                            <td>@education.educationPeriod</td>
+                                                        </tr>
+                                                    }
+                                                    </ul>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                            <!-- /.panel-body -->
+                                    </div>
+                                        <!-- /.col-lg-12 -->
+                                </div>
+                            </div>
+
+                        }
+                        <div class="form-group">
+                            <div>
+                                <button data-toggle="modal" data-target="#myModal" value="Delete graduate" class="btn btn-danger btn-lg">
+                                    Delete graduate</button>
+                            </div>
+                        </div>
+                        <!-- Modal -->
+                        <div class="modal fade" id="myModal" role="dialog">
+                            <div class="modal-dialog modal-sm">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">Delete graduate</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Are you sure you want to delete this graduate?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <a href="/delete/@graduate.get._id" type="button" class="btn btn-danger">
+                                            Delete</a>
+                                        <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                @helper.form(action = routes.EgresadosController.renderValidate(graduate.get._id)) {
+                    @*<input id="id" name="id" value="@graduate.get._id" hidden>*@
+                    <input type="submit" value="Validar links" class="btn btn-info btn-lg">
+                    }
+            }
+            </div>
+        </div>
+
+    </div>
 }
 
 

@@ -2,14 +2,14 @@ package controllers
 
 import actions.SecureAction
 import com.google.inject.Inject
-import models.{LinkedinUserProfile, LaNacionNews, Graduate, InfobaeNews}
+import models._
 import play.api.http.ContentTypes
 import play.api.i18n.MessagesApi
 import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
 import services._
-import scala.concurrent.ExecutionContext.Implicits.global
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
@@ -66,6 +66,36 @@ class RestApiController @Inject()(graduateService: GraduateService,
     }
   }}
 
+  def getAllClarinData = Action { implicit request => {
+    var info = List[ClarinNews]()
+    var graduates = Seq[Graduate]()
+    val all: Future[Seq[Graduate]] = graduateService.all()
+    graduates = Await.result(all,Duration.Inf)
+    for(grad <- graduates){
+      info =  info ::: grad.clarinNews
+    }
+    if(info.isEmpty){
+      Ok("{\"type\":\"success\",\"value\": \"There is no data\" }")
+    }else{
+      Ok("{\"type\":\"success\",\"value\": " + Json.prettyPrint(Json.toJson(info)) + "}")
+    }
+  }}
+
+  def getAllElCronistaData = Action { implicit request => {
+    var info = List[ElCronistaNews]()
+    var graduates = Seq[Graduate]()
+    val all: Future[Seq[Graduate]] = graduateService.all()
+    graduates = Await.result(all,Duration.Inf)
+    for(grad <- graduates){
+      info =  info ::: grad.elCronistaNews
+    }
+    if(info.isEmpty){
+      Ok("{\"type\":\"success\",\"value\": \"There is no data\" }")
+    }else{
+      Ok("{\"type\":\"success\",\"value\": " + Json.prettyPrint(Json.toJson(info)) + "}")
+    }
+  }}
+
   def getAllLinkedInData = Action { implicit request => {
     var info = List[LinkedinUserProfile]()
     var graduates = Seq[Graduate]()
@@ -104,6 +134,34 @@ class RestApiController @Inject()(graduateService: GraduateService,
         Ok("{\"type\":\"success\",\"value\": \"The graduate exists, but there is no data\" }")
       }else{
         Ok("{\"type\":\"success\",\"value\": " + Json.prettyPrint(Json.toJson(find.value.get.get.laNacionNews)) + "}")
+      }
+    }catch{
+      case e: Exception => Ok("{\"type\":\"error\",\"value\": \"The graduate couldn't be found\" }")
+    }
+  }}
+
+  def getOneClarinData(id:String) = Action {implicit request =>{
+    val find= graduateService.find(id)
+    try {
+      val one = Await.result(find, Duration.Inf)
+      if(one.clarinNews.isEmpty){
+        Ok("{\"type\":\"success\",\"value\": \"The graduate exists, but there is no data\" }")
+      }else{
+        Ok("{\"type\":\"success\",\"value\": " + Json.prettyPrint(Json.toJson(find.value.get.get.clarinNews)) + "}")
+      }
+    }catch{
+      case e: Exception => Ok("{\"type\":\"error\",\"value\": \"The graduate couldn't be found\" }")
+    }
+  }}
+
+  def getOneElCronistaData(id:String) = Action {implicit request =>{
+    val find= graduateService.find(id)
+    try {
+      val one = Await.result(find, Duration.Inf)
+      if(one.elCronistaNews.isEmpty){
+        Ok("{\"type\":\"success\",\"value\": \"The graduate exists, but there is no data\" }")
+      }else{
+        Ok("{\"type\":\"success\",\"value\": " + Json.prettyPrint(Json.toJson(find.value.get.get.elCronistaNews)) + "}")
       }
     }catch{
       case e: Exception => Ok("{\"type\":\"error\",\"value\": \"The graduate couldn't be found\" }")
