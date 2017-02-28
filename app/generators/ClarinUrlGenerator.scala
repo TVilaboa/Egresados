@@ -76,9 +76,9 @@ class ClarinUrlGenerator extends BasicUrlGenerator{
       **/
     override def cleanUrlDomain(url: String): String = {
       val split : Array[String] = url.split("http://")
-      val aux = split.filter(x => x.contains("www.Clarin.com.ar/"))
+      val aux = split.filter(x => x.contains("www.clarin.com/"))
       if(aux.nonEmpty)
-        "http://" + aux.head.substring(0, aux.head.indexOf("-"))
+        "http://" + aux.head.substring(0, aux.head.indexOf(".html")+5)
       else
         ""
     }
@@ -91,7 +91,7 @@ class ClarinUrlGenerator extends BasicUrlGenerator{
     }
 
     private def isCorrect(searchName: Array[String], domain: String): Boolean = {
-      domain.contains("www.Clarin.com.ar/")
+      domain.contains("www.clarin.com/")
     }
 }
 

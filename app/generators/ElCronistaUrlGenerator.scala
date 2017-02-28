@@ -28,7 +28,7 @@ class ElCronistaUrlGenerator extends BasicUrlGenerator{
         val splittedName = name.get.split(" ")
         val splittedQuery = query.get.split(" ")
 
-        var searcher = "ElCronista"
+        var searcher = "Cronista"
 
         for(splitVal : String <- splittedName)
           searcher = searcher + "+" + splitVal
@@ -53,7 +53,7 @@ class ElCronistaUrlGenerator extends BasicUrlGenerator{
       val doc = Jsoup.connect(request).userAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)")
         .timeout(50000)
         .get
-      val links: Elements = doc.select("a[href*=ElCronista]")
+      val links: Elements = doc.select("a[href*=Cronista]")
       for (link <- links) {
         var temp = link.attr("href")
         if (temp.startsWith("/url?q=")) {
@@ -76,9 +76,10 @@ class ElCronistaUrlGenerator extends BasicUrlGenerator{
       **/
     override def cleanUrlDomain(url: String): String = {
       val split : Array[String] = url.split("http://")
-      val aux = split.filter(x => x.contains("www.ElCronista.com.ar/"))
+      val aux = split.filter(x => x.contains("www.cronista.com/"))
       if(aux.nonEmpty)
-        "http://" + aux.head.substring(0, aux.head.indexOf("-"))
+        //"http://" + aux.head.substring(0, aux.head.indexOf("-"))
+      "http://" + aux.head.substring(0, aux.head.indexOf(".html")+5)
       else
         ""
     }
@@ -91,7 +92,7 @@ class ElCronistaUrlGenerator extends BasicUrlGenerator{
     }
 
     private def isCorrect(searchName: Array[String], domain: String): Boolean = {
-      domain.contains("www.ElCronista.com.ar/")
+      domain.contains("www.cronista.com/")
     }
 }
 

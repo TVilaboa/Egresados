@@ -22,15 +22,15 @@ class ElCronistaScraper() {
     try {
       doc = Jsoup.connect(url).timeout(5000).userAgent(userAgentString).get()
 
-      val article = doc.select("#nota") //Para entrar en un tag <article id = "nota"/>
+      val article = doc.select(".site-content") //Para entrar en un tag <article id = "nota"/>
 
       //busco los datos en la nota
       val title = article.get(0).getElementsByTag("h1").get(0).text()
-      val date = article.get(0).getElementsByClass("fecha").get(0).text()
-      val tuft = article.get(0).getElementsByTag("p").get(0).text()
+      val date = article.get(0).getElementsByClass("entry-date").get(0).text()
+      val tuft = article.get(0).getElementsByTag("h2").get(0).text()
       var author: String = "anonymus"
 
-      val aux = article.get(0).select("a[itemprop = author]")
+      val aux = article.get(0).select(".author-name")
       if(aux.size() > 0)
         author = aux.get(0).text()
 

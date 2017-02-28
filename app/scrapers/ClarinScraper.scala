@@ -22,12 +22,12 @@ class ClarinScraper() {
     try {
       doc = Jsoup.connect(url).timeout(5000).userAgent(userAgentString).get()
 
-      val article = doc.select("#nota") //Para entrar en un tag <article id = "nota"/>
+      val article = doc.select(".main-section") //Para entrar en un tag <article id = "nota"/>
 
       //busco los datos en la nota
       val title = article.get(0).getElementsByTag("h1").get(0).text()
-      val date = article.get(0).getElementsByClass("fecha").get(0).text()
-      val tuft = article.get(0).getElementsByTag("p").get(0).text()
+      val date = article.get(0).getElementsByTag("span").get(0).text()
+      val tuft = article.get(0).getElementsByClass("volanta").get(0).text()
       var author: String = "anonymus"
 
       val aux = article.get(0).select("a[itemprop = author]")
