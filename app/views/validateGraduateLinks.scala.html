@@ -118,19 +118,6 @@
                 }
             }
 
-            @*function sendPost(linkedInLinks, laNacionLinks, infobaeLinks){*@
-                @*$.ajax({*@
-                @*type :  "POST",*@
-                @*dataType: 'json',*@
-                @*data: { id:@graduate.get._id , infobaeLinks:infobaeLinks, laNacionLinks:laNacionLinks, linkedInLinks:linkedInLinks},*@
-                @*url  :  "@routes.EgresadosController.validateLinks",*@
-                @*success: function(data){*@
-                    @*console.log(data);*@
-                @*}*@
-            @*});*@
-
-            @*}*@
-
             function sendPost(laNacionLinks){
                 $.ajax({
                     type :  "POST",

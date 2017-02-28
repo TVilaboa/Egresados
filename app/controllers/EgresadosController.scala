@@ -1,18 +1,22 @@
 package controllers
 
 import java.io.IOException
-import java.util.UUID
+import java.text.SimpleDateFormat
+import java.util.{Date, UUID}
 
 import actions.SecureAction
+import akka.actor.FSM.Failure
+import akka.actor.Status.Success
 import com.github.tototoshi.csv.CSVReader
 import com.google.inject.Inject
 import com.mongodb.MongoWriteException
-import forms.AuthForms.{SignupData, LoginData}
+import forms.AuthForms.{LoginData, SignupData}
 import forms.GraduateForms.GraduateData
 import io.netty.util.Mapping
 import models._
+import org.joda.time.DateTime
 import play.api.i18n.MessagesApi
-import play.api.libs.json.{Json, JsValue}
+import play.api.libs.json.{JsValue, Json}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
@@ -23,6 +27,7 @@ import play.api.Play.current
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
+import scala.util.Try
 
 /**
   * Created by Ignacio Vazquez on 28/08/2016.
@@ -104,8 +109,11 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       graduates = graduates.filter(x => x.firstName.toLowerCase.contains(firstname.toLowerCase))
     if (lastname.nonEmpty)
       graduates = graduates.filter(x => x.lastName.toLowerCase.contains(lastname.toLowerCase))
-    if (gradDate.nonEmpty)
-      graduates = graduates.filter(x => x.graduationDate.toLowerCase.contains(gradDate.toLowerCase))
+    if (gradDate.nonEmpty){
+      val format = new SimpleDateFormat("dd/MM/yyyy")
+      val date = new DateTime(gradDate).toDate
+      graduates = graduates.filter(x => x.graduationDate.toLowerCase.contains(format.format(date).toLowerCase))
+    }
     if (career.nonEmpty)
       graduates = graduates.filter(x => x.career.toLowerCase.contains(career.toLowerCase))
     if (identification.nonEmpty)
@@ -129,7 +137,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
 
   def renderValidate(id:String) = Action {
-    try{
       var graduate: Option[Graduate] = None
       val result: Future[Graduate] = graduateService.find(id)
       result onSuccess {
@@ -146,8 +153,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       }
       Await.ready(result, Duration.Inf)
       Ok(views.html.validateGraduateLinks.render(graduate))
-
-    }
   }
 
 
@@ -174,7 +179,16 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       )
 
       graduateService.save(graduate).map((_) => {
+//        val name = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("firstName").get(0)
+//        val surname = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("lastName").get(0)
+//        val dni = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("dni").get(0)
+//        val code = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("studentcode").get(0)
+//        val bday = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("birthday").get(0)
+//        val eday = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("entryday").get(0)
+//        val gday = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("graduationday").get(0)
+//        val career = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("career").get(0)
         Redirect("/profile/" + graduate._id)
+//        Ok(views.html.graduateProfile.render(name,surname,dni,code,bday,eday,gday,career,"Graduado creado correctamente!"))
       }).recoverWith {
         case e: MongoWriteException => Future {
 
@@ -192,7 +206,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
 
   def showProfile(id:String) = Action {
-    try {
       var graduate: Option[Graduate] = None
       val result: Future[Graduate] = graduateService.find(id)
       result onSuccess {
@@ -208,7 +221,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       }
       graduate = Option(Await.result(result, Duration.Inf))
       Ok(views.html.graduateProfile.render(graduate))
-    }
   }
 
   def showUpdatingForm (id:String) = Action {
@@ -364,7 +376,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
             )
           ) :: graduatesCSV
 
-          try {
             var graduateDB: Option[Graduate] = None
             val result: Future[Graduate] = graduateService.findByDocumentId(documentId)
             result onSuccess {
@@ -388,8 +399,6 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
               }
             }
             Await.ready(result, Duration.Inf)
-
-          }
         }
 
       }
@@ -439,27 +448,11 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       laNacionNews = laNacionNews.++(news)
     }
 
-    val newGraduate = Graduate(
-      graduate._id,
-      graduate.firstName,
-      graduate.lastName,
-      graduate.documentId,
-      graduate.birthDate,
-      graduate.entryDate,
-      graduate.graduationDate,
-      graduate.career,
-      graduate.studentCode,
-      laNacionNews,
-      List[InfobaeNews](),
-      LinkedinUserProfile(UUID.randomUUID().toString,
-        "",
-        List[LinkedinJob](),
-        List[LinkedinEducation](),
-        ""
-      ))
+    graduate.copy(laNacionNews = laNacionNews)
+    val newGraduate = graduate.copy(laNacionNews = laNacionNews)
+
     Await.result(graduateService.update(newGraduate), Duration.Inf)
-    //Ok(views.html.graduateProfile.render(Option(newGraduate)))
-    //    Redirect(routes.EgresadosController.showProfile(newGraduate._id))
+
     Ok(Json.obj("status" -> "success"))
   }
 }

@@ -6,13 +6,11 @@
 
 @layout(title = "Add Graduate", styles) {
     <div id="page-wrapper">
-                         <div class="row"> 
+        <div class="row"> 
             <div class="col-lg-12">
                 <h1 class="page-header">New Graduate</h1> 
             </div>
-                <!-- /.col-lg-12 -->
         </div>
-                <!-- /.row --> 
             <div class="row"> 
                 <div class="col-lg-12">
                     <div class="panel panel-default"> 
@@ -21,8 +19,8 @@
                         </div>
                             <!-- /.panel-heading --> 
                         <div class="panel-body">
-                            @helper.form(action = routes.EgresadosController.addGraduate()) {
-                                <input id="inputIDAdd" type="number" name="id" value="-1" class="form-control">
+                            @helper.form(action = routes.EgresadosController.addGraduate(), 'class -> "form-horizontal", 'onsubmit -> "return validation()") {
+                                <input type="number" style="display : none" name="id" value="-1" class="form-control">
                                 <div class="form-group">
                                     <label for="firstName">Nombre</label>
                                     <input onkeypress="return soloLetras(event)" required type="text" class="form-control" name="firstName" id="firstName" placeholder="Nombre">
@@ -102,15 +100,11 @@
 
                         <!-- /.panel-body --> 
                     </div>
-                                             <!-- /.panel --> 
+                    <!-- /.panel --> 
                 </div>
-                                     <!-- /.col-lg-12 --> 
-
+                  <!-- /.col-lg-12 --> 
             </div>
-                             <!-- /.row -->  
-            <!-- /.row --> 
         </div>
-     
     <script>
 
             function soloLetras(e){

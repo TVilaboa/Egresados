@@ -155,7 +155,7 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
   private def bsonToListLanacion(bson : BsonArray) : List[LaNacionNews] ={
     var news = List[LaNacionNews]()
     for(bsonV : BsonValue <- bson.getValues){
-      var doc = bsonV.asDocument()
+      val doc = bsonV.asDocument()
       news = news :+ LaNacionNews(doc.get("_id").asString().getValue,doc.get("url").asString().getValue,doc.get("title").asString().getValue,
         doc.get("date").asString().getValue,doc.get("tuft").asString().getValue,doc.get("author").asString().getValue)
     }
@@ -165,11 +165,11 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
   private def bsonToListInfobae(bson : BsonArray) : List[InfobaeNews] ={
     var news = List[InfobaeNews]()
     for(bsonV : BsonValue <- bson.getValues){
-      var doc = bsonV.asDocument()
+      val doc = bsonV.asDocument()
       news = news :+ InfobaeNews(doc.get("_id").asString().getValue,doc.get("url").asString().getValue,doc.get("title").asString().getValue,
         doc.get("date").asString().getValue,doc.get("tuft").asString().getValue,doc.get("author").asString().getValue)
     }
-    return news
+    news
   }
 
   private def bsonToLinkedinUserProfile(bson : BsonValue) : LinkedinUserProfile ={
@@ -180,7 +180,7 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
   private def bsonToListJobs(bson : BsonArray) : List[LinkedinJob] ={
     var jobs = List[LinkedinJob]()
     for(bsonV : BsonValue <- bson.getValues){
-      var doc = bsonV.asDocument()
+      val doc = bsonV.asDocument()
       var position: String = null
       var workplace: String = null
       var workUrl: String = null
@@ -219,7 +219,7 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
   private def bsonToListEducation(bson : BsonArray) : List[LinkedinEducation] ={
     var educationList = List[LinkedinEducation]()
     for(bsonV : BsonValue <- bson.getValues){
-      var doc = bsonV.asDocument()
+      val doc = bsonV.asDocument()
       var institute: String = null
       var instituteUrl: String = null
       var title: String = null
