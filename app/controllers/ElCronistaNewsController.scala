@@ -3,10 +3,10 @@ package controllers
 import actions.SecureAction
 import com.google.inject.Inject
 import generators.{ElCronistaUrlGenerator, ElCronistaUrlGeneratorObject}
-import models.{Graduate, ElCronistaNews}
+import models.{Graduate, News}
 import play.api.mvc.{Action, Controller}
 import scrapers.ElCronistaScraper
-import services.{GraduateService, ElCronistaNewsService}
+import services.{ElCronistaNewsService, GraduateService}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
@@ -22,8 +22,8 @@ class ElCronistaNewsController @Inject()(newsElCronistaService: ElCronistaNewsSe
     val fullName : Option[String]= Option(graduate.firstName + " " +graduate.lastName)
     val links = ElCronistaUrlGeneratorObject.search(fullName,Option("Universidad Austral"))
     val scraper: ElCronistaScraper = new ElCronistaScraper()
-    var news: List[ElCronistaNews] = List[ElCronistaNews]()
-    var element: Option[ElCronistaNews] = None
+    var news: List[News] = List[News]()
+    var element: Option[News] = None
     for(link <- links) {
       if (!link.equals(null)) {
         element = scraper.getArticleData(link,fullName,0)
@@ -42,7 +42,7 @@ class ElCronistaNewsController @Inject()(newsElCronistaService: ElCronistaNewsSe
 
   def deleteNews(id:String) = Action {
     //Get graduate from DB.
-    val news : ElCronistaNews = Await.result(newsElCronistaService.find(id),Duration.Inf)
+    val news : News = Await.result(newsElCronistaService.find(id),Duration.Inf)
     Await.result(newsElCronistaService.drop(news), Duration.Inf)
     Redirect("/")
   }
@@ -53,10 +53,10 @@ class ElCronistaNewsController @Inject()(newsElCronistaService: ElCronistaNewsSe
     val all : Future[Seq[Graduate]] = graduateService.all()
     val graduates : Seq[Graduate] = Await.result(all,Duration.Inf)
     graduates.foreach{grad : Graduate =>
-      var newsList: List[ElCronistaNews] = List[ElCronistaNews]()
+      var newsList: List[News] = List[News]()
       val fullName : Option[String]= Option(grad.firstName + " " +grad.lastName)
       val links = ElCronistaUrlGeneratorObject.search(fullName,Option("Universidad Austral"))
-      var element: Option[ElCronistaNews] = null
+      var element: Option[News] = null
       links.foreach{link : String =>
 
         element = scraper.getArticleData(link,fullName,0)

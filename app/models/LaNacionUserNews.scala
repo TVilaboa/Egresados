@@ -7,7 +7,7 @@ import java.util.Date
   * Created by jeronimocarlos on 9/12/16.
   */
 case class LaNacionUserNews(
-                             news: List[LaNacionNews],
+                             news: List[News],
                              timestamp: Date
                       )
 

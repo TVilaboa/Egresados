@@ -25,10 +25,10 @@ class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,gr
     val fullName : Option[String]= Option(graduate.firstName + " " +graduate.lastName)
     val links = InfobaeUrlGeneratorObject.search(fullName,Option("Universidad Austral"))
     val scraper: InfobaeScraper = new InfobaeScraper()
-    var news: List[InfobaeNews] = List[InfobaeNews]()
-    var element: Option[InfobaeNews] = null
+    var news: List[News] = List[News]()
+    var element: Option[News] = null
     for(link <- links) {
-      element = scraper.scrape(link,fullName,0)
+      element = scraper.getArticleData(link,fullName,0)
       if (element.isDefined) {
         newsInfobaeService.save(element.get)
         news = element.get :: news
@@ -54,13 +54,13 @@ class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,gr
     val all : Future[Seq[Graduate]] = graduateService.all()
     val graduates : Seq[Graduate] = Await.result(all,Duration.Inf)
     graduates.foreach{grad : Graduate =>
-      var newsList: List[InfobaeNews] = List[InfobaeNews]()
+      var newsList: List[News] = List[News]()
       val fullName : Option[String]= Option(grad.firstName + " " +grad.lastName)
       val links = InfobaeUrlGeneratorObject.search(fullName,Option("Universidad Austral"))
-      var element: Option[InfobaeNews] = null
+      var element: Option[News] = null
       links.foreach{link : String =>
         val name = grad.firstName + ""
-        element = scraper.scrape(link, fullName,0)
+        element = scraper.getArticleData(link, fullName,0)
         if (element.isDefined) {
           newsInfobaeService.save(element.get)
           newsList = element.get :: newsList

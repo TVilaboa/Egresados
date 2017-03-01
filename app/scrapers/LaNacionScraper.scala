@@ -4,14 +4,14 @@ import java.io.IOException
 import java.util.UUID
 
 import io.netty.handler.timeout.ReadTimeoutException
-import models.LaNacionNews
+import models.News
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.Logger
 
-class LaNacionScraper () {
+class LaNacionScraper () extends Scraper{
 
-  def getArticleData(url : String, name : Option[String], cycle : Int): Option[LaNacionNews] ={
+  override def getArticleData(url : String, name : Option[String], cycle : Int): Option[News] ={
 
     val userAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
     val successLogger: Logger = Logger("successLogger")
@@ -34,7 +34,7 @@ class LaNacionScraper () {
       if(aux.size() > 0)
         author = aux.get(0).text()
 
-      Some(LaNacionNews(UUID.randomUUID().toString, url, title, date, tuft, author))
+      Some(News(UUID.randomUUID().toString, url, title, date, tuft, author))
 
 //      if(name.isDefined && article.toString.contains(name)){
 //        successLogger.info(url)

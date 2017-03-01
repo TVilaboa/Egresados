@@ -2,7 +2,7 @@ package services
 
 import com.google.inject.Inject
 import daos.{InfobaeNewsDao, LaNacionNewsDao}
-import models.{InfobaeNews, LaNacionNews}
+import models.News
 import org.mongodb.scala.Completed
 import org.mongodb.scala.result.UpdateResult
 import scala.concurrent.Future
@@ -12,24 +12,24 @@ import scala.concurrent.Future
   */
 class InfobaeNewsService @Inject()(infobaeNewsDao: InfobaeNewsDao) {
 
-  def all(): Future[Seq[InfobaeNews]] = infobaeNewsDao.all()
+  def all(): Future[Seq[News]] = infobaeNewsDao.all()
 
-  def find(infobaeNewsId: String): Future[InfobaeNews] = infobaeNewsDao.find(infobaeNewsId)
+  def find(infobaeNewsId: String): Future[News] = infobaeNewsDao.find(infobaeNewsId)
 
-  def findByUrl(infobaeNewsUrl: String): Future[InfobaeNews] = infobaeNewsDao.findByUrl(infobaeNewsUrl)
+  def findByUrl(infobaeNewsUrl: String): Future[News] = infobaeNewsDao.findByUrl(infobaeNewsUrl)
 
-  def findByTitle(infobaeNewsTitle: String): Future[InfobaeNews] = infobaeNewsDao.findByTitle(infobaeNewsTitle)
+  def findByTitle(infobaeNewsTitle: String): Future[News] = infobaeNewsDao.findByTitle(infobaeNewsTitle)
 
-  def findByDate(infobaeNewsDate: String): Future[InfobaeNews] = infobaeNewsDao.findByDate(infobaeNewsDate)
+  def findByDate(infobaeNewsDate: String): Future[News] = infobaeNewsDao.findByDate(infobaeNewsDate)
 
-  def findByTuft(infobaeNewsTuft: String): Future[InfobaeNews] = infobaeNewsDao.findByTuft(infobaeNewsTuft)
+  def findByTuft(infobaeNewsTuft: String): Future[News] = infobaeNewsDao.findByTuft(infobaeNewsTuft)
 
-  def findByAuthor(infobaeNewsAuthor: String): Future[InfobaeNews] = infobaeNewsDao.findByAuthor(infobaeNewsAuthor)
+  def findByAuthor(infobaeNewsAuthor: String): Future[News] = infobaeNewsDao.findByAuthor(infobaeNewsAuthor)
 
-  def update(infobaeNews: InfobaeNews): Future[UpdateResult] = infobaeNewsDao.update(infobaeNews)
+  def update(infobaeNews: News): Future[UpdateResult] = infobaeNewsDao.update(infobaeNews)
 
-  def save(infobaeNews: InfobaeNews): Future[Completed] = infobaeNewsDao.save(infobaeNews)
+  def save(infobaeNews: News): Future[Completed] = infobaeNewsDao.save(infobaeNews)
 
-  def drop(infobaeNews: InfobaeNews) : Future[InfobaeNews] = infobaeNewsDao.drop(infobaeNews)
+  def drop(infobaeNews: News) : Future[News] = infobaeNewsDao.drop(infobaeNews)
 
 }

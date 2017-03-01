@@ -15,10 +15,10 @@ case class Graduate(  _id: String,
                       graduationDate: String,
                       career: String,
                       studentCode: String,
-                      laNacionNews: List[LaNacionNews],
-                      infobaeNews: List[InfobaeNews],
-                      clarinNews: List[ClarinNews],
-                      elCronistaNews:List[ElCronistaNews],
+                      laNacionNews: List[News],
+                      infobaeNews: List[News],
+                      clarinNews: List[News],
+                      elCronistaNews:List[News],
                       linkedinUserProfile: LinkedinUserProfile
                    )
 

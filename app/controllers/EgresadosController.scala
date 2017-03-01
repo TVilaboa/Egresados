@@ -54,25 +54,25 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         "title" -> text(),
         "date" -> text(),
         "tuft" -> text(),
-        "author" -> text())(LaNacionNews.apply)(LaNacionNews.unapply)),
+        "author" -> text())(News.apply)(News.unapply)),
       "infobaeNews" -> list(mapping("_id" -> text(),
         "url" -> text(),
         "title" -> text(),
         "date" -> text(),
         "tuft" -> text(),
-        "author" -> text())(InfobaeNews.apply)(InfobaeNews.unapply)),
+        "author" -> text())(News.apply)(News.unapply)),
       "clarinNews" -> list(mapping("_id" -> text(),
         "url" -> text(),
         "title" -> text(),
         "date" -> text(),
         "tuft" -> text(),
-        "author" -> text())(ClarinNews.apply)(ClarinNews.unapply)),
+        "author" -> text())(News.apply)(News.unapply)),
       "elCronistaNews" -> list(mapping("_id" -> text(),
         "url" -> text(),
         "title" -> text(),
         "date" -> text(),
         "tuft" -> text(),
-        "author" -> text())(ElCronistaNews.apply)(ElCronistaNews.unapply)),
+        "author" -> text())(News.apply)(News.unapply)),
       "linkedinUserProfile" -> mapping("_id" -> text(),
         "actualPosition" -> text(),
         "jobList" -> list(mapping("_id" -> text(),
@@ -180,10 +180,10 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("graduationday").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("career").head,
         request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("studentcode").head,
-        List[LaNacionNews](),
-        List[InfobaeNews](),
-        List[ClarinNews](),
-        List[ElCronistaNews](),
+        List[News](),
+        List[News](),
+        List[News](),
+        List[News](),
         LinkedinUserProfile(UUID.randomUUID().toString,
           "",
           List[LinkedinJob](),
@@ -268,10 +268,10 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("graduationday").head,
       request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("career").head,
       request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("studentcode").head,
-      List[LaNacionNews](),
-      List[InfobaeNews](),
-      List[ClarinNews](),
-      List[ElCronistaNews](),
+      List[News](),
+      List[News](),
+      List[News](),
+      List[News](),
       LinkedinUserProfile(UUID.randomUUID().toString,
         "",
         List[LinkedinJob](),
@@ -386,10 +386,10 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
             "",
             "",
             studentCode,
-            List[LaNacionNews](),
-            List[InfobaeNews](),
-            List[ClarinNews](),
-            List[ElCronistaNews](),
+            List[News](),
+            List[News](),
+            List[News](),
+            List[News](),
             LinkedinUserProfile(UUID.randomUUID().toString,
               "",
               List[LinkedinJob](),
@@ -408,7 +408,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
                   graduateService.update(Graduate(graduateDB.get._id,firstName, lastName, documentId, birthDate, "", "", "", studentCode, graduateDB.get.laNacionNews,graduateDB.get.infobaeNews,graduateDB.get.clarinNews,graduateDB.get.elCronistaNews,graduateDB.get.linkedinUserProfile))
                 }
                 else {
-                  val graduate : Graduate = Graduate(UUID.randomUUID().toString, firstName, lastName, documentId, birthDate, "", "", "", studentCode, List[LaNacionNews](), List[InfobaeNews](),List[ClarinNews](),List[ElCronistaNews](), LinkedinUserProfile(UUID.randomUUID().toString, "", List[LinkedinJob](), List[LinkedinEducation](), ""))
+                  val graduate : Graduate = Graduate(UUID.randomUUID().toString, firstName, lastName, documentId, birthDate, "", "", "", studentCode, List[News](), List[News](),List[News](),List[News](), LinkedinUserProfile(UUID.randomUUID().toString, "", List[LinkedinJob](), List[LinkedinEducation](), ""))
                   graduateService.save(graduate)
                 }
 
@@ -416,7 +416,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
             }
             result onFailure {
               case _ => {
-                val graduate : Graduate = Graduate(UUID.randomUUID().toString, firstName, lastName, documentId, birthDate, "", "", "", studentCode,List[LaNacionNews](), List[InfobaeNews](),List[ClarinNews](),List[ElCronistaNews](), LinkedinUserProfile(UUID.randomUUID().toString, "", List[LinkedinJob](), List[LinkedinEducation](), ""))
+                val graduate : Graduate = Graduate(UUID.randomUUID().toString, firstName, lastName, documentId, birthDate, "", "", "", studentCode,List[News](), List[News](),List[News](),List[News](), LinkedinUserProfile(UUID.randomUUID().toString, "", List[LinkedinJob](), List[LinkedinEducation](), ""))
                 graduateService.save(graduate)
               }
             }
@@ -435,9 +435,9 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   def deleteGraduate(id:String) = Action {
     //Get graduate from DB.
     val graduate : Graduate = Await.result(graduateService.find(id),Duration.Inf)
-    val laNacionNewsList: List[LaNacionNews] = graduate.laNacionNews
+    val laNacionNewsList: List[News] = graduate.laNacionNews
     val linkedinUserProfile: LinkedinUserProfile = graduate.linkedinUserProfile
-    val infobaeNewsList: List[InfobaeNews] = graduate.infobaeNews
+    val infobaeNewsList: List[News] = graduate.infobaeNews
 
     //Delete Linkedin User Profile from DB.
     linkedinUserProfileService.drop(linkedinUserProfile)
@@ -464,9 +464,9 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
     val graduate: Graduate = Await.result(graduateService.find(id),Duration.Inf)
 
-    var laNacionNews = List[LaNacionNews]()
+    var laNacionNews = List[News]()
     for(a <- laNacionLinks.get.indices){
-      val news: List[LaNacionNews] = List(Await.result(laNacionNewsService.findByUrl(request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("laNacionLinks[]").get(a)),Duration.Inf))
+      val news: List[News] = List(Await.result(laNacionNewsService.findByUrl(request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("laNacionLinks[]").get(a)),Duration.Inf))
       laNacionNews = laNacionNews.++(news)
     }
 

@@ -4,7 +4,7 @@ import java.io.IOException
 import java.util.UUID
 
 import io.netty.handler.timeout.ReadTimeoutException
-import models.InfobaeNews
+import models.News
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -17,9 +17,9 @@ import scala.collection.JavaConversions._
  */
 
 
-class InfobaeScraper {
+class InfobaeScraper extends Scraper{
 
-  def scrape(url: String, name : Option[String], cycle: Int): Option[InfobaeNews] ={
+  override def getArticleData(url: String, name: Option[String], cycle: Int): Option[News]  ={
     val userAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
     var document: Option[Document] = None
     val successLogger: Logger = Logger("successLogger")
@@ -39,14 +39,14 @@ class InfobaeScraper {
 
       if(name.isDefined && document.get.select("div:contains(" + name.get + ")").size() > 0){
         successLogger.info(url)
-        Some(InfobaeNews(UUID.randomUUID().toString, url, titulo.get, fecha.get, copete.get, autor.get))
+        Some(News(UUID.randomUUID().toString, url, titulo.get, fecha.get, copete.get, autor.get))
       }
       else
         None
 
     } catch {
       case  e: ReadTimeoutException =>{
-        if (cycle == 0) scrape(url, name, cycle + 1)
+        if (cycle == 0) getArticleData(url, name, cycle + 1)
         else {
           errorLogger.info(url + " - " + e.toString)
           None

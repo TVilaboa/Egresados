@@ -25,7 +25,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
                                   val messagesApi: MessagesApi) extends Controller {
 
   def getAllInfobaeData = Action { implicit request => {
-    var info = List[InfobaeNews]()
+    var info = List[News]()
     var graduates = Seq[Graduate]()
     val all: Future[Seq[Graduate]] = graduateService.all()
     graduates = Await.result(all,Duration.Inf)
@@ -52,7 +52,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
   }}
 
   def getAllLaNacionData = Action { implicit request => {
-    var info = List[LaNacionNews]()
+    var info = List[News]()
     var graduates = Seq[Graduate]()
     val all: Future[Seq[Graduate]] = graduateService.all()
     graduates = Await.result(all,Duration.Inf)
@@ -67,7 +67,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
   }}
 
   def getAllClarinData = Action { implicit request => {
-    var info = List[ClarinNews]()
+    var info = List[News]()
     var graduates = Seq[Graduate]()
     val all: Future[Seq[Graduate]] = graduateService.all()
     graduates = Await.result(all,Duration.Inf)
@@ -82,7 +82,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
   }}
 
   def getAllElCronistaData = Action { implicit request => {
-    var info = List[ElCronistaNews]()
+    var info = List[News]()
     var graduates = Seq[Graduate]()
     val all: Future[Seq[Graduate]] = graduateService.all()
     graduates = Await.result(all,Duration.Inf)

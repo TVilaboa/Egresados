@@ -6,7 +6,7 @@ import java.util.Date
 import actions.SecureAction
 import com.google.inject.Inject
 import generators.{InfobaeUrlGeneratorObject, LaNacionUrlGenerator, LaNacionUrlGeneratorObject}
-import models.{Graduate, InfobaeNews, LaNacionNews, LaNacionUserNews}
+import models.{Graduate, News}
 import play.api.mvc.{Action, Controller}
 import scrapers.{InfobaeScraper, LaNacionScraper}
 import services.{GraduateService, LaNacionNewsService}
@@ -26,8 +26,8 @@ class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService
     val fullName : Option[String]= Option(graduate.firstName + " " +graduate.lastName)
     val links = LaNacionUrlGeneratorObject.search(fullName,Option("Universidad Austral"))
     val scraper: LaNacionScraper = new LaNacionScraper()
-    var news: List[LaNacionNews] = List[LaNacionNews]()
-    var element: Option[LaNacionNews] = None
+    var news: List[News] = List[News]()
+    var element: Option[News] = None
     for(link <- links) {
       if (!link.equals(null)) {
         element = scraper.getArticleData(link,fullName,0)
@@ -46,7 +46,7 @@ class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService
 
   def deleteNews(id:String) = Action {
     //Get graduate from DB.
-    val news : LaNacionNews = Await.result(newsLaNacionService.find(id),Duration.Inf)
+    val news : News = Await.result(newsLaNacionService.find(id),Duration.Inf)
     Await.result(newsLaNacionService.drop(news), Duration.Inf)
     Redirect("/")
   }
@@ -57,10 +57,10 @@ class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService
     val all : Future[Seq[Graduate]] = graduateService.all()
     val graduates : Seq[Graduate] = Await.result(all,Duration.Inf)
     graduates.foreach{grad : Graduate =>
-      var newsList: List[LaNacionNews] = List[LaNacionNews]()
+      var newsList: List[News] = List[News]()
       val fullName : Option[String]= Option(grad.firstName + " " +grad.lastName)
       val links = LaNacionUrlGeneratorObject.search(fullName,Option("Universidad Austral"))
-      var element: Option[LaNacionNews] = null
+      var element: Option[News] = null
       links.foreach{link : String =>
 
         element = scraper.getArticleData(link,fullName,0)

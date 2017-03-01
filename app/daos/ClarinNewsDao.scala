@@ -1,7 +1,7 @@
 package daos
 
 import com.google.inject.{ImplementedBy, Inject, Singleton}
-import models.ClarinNews
+import models.News
 import org.mongodb.scala._
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.result.UpdateResult
@@ -17,89 +17,89 @@ import scala.concurrent.Future
 @ImplementedBy(classOf[MongoClarinNewsDao])
 trait ClarinNewsDao {
 
-  def all(): Future[Seq[ClarinNews]]
+  def all(): Future[Seq[News]]
 
-  def find(ClarinNewsId: String): Future[ClarinNews]
+  def find(ClarinNewsId: String): Future[News]
 
-  def findByUrl(ClarinNewsUrl: String): Future[ClarinNews]
+  def findByUrl(ClarinNewsUrl: String): Future[News]
 
-  def findByTitle(ClarinNewsTitle: String): Future[ClarinNews]
+  def findByTitle(ClarinNewsTitle: String): Future[News]
 
-  def findByDate(ClarinNewsDate: String): Future[ClarinNews]
+  def findByDate(ClarinNewsDate: String): Future[News]
 
-  def findByTuft(ClarinNewsTuft: String): Future[ClarinNews]
+  def findByTuft(ClarinNewsTuft: String): Future[News]
   
-  def findByAuthor(ClarinNewsAuthor: String): Future[ClarinNews]
+  def findByAuthor(ClarinNewsAuthor: String): Future[News]
 
-  def update(ClarinNews: ClarinNews): Future[UpdateResult]
+  def update(ClarinNews: News): Future[UpdateResult]
 
-  def save(ClarinNews: ClarinNews): Future[Completed]
+  def save(ClarinNews: News): Future[Completed]
 
-  def drop(ClarinNews: ClarinNews) : Future[ClarinNews]
+  def drop(ClarinNews: News) : Future[News]
 }
 
 @Singleton
 class MongoClarinNewsDao @Inject()(mongo: Mongo) extends ClarinNewsDao {
   private val newsClarin: MongoCollection[Document] = mongo.db.getCollection("ClarinNews")
 
-  override def all(): Future[Seq[ClarinNews]] = {
+  override def all(): Future[Seq[News]] = {
     newsClarin.find().toFuture().map(doc => doc.map(documentToClarinNews))
   }
 
-  override def find(ClarinNewsId: String): Future[ClarinNews] = {
-    newsClarin.find(equal("_id", ClarinNewsId)).head().map[ClarinNews]((doc: Document) => {
+  override def find(ClarinNewsId: String): Future[News] = {
+    newsClarin.find(equal("_id", ClarinNewsId)).head().map[News]((doc: Document) => {
       documentToClarinNews(doc)
     })
   }
 
-  override def findByUrl(ClarinNewsUrl: String): Future[ClarinNews] = {
-    newsClarin.find(equal("url", ClarinNewsUrl)).head().map[ClarinNews]((doc: Document) => {
+  override def findByUrl(ClarinNewsUrl: String): Future[News] = {
+    newsClarin.find(equal("url", ClarinNewsUrl)).head().map[News]((doc: Document) => {
       documentToClarinNews(doc)
     })
   }
 
-  override def findByTitle(ClarinNewsTitle: String): Future[ClarinNews] = {
-    newsClarin.find(equal("title", ClarinNewsTitle)).head().map[ClarinNews]((doc: Document) => {
+  override def findByTitle(ClarinNewsTitle: String): Future[News] = {
+    newsClarin.find(equal("title", ClarinNewsTitle)).head().map[News]((doc: Document) => {
       documentToClarinNews(doc)
     })
   }
 
-  override def findByDate(ClarinNewsDate: String): Future[ClarinNews] = {
-    newsClarin.find(equal("date", ClarinNewsDate)).head().map[ClarinNews]((doc: Document) => {
+  override def findByDate(ClarinNewsDate: String): Future[News] = {
+    newsClarin.find(equal("date", ClarinNewsDate)).head().map[News]((doc: Document) => {
       documentToClarinNews(doc)
     })
   }
 
-  override def findByTuft(ClarinNewsTuft: String): Future[ClarinNews] = {
-    newsClarin.find(equal("tuft", ClarinNewsTuft)).head().map[ClarinNews]((doc: Document) => {
+  override def findByTuft(ClarinNewsTuft: String): Future[News] = {
+    newsClarin.find(equal("tuft", ClarinNewsTuft)).head().map[News]((doc: Document) => {
       documentToClarinNews(doc)
     })
   }
 
-  override def findByAuthor(ClarinNewsAuthor: String): Future[ClarinNews] = {
-    newsClarin.find(equal("author", ClarinNewsAuthor)).head().map[ClarinNews]((doc: Document) => {
+  override def findByAuthor(ClarinNewsAuthor: String): Future[News] = {
+    newsClarin.find(equal("author", ClarinNewsAuthor)).head().map[News]((doc: Document) => {
       documentToClarinNews(doc)
     })
   }
 
-  override def update(ClarinNews: ClarinNews): Future[UpdateResult] = {
+  override def update(ClarinNews: News): Future[UpdateResult] = {
     newsClarin.updateOne(equal("_id", ClarinNews._id), Document(Json.toJson(ClarinNews).toString)).head()
   }
 
-  override def save(ClarinNews: ClarinNews): Future[Completed] = {
+  override def save(ClarinNews: News): Future[Completed] = {
     val ClarinNewsSaver: String = Json.toJson(ClarinNews).toString
     val doc: Document = Document(ClarinNewsSaver)
     newsClarin.insertOne(doc).head()
   }
 
-  override def drop(ClarinNews: ClarinNews) : Future[ClarinNews] = {
-    newsClarin.findOneAndDelete(equal("_id", ClarinNews._id)).head().map[ClarinNews]((doc: Document) => {
+  override def drop(ClarinNews: News) : Future[News] = {
+    newsClarin.findOneAndDelete(equal("_id", ClarinNews._id)).head().map[News]((doc: Document) => {
       documentToClarinNews(doc)
     })
   }
 
-  private def documentToClarinNews(doc: Document): ClarinNews = {
-    ClarinNews(
+  private def documentToClarinNews(doc: Document): News = {
+    News(
       doc.get("_id").get.asString().getValue,
       doc.get("url").get.asString().getValue,
       doc.get("title").get.asString().getValue,

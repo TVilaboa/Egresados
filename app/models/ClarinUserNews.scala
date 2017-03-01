@@ -6,7 +6,7 @@ import java.util.Date
   * Created by Tomás on 28/02/2017.
   */
 case class ClarinUserNews(
-                             news: List[ClarinNews],
+                             news: List[News],
                              timestamp: Date
                            )
 

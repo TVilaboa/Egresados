@@ -37,6 +37,10 @@ GET         /delete/:id                   controllers.EgresadosController.delete
 
 GET         /stats                        controllers.EgresadosController.getLinkedInUrlStats
 
+#Validation
+GET         /validate/:id                 controllers.EgresadosController.renderValidate(id: String)
+POST        /valid                        controllers.EgresadosController.validateLinks
+
 #LinkedInScraper
 GET          /linkedin/search/:id         controllers.LinkedinUserProfileController.saveLinkedinUserProfile(id:String)
 GET          /linkedin/searchAll          controllers.LinkedinUserProfileController.saveAllLinkedinUserProfile
@@ -44,34 +48,28 @@ GET          /linkedin/delete/:id         controllers.LinkedinUserProfileControl
 
 #LaNacionController
 GET         /lanacion/search/:id          controllers.LaNacionNewsController.saveNews(id : String)
-GET         /lanacion/searchAll          controllers.LaNacionNewsController.saveAllLaNacionNews
-GET         /validate/:id                 controllers.EgresadosController.renderValidate(id: String)
-POST        /valid                        controllers.EgresadosController.validateLinks
+GET         /lanacion/searchAll           controllers.LaNacionNewsController.saveAllLaNacionNews
 
 #ClarinController
-GET         /clarin/search/:id          controllers.ClarinNewsController.saveNews(id : String)
-GET         /clarin/searchAll          controllers.ClarinNewsController.saveAllClarinNews
-GET         /validate/:id                 controllers.EgresadosController.renderValidate(id: String)
-POST        /valid                        controllers.EgresadosController.validateLinks
+GET         /clarin/search/:id            controllers.ClarinNewsController.saveNews(id : String)
+GET         /clarin/searchAll             controllers.ClarinNewsController.saveAllClarinNews
 
 #ElCronistaController
-GET         /elCronista/search/:id          controllers.ElCronistaNewsController.saveNews(id : String)
+GET         /elCronista/search/:id         controllers.ElCronistaNewsController.saveNews(id : String)
 GET         /elCronista/searchAll          controllers.ElCronistaNewsController.saveAllElCronistaNews
-GET         /validate/:id                 controllers.EgresadosController.renderValidate(id: String)
-POST        /valid                        controllers.EgresadosController.validateLinks
 
 #InfobaeController
 GET         /infobae/search/:id           controllers.InfobaeNewsController.saveNews(id : String)
 GET         /infobae/searchAll            controllers.InfobaeNewsController.saveAllInfobaeNews
 
 #RestApi
-GET         /api/infobae            controllers.RestApiController.getAllInfobaeData()
-GET         /api/egresados          controllers.RestApiController.getAllEgresadosData()
-GET         /api/lanacion           controllers.RestApiController.getAllLaNacionData()
-GET         /api/clarin           controllers.RestApiController.getAllClarinData()
-GET         /api/elcronista           controllers.RestApiController.getAllElCronistaData()
-GET         /api/linkedin           controllers.RestApiController.getAllLinkedInData()
-GET         /api/infobae/:id        controllers.RestApiController.getOneInfobaeData(id : String)
-GET         /api/lanacion/:id       controllers.RestApiController.getOneLaNacionData(id : String)
-GET         /api/linkedin/:id       controllers.RestApiController.getOneLinkedinData(id : String)
-GET         /api/egresados/carrera/:career controllers.RestApiController.getAllEgresadosByCareer(career : String)
+GET         /api/infobae                    controllers.RestApiController.getAllInfobaeData()
+GET         /api/egresados                  controllers.RestApiController.getAllEgresadosData()
+GET         /api/lanacion                   controllers.RestApiController.getAllLaNacionData()
+GET         /api/clarin                     controllers.RestApiController.getAllClarinData()
+GET         /api/elcronista                 controllers.RestApiController.getAllElCronistaData()
+GET         /api/linkedin                   controllers.RestApiController.getAllLinkedInData()
+GET         /api/infobae/:id                controllers.RestApiController.getOneInfobaeData(id : String)
+GET         /api/lanacion/:id               controllers.RestApiController.getOneLaNacionData(id : String)
+GET         /api/linkedin/:id               controllers.RestApiController.getOneLinkedinData(id : String)
+GET         /api/egresados/carrera/:career  controllers.RestApiController.getAllEgresadosByCareer(career : String)

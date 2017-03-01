@@ -98,13 +98,13 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
   }
 
   private def documentToGraduate(doc: Document): Graduate = {
-    var nacionNews : List[LaNacionNews] =  List[LaNacionNews]()
+    var nacionNews : List[News] =  List[News]()
 
-    var infobaeNews : List[InfobaeNews] =  List[InfobaeNews]()
+    var infobaeNews : List[News] =  List[News]()
 
-    var clarinNews : List[ClarinNews] =  List[ClarinNews]()
+    var clarinNews : List[News] =  List[News]()
 
-    var elCronistaNews : List[ElCronistaNews] =  List[ElCronistaNews]()
+    var elCronistaNews : List[News] =  List[News]()
 
     var linkedinUserProfile: LinkedinUserProfile = LinkedinUserProfile(
                                                       UUID.randomUUID().toString,
@@ -176,41 +176,41 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
     )
   }
 
-  private def bsonToListLanacion(bson : BsonArray) : List[LaNacionNews] ={
-    var news = List[LaNacionNews]()
+  private def bsonToListLanacion(bson : BsonArray) : List[News] ={
+    var news = List[News]()
     for(bsonV : BsonValue <- bson.getValues){
       val doc = bsonV.asDocument()
-      news = news :+ LaNacionNews(doc.get("_id").asString().getValue,doc.get("url").asString().getValue,doc.get("title").asString().getValue,
+      news = news :+ News(doc.get("_id").asString().getValue,doc.get("url").asString().getValue,doc.get("title").asString().getValue,
         doc.get("date").asString().getValue,doc.get("tuft").asString().getValue,doc.get("author").asString().getValue)
     }
     news
   }
 
-  private def bsonToListInfobae(bson : BsonArray) : List[InfobaeNews] ={
-    var news = List[InfobaeNews]()
+  private def bsonToListInfobae(bson : BsonArray) : List[News] ={
+    var news = List[News]()
     for(bsonV : BsonValue <- bson.getValues){
       val doc = bsonV.asDocument()
-      news = news :+ InfobaeNews(doc.get("_id").asString().getValue,doc.get("url").asString().getValue,doc.get("title").asString().getValue,
+      news = news :+ News(doc.get("_id").asString().getValue,doc.get("url").asString().getValue,doc.get("title").asString().getValue,
         doc.get("date").asString().getValue,doc.get("tuft").asString().getValue,doc.get("author").asString().getValue)
     }
     news
   }
 
-  private def bsonToListClarin(bson : BsonArray) : List[ClarinNews] ={
-    var news = List[ClarinNews]()
+  private def bsonToListClarin(bson : BsonArray) : List[News] ={
+    var news = List[News]()
     for(bsonV : BsonValue <- bson.getValues){
       val doc = bsonV.asDocument()
-      news = news :+ ClarinNews(doc.get("_id").asString().getValue,doc.get("url").asString().getValue,doc.get("title").asString().getValue,
+      news = news :+ News(doc.get("_id").asString().getValue,doc.get("url").asString().getValue,doc.get("title").asString().getValue,
         doc.get("date").asString().getValue,doc.get("tuft").asString().getValue,doc.get("author").asString().getValue)
     }
     news
   }
 
-  private def bsonToListElCronista(bson : BsonArray) : List[ElCronistaNews] ={
-    var news = List[ElCronistaNews]()
+  private def bsonToListElCronista(bson : BsonArray) : List[News] ={
+    var news = List[News]()
     for(bsonV : BsonValue <- bson.getValues){
       val doc = bsonV.asDocument()
-      news = news :+ ElCronistaNews(doc.get("_id").asString().getValue,doc.get("url").asString().getValue,doc.get("title").asString().getValue,
+      news = news :+ News(doc.get("_id").asString().getValue,doc.get("url").asString().getValue,doc.get("title").asString().getValue,
         doc.get("date").asString().getValue,doc.get("tuft").asString().getValue,doc.get("author").asString().getValue)
     }
     news
