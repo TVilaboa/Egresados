@@ -18,14 +18,6 @@ import play.data.format.Formats.DateTime
 
 class LinkedinUserProfileScraper () {
 
-//  def main(args: Array[String]) {
-//    val userProfile1 = getLinkedinProfile("https://ar.linkedin.com/in/ignacio-cassol-894a0935")
-//    val userProfile2 = getLinkedinProfile("https://ar.linkedin.com/in/javier-isoldi-5a937091?trk=pub-pbmap")
-//    val userProfile3 = getLinkedinProfile("https://ar.linkedin.com/in/andres-scoccimarro-303412")
-//    val userProfile4 = getLinkedinProfile("https://ar.linkedin.com/in/santiagofuentes?trk=pub-pbmap")
-//    val userProfile5 = getLinkedinProfile("https://ar.linkedin.com/in/kevstessens?trk=pub-pbmap")
-//  }
-
   def getLinkedinProfile(url: String, cycle: Int): Option[LinkedinUserProfile]  = {
     val userAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
     val successLogger: Logger = Logger("successLogger")
