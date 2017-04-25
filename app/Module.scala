@@ -16,8 +16,8 @@ class Module extends AbstractModule with AkkaGuiceSupport {
 
   override def configure() = {
     //Bind cassandra scheduler
-    bindActor[ScraperActor]("scraper-actor")
-    bind(classOf[Scheduler]).asEagerSingleton()
+//    bindActor[ScraperActor]("scraper-actor")
+//    bind(classOf[Scheduler]).asEagerSingleton()
   }
 
 }

@@ -76,4 +76,7 @@ class LaNacionScraper extends NewsScraper{
     }
     valid
   }
+
+  override protected def getScraperName(): String = "La Nacion Scraper"
+
 }

@@ -14,6 +14,7 @@ import models.{LinkedinEducation, LinkedinJob, LinkedinUserProfile}
 
 
 class LinkedinUserProfileScraper {
+  final val scraper : String = "LinkedIn Scraper"
   final val SUCCESS_LOGGER: Logger = Logger("successLogger")
   final val ERROR_LOGGER: Logger = Logger("errorLogger")
   var userAgent : String = UserAgentStrings.getActive()
@@ -25,7 +26,7 @@ class LinkedinUserProfileScraper {
 
      doc = Option(Jsoup.connect(url).userAgent(userAgent).get)
 
-      SUCCESS_LOGGER.info(url)
+      SUCCESS_LOGGER.info(s"${scraper} :-: ${url}")
 
       val title = getJobTitle(doc.get)
 
@@ -37,32 +38,31 @@ class LinkedinUserProfileScraper {
     }
     catch {
       case e : HttpStatusException =>
-        ERROR_LOGGER.info(s"${url} - ${e.toString}")
         try{
           userAgent = UserAgentStrings.next()
           getLinkedinProfile(url,0)
         }
-        catch{
-          case e : IndexOutOfBoundsException =>
-            UserAgentStrings.reset()
-            ERROR_LOGGER.info(s"${url} - ${e.toString}\nTried all available User Agents")
-            None
+      catch{
+        case e : IndexOutOfBoundsException =>
+          ERROR_LOGGER.warn(s"${scraper} :-: ${url} :-: Tried All Available User Agents")
+          UserAgentStrings.reset()
+          None
         }
 
       case  e: ReadTimeoutException =>
         if (cycle == 0)
           getLinkedinProfile(url, cycle + 1)
         else {
-          ERROR_LOGGER.info(s"${url} - ${e.toString}")
+          ERROR_LOGGER.error(s"${scraper} :-: ${url} :-: ${e.toString}")
           None
         }
 
       case e : IOException =>
-        ERROR_LOGGER.info(s"${url} - ${e.toString}")
+        ERROR_LOGGER.error(s"${scraper} :-: ${url} :-: ${e.toString}")
         None
 
       case  e: Exception =>
-        ERROR_LOGGER.info(s"${url} - ${e.toString}")
+        ERROR_LOGGER.error(s"${scraper} :-: ${url} :-: ${e.toString}")
         None
     }
   }

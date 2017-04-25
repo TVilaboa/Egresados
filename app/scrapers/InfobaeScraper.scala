@@ -80,4 +80,7 @@ class InfobaeScraper extends NewsScraper{
     }
     valid
   }
+
+  override protected def getScraperName(): String = "Infobae Scraper"
+
 }

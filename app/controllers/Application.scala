@@ -5,9 +5,9 @@ import generators._
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import actions.SecureAction
-import services.{SessionService, UserService}
+import org.joda.time.DateTime
+import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 
-import scala.collection.mutable.ListBuffer
 import scala.io.Source
 
 class Application @Inject()(secureAction: SecureAction) extends Controller {
@@ -32,26 +32,58 @@ class Application @Inject()(secureAction: SecureAction) extends Controller {
     val errorLines = Source.fromFile("logs/error.log").getLines.toList
     val successLines = Source.fromFile("logs/success.log").getLines.toList
 
-    var errorDate : String = ""
-    var errorLogs: List[String] = List()
-    var successDate : String = ""
-    var successLogs: List[String] = List()
+    val error : List[String] = Source.fromFile("logs/error.log").getLines().toList
+    val success : List[String] = Source.fromFile("logs/success.log").getLines().toList
 
-    if(errorLines.nonEmpty){
-      errorDate = errorLines.last.substring(0,10)
-      if(errorDate.nonEmpty)
-        errorLogs = errorLines.filter(_.contains(errorDate)).map{log =>
-          val aux = log.split("ERROR").last
-          aux.substring(3,aux.length)
-        }.distinct
-    }
+    val dtf : DateTimeFormatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss")
 
-    if(successLines.nonEmpty){
-      successDate = successLines.last.substring(0,10)
-      if(successDate.nonEmpty)
-        successLogs = successLines.filter(_.contains(successDate)).map(_.split(" ").last).distinct
-    }
+    val errorTuple : List[(DateTime,String,String,String)] = error.map{x =>
+      //Info is made up from either
+      //News Scraps => Date - [ERROR] - Class :-: Message :-: Url
+      //LinkedIn Scraps => Date - [ERROR] - Class :-: Url :-: Message
+      val info : Array[String] = x.split(":-:")
+      val basicData : Array[String]= info(0).split("-")
 
-    Ok(views.html.index.render("", errorDate, errorLogs, successDate, successLogs))
+      val scraper : String = basicData.last
+      val message : String = scraper match{
+        case "LinkedIn Scraper" => info.last
+        case _ => info(1)
+      }
+      val url : String = scraper match{
+        case "LinkedIn Scraper" => info(1)
+        case _ => info.last
+      }
+      val date : DateTime = dtf.parseDateTime(basicData.head.trim).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0)
+      (date,scraper,message,url)
+    }.groupBy(_._1).toList.sortBy(_._1.getMillis).last._2
+
+    val successTuple : List[(DateTime,String,String,String)] = success.map{x =>
+      //Info is made up from either
+      //News Scraps => Date - [SUCCESS] - Class :-: Message :-: Url
+      //LinkedIn Scraps => Date - [SUCCESS] - Class :-: Url
+      val info : Array[String] = x.split(":-:")
+      val basicData : Array[String]= info(0).split("-")
+
+      val scraper : String = basicData.last
+      val message : String = scraper match{
+        case "LinkedIn Scraper" => ""
+        case _ => info(1)
+      }
+      val url : String = info.last
+
+      val date : DateTime = dtf.parseDateTime(basicData.head.trim).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0)
+      (date,scraper,message,url)
+    }.groupBy(_._1).toList.sortBy(_._1.getMillis).last._2
+
+    val errorDate : DateTime = errorTuple.head._1
+    val successDate : DateTime = successTuple.head._1
+
+    if(errorDate.isEqual(successDate))
+      Ok(views.html.index.render("", errorDate, successTuple, errorTuple))
+    else if(errorDate.isAfter(successDate))
+      Ok(views.html.index.render("", errorDate, successTuple.filter(_._1.equals(errorDate)), errorTuple))
+    else
+      Ok(views.html.index.render("", successDate, successTuple, errorTuple.filter(_._1.equals(successDate))))
+
   }
 }

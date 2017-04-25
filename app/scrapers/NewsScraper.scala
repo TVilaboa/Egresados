@@ -22,6 +22,7 @@ trait NewsScraper {
     * Main method that scraps and retrieves a news object from a specific url and for a person's name
     */
   def getArticleData(url : String, name : Option[String], cycle : Int): Option[News] = {
+    val scraper : String = getScraperName()
     var document : Option[Document] = None
 
     try{
@@ -33,11 +34,11 @@ trait NewsScraper {
       val author : Option[String] = getAuthor(document.get)
 
       if(validateScrap(title,tuft,date,author) && validateNews(name,document.get)){
-        SUCCESS_LOGGER.info(s"${url}")
+        SUCCESS_LOGGER.info(s"${scraper} :-: '${name.get}'  Scrapped Successfully :-: ${url}")
         Some(News(UUID.randomUUID().toString,url,title.get,date.get,tuft.get,author.get))
       }
       else{
-        ERROR_LOGGER.info(s"${url} - No Data Available or News is not valid")
+        ERROR_LOGGER.warn(s"${scraper} :-: '${name.get}' No Data Available or News is not valid :-: ${url}")
         None
       }
     }
@@ -46,16 +47,16 @@ trait NewsScraper {
         if (cycle == 0)
           getArticleData(url, name, cycle + 1)
         else {
-          ERROR_LOGGER.info(s"${url} - ${e.toString}")
+          ERROR_LOGGER.error(s"${scraper} :-: '${name.get}' ${e.toString} :-: ${url}")
           None
         }
       }
       case e : IOException => {
-        ERROR_LOGGER.info(s"${url} - ${e.toString}")
+        ERROR_LOGGER.error(s"${scraper} :-: '${name.get}' ${e.toString} :-: ${url}")
         None
       }
       case e: IOException =>
-        ERROR_LOGGER.info(s"${url} - ${e.toString}")
+        ERROR_LOGGER.error(s"${scraper} :-: '${name.get}' ${e.toString} :-: ${url}")
         None
     }
   }
@@ -91,4 +92,6 @@ trait NewsScraper {
     * Define wether the news is a valid one
     */
   protected def validateNews(name : Option[String], document: Document) : Boolean
+
+  protected def getScraperName() : String
 }

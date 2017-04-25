@@ -76,4 +76,6 @@ class ElCronistaScraper extends NewsScraper{
     }
     valid
   }
+
+  override protected def getScraperName(): String = "El Cronista Scraper"
 }
