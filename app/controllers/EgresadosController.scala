@@ -92,49 +92,40 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   )
 
   def showSearchForm = Action{
-    var graduates = Seq[Graduate]()
 
+    val graduates : List[Graduate]= Await.result(graduateService.all(), Duration.Inf).toList
 
-    val all: Future[Seq[Graduate]] = graduateService.all()
-
-
-    graduates = Await.result(all, Duration.Inf)
-    Ok(views.html.search.render(graduates, graduateForm, true, null, null, null, null, null, null))
+    Ok(views.html.search.render(graduates, graduateForm, true, Map[String,String]()))
   }
 
   def search = Action { implicit request => {
-    var graduates = Seq[Graduate]()
 
-    val firstname = graduateForm.bindFromRequest.data("firstName")
-    val lastname = graduateForm.bindFromRequest.data("lastName")
-    val gradDate = graduateForm.bindFromRequest.data("graduationDate")
-    val career = graduateForm.bindFromRequest.data("career")
-    val identification = graduateForm.bindFromRequest.data("identification")
-    val studentCode = graduateForm.bindFromRequest.data("studentCode")
+    val firstName : String = graduateForm.bindFromRequest.data("firstName")
+    val lastName : String = graduateForm.bindFromRequest.data("lastName")
+    val gradDate : String = graduateForm.bindFromRequest.data("graduationDate")
+    val career : String = graduateForm.bindFromRequest.data("career")
+    val identification : String = graduateForm.bindFromRequest.data("identification")
+    val studentCode : String = graduateForm.bindFromRequest.data("studentCode")
 
+    var graduates: List[Graduate] = Await.result(graduateService.all(), Duration.Inf).toList
 
-    val all: Future[Seq[Graduate]] = graduateService.all()
-
-    graduates = Await.result(all, Duration.Inf)
-
-    if (firstname.nonEmpty)
-      graduates = graduates.filter(x => x.firstName.toLowerCase.contains(firstname.toLowerCase))
-    if (lastname.nonEmpty)
-      graduates = graduates.filter(x => x.lastName.toLowerCase.contains(lastname.toLowerCase))
-    if (gradDate.nonEmpty){
+    if(firstName.nonEmpty)
+      graduates = graduates.filter(x => x.firstName.toLowerCase.contains(firstName.toLowerCase))
+    if(lastName.nonEmpty)
+      graduates = graduates.filter(x => x.lastName.toLowerCase.contains(lastName.toLowerCase))
+    if(gradDate.nonEmpty){
       val format = new SimpleDateFormat("dd/MM/yyyy")
       val date = new DateTime(gradDate).toDate
       graduates = graduates.filter(x => x.graduationDate.toLowerCase.contains(format.format(date).toLowerCase))
     }
-    if (career.nonEmpty)
+    if(career.nonEmpty)
       graduates = graduates.filter(x => x.career.toLowerCase.contains(career.toLowerCase))
-    if (identification.nonEmpty)
+    if(identification.nonEmpty)
       graduates = graduates.filter(x => x.documentId.toLowerCase.contains(identification.toLowerCase))
-    if (studentCode.nonEmpty)
+    if(studentCode.nonEmpty)
       graduates = graduates.filter(x => x.studentCode.toLowerCase.contains(studentCode.toLowerCase))
 
-
-    Ok(views.html.search.render(graduates, graduateForm, false, firstname, lastname, gradDate, career, identification, studentCode))
+    Ok(views.html.search.render(graduates, graduateForm, false, graduateForm.bindFromRequest.data))
   }
   }
 

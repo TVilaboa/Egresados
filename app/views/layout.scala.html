@@ -1,8 +1,94 @@
-@(title: String,scripts: Html = Html(""),styles: Html = Html(""))(content: Html)
+
+
+@(title: String, scripts: Html = Html(""), styles: Html = Html(""))(content: Html)
+
+@navbar()={
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="col-xs-2 navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Graduates Tracker</a>
+        </div>
+        <!-- /.navbar-header -->
+        <div class="col-xs-6">
+            <ul class="nav nav-pills list">
+                <li role="presentation"><a href="@routes.Application.homeFeed()"><i class="fa fa-home"></i> Home</a></li>
+                <li role="presentation"><a href="@routes.EgresadosController.showSearchForm()"><i class="fa fa-graduation-cap"></i> Graduates</a></li>
+                <li role="presentation"><a href="@routes.EgresadosController.addGraduate()"><i class="fa fa-graduation-cap"></i> Add Graduate</a></li>
+            </ul>
+        </div>
+        <div class="col-xs-4">
+            <ul class="nav navbar-top-links navbar-right">
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="@routes.UserAuthController.logout()"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+                <!-- /.navbar-top-links -->
+        </div>
+
+        <div class="navbar-default sidebar" role="navigation">
+            <div class="sidebar-nav navbar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li>
+                        <a href="#"><i class="fa fa-sitemap fa-fw"></i> Scrap<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="@routes.LinkedinUserProfileController.saveAllLinkedinUserProfile()">Linkedin</a>
+                            </li>
+                            <li>
+                                <a href="@routes.LaNacionNewsController.saveAllLaNacionNews()">La Nacion</a>
+                            </li>
+                            <li>
+                                <a href="@routes.InfobaeNewsController.saveAllInfobaeNews()">Infobae</a>
+                            </li>
+                            <li>
+                                <a href="@routes.ClarinNewsController.saveAllClarinNews()">Clarin</a>
+                            </li>
+                            <li>
+                                <a href="@routes.ElCronistaNewsController.saveAllElCronistaNews()">El Cronista</a>
+                            </li>
+                        </ul>
+                        <!-- /.nav-second-level -->
+                    </li>
+                    <li>
+                        <a href="@routes.EgresadosController.showimportCSV()">
+                            <i class="fa fa-file"></i>
+                            Upload CSV
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.sidebar-collapse -->
+        </div>
+        <!-- /.navbar-static-side -->
+    </nav>
+    <!-- /#wrapper -->
+    }
+
 <!DOCTYPE html>
 <html>
 
-    <head>
+<head>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,39 +96,33 @@
     <meta name="description" content="">
     <meta name="author" content="FI Austral">
 
-        <title>@title</title>
+    <title>@title</title>
 
-        <!-- Bootstrap Core CSS -->
+    <!-- Bootstrap Core CSS -->
     <link href="@routes.Assets.at("bower_components/bootstrap/dist/css/bootstrap.min.css")" rel="stylesheet">
 
-        <!-- MetisMenu CSS -->
+    <!-- MetisMenu CSS -->
     <link href="@routes.Assets.at("bower_components/metisMenu/dist/metisMenu.min.css")" rel="stylesheet">
 
-        <!-- Timeline CSS -->
-    <link href="@routes.Assets.at("bower_components/startbootstrap-sb-admin-2/dist/css/timeline.css")" rel="stylesheet">
-
-        <!-- Custom CSS -->
+    <!-- Custom CSS -->
     <link href="@routes.Assets.at("bower_components/startbootstrap-sb-admin-2/dist/css/sb-admin-2.css")" rel="stylesheet">
 
-        <!-- Morris Charts CSS -->
-    <link href="@routes.Assets.at("bower_components/morrisjs/morris.css")" rel="stylesheet">
-
-        <!-- Custom Fonts -->
+    <!-- Custom Fonts -->
     <link href="@routes.Assets.at("bower_components/font-awesome/css/font-awesome.min.css")" rel="stylesheet" type="text/css">
 
-        <!-- Navbar CSS-->
-        <link href="@routes.Assets.at("stylesheets/nav.css")" rel="stylesheet" type="text/css">
+    <!-- Navbar CSS-->
+    <link href="@routes.Assets.at("stylesheets/nav.css")" rel="stylesheet" type="text/css">
 
-        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-        <!--[if lt IE 9]>
+    <!-- Extra CSS to be added -->
+    @styles
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
-        @styles
-
-    </head>
+</head>
 
     <body>
         <section class="content">
@@ -53,107 +133,18 @@
         </section>
     </body>
 
-        <!-- jQuery -->
+    <!-- jQuery -->
     <script src="@routes.Assets.at("bower_components/jquery/dist/jquery.min.js")"></script>
 
-        <!-- Bootstrap Core JavaScript -->
+    <!-- Bootstrap Core JavaScript -->
     <script src="@routes.Assets.at("bower_components/bootstrap/dist/js/bootstrap.min.js")"></script>
 
-        <!-- Metis Menu Plugin JavaScript -->
+    <!-- Metis Menu Plugin JavaScript -->
     <script src="@routes.Assets.at("bower_components/metisMenu/dist/metisMenu.min.js")"></script>
 
-        <!-- Morris Charts JavaScript -->
-    <script src="@routes.Assets.at("bower_components/raphael/raphael.min.js")"></script>
-    <script src="@routes.Assets.at("bower_components/morrisjs/morris.min.js")"></script>
-    <script src="@routes.Assets.at("javascripts/morris-data.js")"></script>
-
-        <!-- Custom Theme JavaScript -->
+    <!-- Custom Theme JavaScript -->
     <script src="@routes.Assets.at("bower_components/startbootstrap-sb-admin-2/dist/js/sb-admin-2.js")"></script>
 
     @scripts
 
 </html>
-
-    @navbar()={
-
-            <!-- Navigation -->
-        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-            <div class="col-xs-2 navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="/">Graduates Tracker</a>
-            </div>
-                <!-- /.navbar-header -->
-            <div class="col-xs-6">
-                <ul class="nav nav-pills list">
-                    <li role="presentation"><a href="@routes.Application.homeFeed()"><i class="fa fa-home"></i> Home</a></li>
-                    <li role="presentation"><a href="@routes.EgresadosController.showSearchForm()"><i class="fa fa-graduation-cap"></i> Graduates</a></li>
-                    <li role="presentation"><a href="@routes.EgresadosController.addGraduate()"><i class="fa fa-graduation-cap"></i> Add Graduate</a></li>
-                </ul>
-
-            </div>
-            <div class="col-xs-4">
-                <ul class="nav navbar-top-links navbar-right">
-                        <!-- /.dropdown -->
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-user">
-                            <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
-                            </li>
-                            <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
-                            </li>
-                            <li class="divider"></li>
-                            <li><a href="@routes.UserAuthController.logout()"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
-                            </li>
-                        </ul>
-                            <!-- /.dropdown-user -->
-                    </li>
-                        <!-- /.dropdown -->
-                </ul>
-                    <!-- /.navbar-top-links -->
-            </div>
-
-            <div class="navbar-default sidebar" role="navigation">
-                <div class="sidebar-nav navbar-collapse">
-                    <ul class="nav" id="side-menu">
-                        <li>
-                            <a href="#"><i class="fa fa-sitemap fa-fw"></i> Scrap<span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li>
-                                    <a href="@routes.LinkedinUserProfileController.saveAllLinkedinUserProfile()">Linkedin</a>
-                                </li>
-                                <li>
-                                    <a href="@routes.LaNacionNewsController.saveAllLaNacionNews()">La Nacion</a>
-                                </li>
-                                <li>
-                                    <a href="@routes.InfobaeNewsController.saveAllInfobaeNews()">Infobae</a>
-                                </li>
-                                <li>
-                                    <a href="@routes.ClarinNewsController.saveAllClarinNews()">Clarin</a>
-                                </li>
-                                <li>
-                                    <a href="@routes.ElCronistaNewsController.saveAllElCronistaNews()">El Cronista</a>
-                                </li>
-                            </ul>
-                                <!-- /.nav-second-level -->
-                        </li>
-                        <li>
-                            <a href="@routes.EgresadosController.showimportCSV()">
-                                <i class="fa fa-file"></i>
-                                Upload CSV
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                    <!-- /.sidebar-collapse -->
-            </div>
-                <!-- /.navbar-static-side -->
-        </nav>
-            <!-- /#wrapper -->
-    }
