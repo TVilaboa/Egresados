@@ -1,6 +1,6 @@
 @(graduates: List[Graduate], form : Form[Graduate], condition : Boolean, filters : Map[String,String])
 
-@styles = {
+@css = {
     <!-- DataTables CSS -->
     <link href="@routes.Assets.at("bower_components/datatables/media/css/jquery.dataTables.min.css")" rel="stylesheet">
     <link href="@routes.Assets.at("stylesheets/application.css")" rel="stylesheet">
@@ -16,6 +16,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.print.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.colVis.min.js"></script>
 
     <!-- Page-Level Demo Scripts - Tables - Use for reference -->
     <script>
@@ -26,7 +27,12 @@
                     select: true,
                     buttons: [
                         'excel',
-                        'csv',
+                        {
+                            extend : 'csv',
+                            exportOptions:{
+                                columns : [0, 1, 2, 3, 4,5]
+                            }
+                        },
                         {
                             text : 'JSON',
                             action: function ( e, dt, button, config ) {
@@ -44,7 +50,7 @@
     </script>
 }
 
-    @layout("Search",scripts,styles){
+    @layout("Search",scripts,css){
 
         <div id="wrapper">
             <div id="page-wrapper">
@@ -62,7 +68,6 @@
                         <!-- /.panel-heading -->
                             <div class="panel-body">
                                 <div class="dataTable_wrapper">
-                                    <h3>Search</h3>
                                     @helper.form(action = routes.EgresadosController.search()){
                                         <div class="form-group">
                                             <div class="col-md-6">

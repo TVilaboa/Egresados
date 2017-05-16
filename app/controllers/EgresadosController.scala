@@ -160,6 +160,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
 
   def addGraduate = Action.async { implicit request =>
+
     try {
       val graduate = Graduate(
         UUID.randomUUID().toString,
@@ -184,19 +185,9 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       )
 
       graduateService.save(graduate).map((_) => {
-//        val name = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("firstName").get(0)
-//        val surname = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("lastName").get(0)
-//        val dni = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("dni").get(0)
-//        val code = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("studentcode").get(0)
-//        val bday = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("birthday").get(0)
-//        val eday = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("entryday").get(0)
-//        val gday = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("graduationday").get(0)
-//        val career = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("career").get(0)
-        Redirect("/profile/" + graduate._id)
-//        Ok(views.html.graduateProfile.render(name,surname,dni,code,bday,eday,gday,career,"Graduado creado correctamente!"))
+        Ok(Json.toJson(graduate))
       }).recoverWith {
         case e: MongoWriteException => Future {
-
           Forbidden
         }
         case e => Future {
@@ -205,7 +196,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       }
     } catch {
       case e: IOException => Future {
-        BadRequest
+        Ok("{body:\"IOException happended\"}")
       }
     }
   }

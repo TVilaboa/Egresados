@@ -1,191 +1,250 @@
 
-@styles = {
+@css = {
     <!-- Application Style CSS -->
-    <link href="@routes.Assets.at("../../public/stylesheets/application.css")" rel="stylesheet">
+    <link href="@routes.Assets.at("stylesheets/application.css")" rel="stylesheet">
 }
 
-@layout(title = "Add Graduate", styles) {
-    <div id="page-wrapper">
-        <div class="row"> 
-            <div class="col-lg-12">
-                <h1 class="page-header">New Graduate</h1> 
-            </div>
-        </div>
+@scripts = {
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.validate.min.js")"></script>
+
+        <script type="text/javascript">
+
+
+            $(function(){
+
+                function checkBirthday(year){
+                    var today = new Date().getFullYear();
+                    return (today - year) >= 22;
+                }
+
+                function checkEntry(year){
+                    var today = new Date().getFullYear();
+                    return (today - year) >= 6;
+                }
+
+                function checkGraduation(date){
+                    var today = new Date().getTime();
+                    var input = new Date(date).getTime();
+                    return today > input;
+                }
+
+                $.validator.addMethod("oldEnough",function(value,element){
+                    return checkBirthday(value);
+                },"Fecha de Nacimiento, debe ser al menos 22 años menor al dia de la fecha.");
+
+                $.validator.addMethod("correctEntry",function(value,element){
+                    return checkEntry(value);
+                },"Fecha de Ingreso Invalida, debe ser al menos 5 años menor al dia de la fecha.");
+
+                $.validator.addMethod("correctGraduation",function(value,element){
+                    return checkGraduation(value);
+                },"Fecha de Egreso Invalida, no debe superar la fecha del dia.");
+
+                $('#addGraduateForm').validate({
+                    rules : {
+                        firstName : {require : true},
+                        lastName : {require : true},
+                        dni : {require : true},
+                        studentcode : {require : true},
+                        career : {require : true},
+                        birthday : {require : true},
+                        entryday : {require : true},
+                        graduationday : {require : true}
+                    },
+                    messages : {
+                        firstName : {require : "Ingresa un nombre para el Graduado"},
+                        lastName : {require : "Ingresa un apellido para el Graduado"},
+                        dni : {require : "Ingresa un DNI para el Graduado"},
+                        studentcode : {require : "Ingresa un codigo de legajo para el Graduado"},
+                        career : {require : "Ingresa una carrera para el Graduado"},
+                        birthday : {require : "Ingresa una fecha de nacimiento para el Graduado"},
+                        entryday : {require : "Ingresa una fecha de ingreso para el Graduado"},
+                        graduationday : {require : "Ingresa una fecha de graduacion para el Graduado"}
+                    },
+                    submitHandler : function(form){
+                        $.ajax({
+                            url : form.action,
+                            type : form.method,
+                            data : $(form).serialize(),
+                            success : function(res){
+                                alert(res);
+                            }
+                        });
+                    }
+                });
+            });
+
+            /**
+            * Script that allows only to type the selected characters
+             * */
+                function allowedCharacters(e){
+                    var key = e.keyCode || e.which;
+                    var keyword = String.fromCharCode(key).toLowerCase();
+                    var allowed = " áéíóúabcdefghijklmnñopqrstuvwxyz";
+                    var specialCharacters = "8-37-39-46";
+
+                    var isSpecial = false;
+                    for(var i in specialCharacters){
+                        if(key == specialCharacters[i]){
+                            isSpecial = true;
+                            break;
+                        }
+                    }
+
+                    if(allowed.indexOf(keyword)==-1 && !isSpecial){
+                        return false;
+                    }
+                }
+
+                $(document).ready(function() {
+                    $('#messageSpan').hide();
+
+                    $('#firstName').on('keypress',function(event){
+                        return allowedCharacters(event);
+                    });
+
+                    $('#lastName').on('keypress',function(event){
+                        return allowedCharacters(event);
+                    });
+
+                    $('#career').on('keypress',function(event){
+                        return allowedCharacters(event);
+                    });
+                });
+
+
+                function isNumberKey(evt){
+                    var charCode = (evt.which) ? evt.which : event.keyCode;
+                    return !(charCode > 31 && (charCode < 48 || charCode > 57));
+                }
+
+                function validateBirthDate() {
+                    document.getElementById('birthSpan').style.display = 'none'; //Para que no vuelva a aparecer
+                    var parts = document.getElementById('birthday').value.split("-");
+
+                    var year = parseInt(parts[0], 10);
+                    var actualYear = new Date().getFullYear();
+                    if(actualYear - year < 22) {
+                        document.getElementById('birthSpan').style.display = 'block';
+                        return false;
+                    }
+                    return true;
+                }
+
+                function validateEntryDate() {
+                    document.getElementById('entrySpan').style.display = 'none'; //Para que no vuelva a aparecer
+                    var parts = document.getElementById('entryday').value.split("-");
+
+                    var year = parseInt(parts[0], 10);
+                    var actualYear = new Date().getFullYear();
+                    if(actualYear - year < 6) {
+                        document.getElementById('entrySpan').style.display = 'block';
+                        return false;
+                    }
+                    return true;
+                }
+
+                function validateGraduateDate() {
+                    document.getElementById('graduationSpan').style.display = 'none'; //Para que no vuelva a aparecer
+                    var parts = document.getElementById('graduationday').value.split("-");
+
+                    var day = parseInt(parts[2], 10);
+                    var month = parseInt(parts[1], 10);
+                    var year = parseInt(parts[0], 10);
+                    var actualYear = new Date().getFullYear();
+                    var actualMonth = (new Date().getMonth()) + 1;
+                    var actualDay = new Date().getDate();
+                    if(actualYear < year || (actualYear == year && actualMonth < month) || (actualYear == year && actualMonth == month && actualDay < day)) {
+                        document.getElementById('graduationSpan').style.display = 'block';
+                        return false;
+                    }
+                    return true;
+                }
+
+                function validation() {
+                    var validateBirth = false;
+                    var validateEntry = false;
+                    var validateGraduate = false;
+                    if(validateBirthDate()) validateBirth = true;
+                    if(validateEntryDate()) validateEntry = true;
+                    if(validateGraduateDate()) validateGraduate = true;
+
+                    return (validateBirth && validateEntry && validateGraduate);
+                }
+
+        </script>
+}
+
+@layout(title = "Add Graduate", scripts, css) {
+
+    <div id="wrapper">
+        <div id="page-wrapper">
             <div class="row"> 
                 <div class="col-lg-12">
+                    <h1 class="page-header">Nuevo Graduado</h1>
+                    <div id="messageSpan" class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="false"></span>
+                        <span class="sr-only">Error:</span>
+                        <span>Agregar</span>
+                    </div>
+                </div>
+                <div class="col-lg-12">
                     <div class="panel panel-default"> 
-                        <div class="alert alert-info">
-                            Alta de Graduado Manual
-                        </div>
-                            <!-- /.panel-heading --> 
+                        <!-- /.panel-heading --> 
                         <div class="panel-body">
-                            @helper.form(action = routes.EgresadosController.addGraduate(), 'class -> "form-horizontal", 'onsubmit -> "return validation()") {
-                                <input type="number" style="display : none" name="id" value="-1" class="form-control">
+                            @helper.form(action = routes.EgresadosController.addGraduate(), 'id -> "addGraduateForm", 'class -> "form-horizontal") {
                                 <div class="form-group">
-                                    <label for="firstName">Nombre</label>
-                                    <input onkeypress="return soloLetras(event)" required type="text" class="form-control" name="firstName" id="firstName" placeholder="Nombre">
-                                </div>
-                                <div class="form-group">
-                                    <label for="lastName">Apellido</label>
-                                    <input onkeypress="return soloLetras(event)" required type="text" class="form-control" name="lastName" id="lastName" placeholder="Apellido">
-                                </div>
-                                <div class="form-group">
-                                    <label for="dni">DNI</label>
-                                    <input onkeypress="return isNumberKey(event)" required type="text" class="form-control" name="dni" id="dni" placeholder="DNI">
-                                </div>
-                                <div class="form-group">
-                                    <label for="studentcode">StudentCode</label>
-                                    <input type="text" class="form-control" name="studentcode" id="studentcode" placeholder="StudentCode">
-                                </div>
-                                <div class="form-group">
-                                    <div id="birthSpan" class="alert alert-danger" role="alert" style='display: none'>
-                                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="false"></span>
-                                        <span class="sr-only">Error:</span>
-                                        Fecha de Nacimiento, debe ser al menos 22 años menor al dia de la fecha.
+                                    <div class="col-md-6">
+                                        <label for="firstName">Nombre</label>
+                                        <input type="text" class="form-control" name="firstName" id="firstName" placeholder="Nombre">
                                     </div>
-                                    <label for="birthday">Fecha de nacimiento</label>
-                                    <br>
-                                    <input required type="date" name="birthday" id="birthday" placeholder="DD/MM/AAAA">
-                                </div>
-                                <div class="form-group">
-                                    <div id="entrySpan" class="alert alert-danger" role="alert" style='display: none'>
-                                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="false"></span>
-                                        <span class="sr-only">Error:</span>
-                                        Fecha de Ingreso Invalida, debe ser al menos 5 años menor al dia de la fecha.
+                                    <div class="col-md-6">
+                                        <label for="lastName">Apellido</label>
+                                        <input type="text" class="form-control" name="lastName" id="lastName" placeholder="Apellido">
                                     </div>
-                                    <label for="entryday">Fecha de ingreso a la facultad</label>
-                                    <br>
-                                    <input required type="date" name="entryday" id="entryday" placeholder="DD/MM/AAAA">
                                 </div>
                                 <div class="form-group">
-                                    <div id="graduationSpan" class="alert alert-danger" role="alert" style='display: none'>
-                                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="false"></span>
-                                        <span class="sr-only">Error:</span>
-                                        Fecha de Egreso Invalida, no debe superar la fecha del dia.
+                                    <div class="col-md-6">
+                                        <label for="dni">DNI</label>
+                                        <input type="text" class="form-control" name="dni" id="dni" placeholder="DNI">
                                     </div>
-                                    <label for="graduationday">Fecha de graduacion</label>
-                                    <br>
-                                    <input type="date" name="graduationday" id="graduationday" placeholder="DD/MM/AAAA">
+                                    <div class="col-md-6">
+                                        <label for="studentcode">Codigo de Estudiante</label>
+                                        <input type="text" class="form-control" name="studentcode" id="studentcode" placeholder="StudentCode">
+                                    </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="career">Carrera</label>
-                                    <input onkeypress="return soloLetras(event)" required type="text" name="career" class="form-control" id="career" placeholder="Carrera">
+                                    <div class="col-md-6">
+                                        <label for="career">Carrera</label>
+                                        <input type="text" name="career" class="form-control" id="career" placeholder="Carrera">
+                                    </div>
                                 </div>
-                                <input type="submit" value="ADD" class="btn btn-info btn-lg">
+                                <div class="form-group">
+                                    <div class="col-md-4">
+                                        <label for="birthday">Fecha de Nacimiento</label>
+                                        <input type="date" name="birthday" id="birthday" class="form-control" placeholder="dd/MM/yyyy">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="entryday">Fecha de Ingreso a la Facultad</label>
+                                        <input type="date" name="entryday" id="entryday" class="form-control" placeholder="dd/MM/yyyy">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="graduationday">Fecha de Graduacion</label>
+                                        <input type="date" name="graduationday" id="graduationday" class="form-control" placeholder="dd/MM/yyyy">
+                                    </div>
+                                </div>
 
+                                <button type="submit" class="btn btn-primary btn-lg center-block"><i class="fa fa-graduation-cap"> ADD</i></button>
                             }
                              
                         </div> 
-
-                        <!-- Modal -->
-                        @*<div id="myModal" class="modal fade" role="dialog">*@
-                            @*<div class="modal-dialog">*@
-
-                                    @*<!-- Modal content-->*@
-                                @*<div class="modal-content">*@
-                                    @*<div class="modal-header">*@
-                                        @*<button type="button" class="close" data-dismiss="modal">&times;</button>*@
-                                        @*<h4 class="modal-title">Invalid Date!</h4>*@
-                                    @*</div>*@
-                                    @*<div class="modal-body">*@
-                                        @*<p>Some text in the modal.</p>*@
-                                    @*</div>*@
-                                    @*<div class="modal-footer">*@
-                                        @*<button type="button" class="btn btn-default" id="modalCloseButton" data-dismiss="modal">Close</button>*@
-                                    @*</div>*@
-                                @*</div>*@
-
-                            @*</div>*@
-                        @*</div>*@
-
                         <!-- /.panel-body --> 
                     </div>
-                    <!-- /.panel --> 
+                        <!-- /.panel --> 
                 </div>
                   <!-- /.col-lg-12 --> 
             </div>
         </div>
-    <script>
+    </div>
 
-            function soloLetras(e){
-                key = e.keyCode || e.which;
-                tecla = String.fromCharCode(key).toLowerCase();
-                letras = " áéíóúabcdefghijklmnñopqrstuvwxyz";
-                especiales = "8-37-39-46";
-
-                tecla_especial = false
-                for(var i in especiales){
-                    if(key == especiales[i]){
-                        tecla_especial = true;
-                        break;
-                    }
-                }
-
-                if(letras.indexOf(tecla)==-1 && !tecla_especial){
-                    return false;
-                }
-            }
-
-            function isNumberKey(evt){
-                var charCode = (evt.which) ? evt.which : event.keyCode
-                if (charCode > 31 && (charCode < 48 || charCode > 57))
-                    return false;
-                return true;
-            }
-
-            function validateBirthDate() {
-                document.getElementById('birthSpan').style.display = 'none'; //Para que no vuelva a aparecer
-                var parts = document.getElementById('birthday').value.split("-");
-
-                var year = parseInt(parts[0], 10);
-                var actualYear = new Date().getFullYear();
-                if(actualYear - year < 22) {
-                    document.getElementById('birthSpan').style.display = 'block';
-                    return false;
-                }
-                return true;
-            }
-
-            function validateEntryDate() {
-                document.getElementById('entrySpan').style.display = 'none'; //Para que no vuelva a aparecer
-                var parts = document.getElementById('entryday').value.split("-");
-
-                var year = parseInt(parts[0], 10);
-                var actualYear = new Date().getFullYear();
-                if(actualYear - year < 6) {
-                    document.getElementById('entrySpan').style.display = 'block';
-                    return false;
-                }
-                return true;
-            }
-
-            function validateGraduateDate() {
-                document.getElementById('graduationSpan').style.display = 'none'; //Para que no vuelva a aparecer
-                var parts = document.getElementById('graduationday').value.split("-");
-
-                var day = parseInt(parts[2], 10);
-                var month = parseInt(parts[1], 10);
-                var year = parseInt(parts[0], 10);
-                var actualYear = new Date().getFullYear();
-                var actualMonth = (new Date().getMonth()) + 1;
-                var actualDay = new Date().getDate();
-                if(actualYear < year || (actualYear == year && actualMonth < month) || (actualYear == year && actualMonth == month && actualDay < day)) {
-                    document.getElementById('graduationSpan').style.display = 'block';
-                    return false;
-                }
-                return true;
-            }
-
-            function validation() {
-                var validateBirth = false;
-                var validateEntry = false;
-                var validateGraduate = false;
-                if(validateBirthDate()) validateBirth = true;
-                if(validateEntryDate()) validateEntry = true;
-                if(validateGraduateDate()) validateGraduate = true;
-
-                return (validateBirth && validateEntry && validateGraduate);
-            }
-
-    </script>
 }
