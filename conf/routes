@@ -1,29 +1,30 @@
 # Routes
 # This file defines all application routes (Higher priority routes first)
-# ~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Home page
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 GET         /                    controllers.Application.homeFeed
 
-## Layout
-#GET         /layout                    controllers.Application.layout
-
 # Tables
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 GET         /tables              controllers.Application.tables
 
 # Map static resources from the /public folder to the /assets URL path
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 GET         /assets/*file        controllers.Assets.at(path="/public", file)
 
 #Auth
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 GET         /signup              controllers.UserAuthController.signupView
 POST        /signup              controllers.UserAuthController.signup
 GET         /login               controllers.Application.login
 POST        /login               controllers.UserAuthController.login
 POST        /logout              controllers.AuthController.logout
 GET         /logout              controllers.UserAuthController.logout
-GET         /secure              controllers.AuthController.securedSampleAction
 
 #EgresadosController
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 GET         /egresados/search             controllers.EgresadosController.showSearchForm
 POST        /egresados/search             controllers.EgresadosController.search
 GET         /add                          controllers.EgresadosController.showGraduateForm
@@ -38,31 +39,38 @@ GET         /delete/:id                   controllers.EgresadosController.delete
 GET         /stats                        controllers.EgresadosController.getLinkedInUrlStats
 
 #Validation
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 GET         /validate/:id                 controllers.EgresadosController.renderValidate(id: String)
 POST        /valid                        controllers.EgresadosController.validateLinks
 
 #LinkedInScraper
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 GET          /linkedin/search/:id         controllers.LinkedinUserProfileController.saveLinkedinUserProfile(id:String)
 GET          /linkedin/searchAll          controllers.LinkedinUserProfileController.saveAllLinkedinUserProfile
 GET          /linkedin/delete/:id         controllers.LinkedinUserProfileController.deleteProfile(id:String)
 
 #LaNacionController
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 GET         /lanacion/search/:id          controllers.LaNacionNewsController.saveNews(id : String)
 GET         /lanacion/searchAll           controllers.LaNacionNewsController.saveAllLaNacionNews
 
 #ClarinController
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 GET         /clarin/search/:id            controllers.ClarinNewsController.saveNews(id : String)
 GET         /clarin/searchAll             controllers.ClarinNewsController.saveAllClarinNews
 
 #ElCronistaController
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 GET         /elCronista/search/:id         controllers.ElCronistaNewsController.saveNews(id : String)
 GET         /elCronista/searchAll          controllers.ElCronistaNewsController.saveAllElCronistaNews
 
 #InfobaeController
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 GET         /infobae/search/:id           controllers.InfobaeNewsController.saveNews(id : String)
 GET         /infobae/searchAll            controllers.InfobaeNewsController.saveAllInfobaeNews
 
 #RestApi
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 GET         /api/infobae                    controllers.RestApiController.getAllInfobaeData()
 GET         /api/egresados                  controllers.RestApiController.getAllEgresadosData()
 GET         /api/lanacion                   controllers.RestApiController.getAllLaNacionData()

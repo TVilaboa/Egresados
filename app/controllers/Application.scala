@@ -12,7 +12,6 @@ import scala.io.Source
 
 class Application @Inject()(secureAction: SecureAction) extends Controller {
 
-
   def index = {
     homeFeed
   }
@@ -26,64 +25,48 @@ class Application @Inject()(secureAction: SecureAction) extends Controller {
   }
 
   /**
-    * Home Feed showing last scraping log result data for user
-    * */
-  def homeFeed = secureAction {
-    val errorLines = Source.fromFile("logs/error.log").getLines.toList
-    val successLines = Source.fromFile("logs/success.log").getLines.toList
-
-    val error : List[String] = Source.fromFile("logs/error.log").getLines().toList
-    val success : List[String] = Source.fromFile("logs/success.log").getLines().toList
-
+    * Private method which parses a log entry line into a useful tuple for the Apps index.
+    */
+  private def parseLogEntry(entry : String) : (DateTime,String,String,String) ={
     val dtf : DateTimeFormatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss")
 
-    val errorTuple : List[(DateTime,String,String,String)] = error.map{x =>
-      //Info is made up from either
-      //News Scraps => Date - [ERROR] - Class :-: Message :-: Url
-      //LinkedIn Scraps => Date - [ERROR] - Class :-: Url :-: Message
-      val info : Array[String] = x.split(":-:")
-      val basicData : Array[String]= info(0).split("-")
+    val entryData = entry.split(":-:")
 
-      val scraper : String = basicData.last
-      val message : String = scraper match{
-        case "LinkedIn Scraper" => info.last
-        case _ => info(1)
-      }
-      val url : String = scraper match{
-        case "LinkedIn Scraper" => info(1)
-        case _ => info.last
-      }
-      val date : DateTime = dtf.parseDateTime(basicData.head.trim).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0)
-      (date,scraper,message,url)
-    }.groupBy(_._1).toList.sortBy(_._1.getMillis).last._2
+    val data = entryData(0).split("-")
 
-    val successTuple : List[(DateTime,String,String,String)] = success.map{x =>
-      //Info is made up from either
-      //News Scraps => Date - [SUCCESS] - Class :-: Message :-: Url
-      //LinkedIn Scraps => Date - [SUCCESS] - Class :-: Url
-      val info : Array[String] = x.split(":-:")
-      val basicData : Array[String]= info(0).split("-")
+    val date : DateTime = dtf.parseDateTime(data.head.trim)
+                          .withHourOfDay(0)
+                          .withMinuteOfHour(0)
+                          .withSecondOfMinute(0)
+                          .withMillisOfSecond(0)
+    val scraper : String = data.last
+    val message : String = entryData(1)
+    val url : String = if(entryData.size > 2) entryData(2) else ""
 
-      val scraper : String = basicData.last
-      val message : String = scraper match{
-        case "LinkedIn Scraper" => ""
-        case _ => info(1)
-      }
-      val url : String = info.last
+    (date,scraper,message,url)
+  }
 
-      val date : DateTime = dtf.parseDateTime(basicData.head.trim).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0)
-      (date,scraper,message,url)
-    }.groupBy(_._1).toList.sortBy(_._1.getMillis).last._2
+  /**
+    * Home Feed showing last scraping log result data for user.
+    * Shows the last Log entries based on last date of scrap activity for both success and error cases.
+    * */
+  def homeFeed = secureAction {
+    val successLogs : List[String] = Source.fromFile("logs/success.log").getLines().toList
+    val successTuples : List[(DateTime,String,String,String)] = successLogs.map(parseLogEntry)
 
-    val errorDate : DateTime = errorTuple.head._1
-    val successDate : DateTime = successTuple.head._1
+    val errorLogs : List[String] = Source.fromFile("logs/error.log").getLines().toList
+    val errorTuples : List[(DateTime,String,String,String)] = errorLogs.map(parseLogEntry)
 
-    if(errorDate.isEqual(successDate))
-      Ok(views.html.index.render("", errorDate, successTuple, errorTuple))
-    else if(errorDate.isAfter(successDate))
-      Ok(views.html.index.render("", errorDate, successTuple.filter(_._1.equals(errorDate)), errorTuple))
+    val lastError : DateTime = errorTuples.minBy(_._1.toDate.getTime)._1
+    val lastSuccess : DateTime = successTuples.minBy(_._1.toDate.getTime)._1
+
+    if(lastError.isAfter(lastSuccess))
+      Ok(views.html.index.render(lastError,
+              successTuples.filter(_._1.equals(lastError)),
+              errorTuples.filter(_._1.equals(lastError))))
     else
-      Ok(views.html.index.render("", successDate, successTuple, errorTuple.filter(_._1.equals(successDate))))
-
+      Ok(views.html.index.render(lastSuccess,
+        successTuples.filter(_._1.equals(lastSuccess)),
+        errorTuples.filter(_._1.equals(lastSuccess))))
   }
 }

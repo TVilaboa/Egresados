@@ -1,5 +1,7 @@
 @import org.joda.time.DateTime
-@(message: String = "", date : DateTime, successLogs : List[(DateTime, String,String,String)],errorLogs : List[(DateTime, String,String,String)])
+@(date : DateTime,
+  successLogs : List[(DateTime, String,String,String)],
+  errorLogs : List[(DateTime, String,String,String)])
 
 @css = {
     <!-- DataTables CSS -->
@@ -98,12 +100,8 @@
     </script>
 }
 
-@layout(title = "Index",scripts,css){
-
-    <p>@message</p>
-
+@layout(title = "Prospect Tracker",scripts,css){
     <div id="page-wrapper">
-
         <div class="row">
             <div class="col-lg-12">
                 <div class="col-lg-6 col-md-6">
@@ -154,7 +152,6 @@
                 </div>
             </div>
         </div>
-
         <div class="row">
             <div class="col-lg-12">
                 <div class="panel panel-default" id="success-table">
@@ -179,9 +176,9 @@
                                         <td title="@log._3">@log._3</td>
                                         <td>
                                         @if(log._2.equals("LinkedIn Scraper")){
-                                            <a href="@log._4">Check Profile</a>
+                                            <a href="@log._4" target="_blank">Check Profile</a>
                                         } else{
-                                            <a href="@log._4">Check News</a>
+                                            <a href="@log._4" target="_blank">Check News</a>
                                         }
                                         </td>
                                     </tr>
@@ -212,9 +209,9 @@
                                     <td title="@log._3">@log._3</td>
                                     <td>
                                     @if(log._2.equals("LinkedIn Scraper")){
-                                        <a href="@log._4">Check Profile</a>
+                                        <a href="@log._4" target="_blank">Check Profile</a>
                                     } else{
-                                        <a href="@log._4">Check News</a>
+                                        <a href="@log._4" target="_blank">Check News</a>
                                     }
                                     </td>
                                 </tr>

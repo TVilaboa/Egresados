@@ -24,14 +24,9 @@ class UserAuthController @Inject()(userService: UserService,
                                    sessionService: SessionService,
                                    secureAction: SecureAction) extends Controller {
 
-  val loginForm = Form(
-    mapping = tuple(
-      "user" -> text,
-      "password" -> text
-    ) verifying("Invalid email or password", result => result match {
-      case (username, password) => check(username, password)
-    })
-  )
+  val loginForm = Form(mapping = tuple("user" -> text, "password" -> text)
+    verifying("Invalid email or password",
+              result => result match {case (username, password) => check(username, password)}))
 
   def checkPassword(username: String, password: String): Future[Boolean] = {
     userService.findByUsername(username).map(User => {

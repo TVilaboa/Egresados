@@ -26,7 +26,7 @@ class LinkedinUserProfileScraper {
 
      doc = Option(Jsoup.connect(url).userAgent(userAgent).get)
 
-      SUCCESS_LOGGER.info(s"${scraper} :-: ${url}")
+      SUCCESS_LOGGER.info(s"${scraper} :-: Profile scraped :-: ${url}")
 
       val title = getJobTitle(doc.get)
 
@@ -44,7 +44,7 @@ class LinkedinUserProfileScraper {
         }
       catch{
         case e : IndexOutOfBoundsException =>
-          ERROR_LOGGER.warn(s"${scraper} :-: ${url} :-: Tried All Available User Agents")
+          ERROR_LOGGER.warn(s"${scraper} :-: Tried All Available User Agents :-: ${url}")
           UserAgentStrings.reset()
           None
         }
@@ -53,16 +53,16 @@ class LinkedinUserProfileScraper {
         if (cycle == 0)
           getLinkedinProfile(url, cycle + 1)
         else {
-          ERROR_LOGGER.error(s"${scraper} :-: ${url} :-: ${e.toString}")
+          ERROR_LOGGER.error(s"${scraper} :-: ${e.toString} :-: ${url}")
           None
         }
 
       case e : IOException =>
-        ERROR_LOGGER.error(s"${scraper} :-: ${url} :-: ${e.toString}")
+        ERROR_LOGGER.error(s"${scraper} :-: ${e.toString} :-: ${url}")
         None
 
       case  e: Exception =>
-        ERROR_LOGGER.error(s"${scraper} :-: ${url} :-: ${e.toString}")
+        ERROR_LOGGER.error(s"${scraper} :-: ${e.toString} :-: ${url}")
         None
     }
   }
