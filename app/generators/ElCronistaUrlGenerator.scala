@@ -2,19 +2,13 @@ package generators
 
 import java.io.IOException
 import java.net.SocketException
-import java.util
 import java.util.Date
-import java.util.ArrayList
 import java.sql.Timestamp
 
 import scala.collection.JavaConversions._
 
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-import org.jsoup.nodes.Element
-
-import scala.collection.mutable.ListBuffer
 
 class ElCronistaUrlGenerator extends BasicUrlGenerator{
 
@@ -78,7 +72,6 @@ class ElCronistaUrlGenerator extends BasicUrlGenerator{
       val split : Array[String] = url.split("http://")
       val aux = split.filter(x => x.contains("www.cronista.com/"))
       if(aux.nonEmpty)
-        //"http://" + aux.head.substring(0, aux.head.indexOf("-"))
       "http://" + aux.head.substring(0, aux.head.indexOf(".html")+5)
       else
         ""

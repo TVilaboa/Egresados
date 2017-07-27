@@ -2,15 +2,11 @@ package generators
 
 import java.io.IOException
 import java.net.SocketException
-import java.util.Date
-
 
 import org.jsoup.Jsoup
-import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 
 import scala.collection.JavaConversions._
-import scala.collection.mutable.ListBuffer
 
 /**
   * Created by nacho on 8/29/2016.

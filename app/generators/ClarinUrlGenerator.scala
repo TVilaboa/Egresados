@@ -2,19 +2,13 @@ package generators
 
 import java.io.IOException
 import java.net.SocketException
-import java.util
 import java.util.Date
-import java.util.ArrayList
 import java.sql.Timestamp
 
 import scala.collection.JavaConversions._
 
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-import org.jsoup.nodes.Element
-
-import scala.collection.mutable.ListBuffer
 
 class ClarinUrlGenerator extends BasicUrlGenerator{
 
