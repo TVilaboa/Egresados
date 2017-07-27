@@ -6,9 +6,10 @@ import java.util.Date
 import java.sql.Timestamp
 
 import scala.collection.JavaConversions._
-
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements
+
+import scala.util.matching.Regex
 
 class LaNacionUrlGenerator extends BasicUrlGenerator{
 
@@ -16,24 +17,24 @@ class LaNacionUrlGenerator extends BasicUrlGenerator{
       * En función de un nombre:String y un String a buscar, devuelve una Lista con los resultados obtenidos
       **/
     override def getSearchedUrl(name: Option[String], query: Option[String]): List[String] = {
-      var result : List[String] = List()
-      if(name.isDefined){
-        //Split both name and query : Option[String]
-        val splittedName = name.get.split(" ")
-        val splittedQuery = query.get.split(" ")
+      name match {
+        case Some(x) =>
+          //Split both name and query : Option[String]
+          val splitName = name.get.split(" ")
+          val splitQuery = query.get.split(" ")
 
-        var searcher = "lanacion"
+          var searcher = "lanacion"
 
-        for(splitVal : String <- splittedName)
-          searcher = searcher + "+" + splitVal
+          for(splitVal : String <- splitName)
+            searcher = searcher + "+" + splitVal
 
-        for(splitVal : String <- splittedQuery)
-          searcher = searcher + "+" + splitVal
+          for(splitVal : String <- splitQuery)
+            searcher = searcher + "+" + splitVal
 
-        val urls = getGoogleSearchRegisters(searcher)
-        result = selectProfileUrl(splittedName, urls)
+          getGoogleSearchRegisters(searcher)
+
+        case None => List()
       }
-      result
     }
 
   /**
@@ -49,12 +50,9 @@ class LaNacionUrlGenerator extends BasicUrlGenerator{
         .get
       val links: Elements = doc.select("a[href*=lanacion]")
       for (link <- links) {
-        var temp = link.attr("href")
-        if (temp.startsWith("/url?q=")) {
-          temp = cleanUrlDomain(temp)
-          if(!"".equals(temp))
-            result = temp :: result
-        }
+        val url = cleanUrlDomain(link.attr("href"))
+        if(!"".equals(url))
+          result = url :: result
       }
     } catch {
       case e: SocketException => e.printStackTrace()
@@ -69,12 +67,17 @@ class LaNacionUrlGenerator extends BasicUrlGenerator{
       * Metodo que se encarga de limpiar un dominio (url:String) para eliminar cualquier exceso de caracteres
       **/
     override def cleanUrlDomain(url: String): String = {
-      val split : Array[String] = url.split("http://")
-      val aux = split.filter(x => x.contains("www.lanacion.com.ar/"))
-      if(aux.nonEmpty)
-        "http://" + aux.head.substring(0, aux.head.indexOf("-"))
-      else
-        ""
+      val regex : Regex = "(http|https)://www.lanacion.com.ar/([0-9]+)".r
+      regex findFirstIn  url match{
+        case Some(x) => x
+        case None => ""
+      }
+//      val split : Array[String] = url.split("http://")
+//      val aux = split.filter(x => x.contains("www.lanacion.com.ar/"))
+//      if(aux.nonEmpty)
+//        "http://" + aux.head.substring(0, aux.head.indexOf("-"))
+//      else
+//        ""
     }
 
     private def selectProfileUrl(username : Array[String], list : List[String]) : List[String] = list.filter(isCorrect(username,_))

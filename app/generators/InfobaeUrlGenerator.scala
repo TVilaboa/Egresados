@@ -7,6 +7,7 @@ import org.jsoup.Jsoup
 import org.jsoup.select.Elements
 
 import scala.collection.JavaConversions._
+import scala.util.matching.Regex
 
 /**
   * Created by nacho on 8/29/2016.
@@ -17,26 +18,24 @@ class InfobaeUrlGenerator extends BasicUrlGenerator{
     * En función de un nombre:String y un String a buscar, devuelve una Lista con los resultados obtenidos
     **/
   override def getSearchedUrl(name: Option[String], query: Option[String]): List[String] = {
-    var result : List[String] = List()
-    if(name.isDefined){
-      //Split both name and query : Option[String]
-      val splittedName = name.get.split(" ")
-      var splittedQuery : Array[String] = Array()
-      if(query.isDefined){
-        splittedQuery = query.get.split(" ")
-      }
+    name match {
+      case Some(x) =>
+        //Split both name and query : Option[String]
+        val splitName = name.get.split(" ")
+        val splitQuery = query.get.split(" ")
 
-      var searcher = "site:infobae.com"
+        var searcher = "site:infobae.com"
 
-      for(splitVal : String <- splittedName)
-        searcher = searcher + "%20" + splitVal
+        for(splitVal : String <- splitName)
+          searcher = searcher + "+" + splitVal
 
-      for(splitVal : String <- splittedQuery)
-        searcher = searcher + "%20" + splitVal
+        for(splitVal : String <- splitQuery)
+          searcher = searcher + "+" + splitVal
 
-      result = getGoogleSearchRegisters(searcher)
+        getGoogleSearchRegisters(searcher)
+
+      case None => List()
     }
-    result
   }
 
   /**
@@ -52,12 +51,9 @@ class InfobaeUrlGenerator extends BasicUrlGenerator{
         .get
       val links: Elements = doc.select("a[href*=infobae]")
       for (link <- links) {
-        var temp = link.attr("href")
-        if (temp.startsWith("/url?q=")) {
-          temp = cleanUrlDomain(temp)
-          if(!"".equals(temp))
-            result = temp :: result
-        }
+        val url = cleanUrlDomain(link.attr("href"))
+        if(!"".equals(url))
+          result = url :: result
       }
     } catch {
       case e: SocketException => e.printStackTrace()
@@ -72,12 +68,15 @@ class InfobaeUrlGenerator extends BasicUrlGenerator{
     * Metodo que se encarga de limpiar un dominio (url:String) para eliminar cualquier exceso de caracteres
     **/
   override def cleanUrlDomain(url: String): String = {
-    val split : Array[String] = url.split("http://")
-    val aux = split.filter(x => !x.contains(":infobae") && x.contains("www.infobae.com/"))
-    if(aux.nonEmpty)
-      "http://" + aux.head
-    else
-      ""
+    val regex : Regex = "(http|https)://www.infobae.com/(.+)".r
+    regex findFirstIn  url match{
+      case Some(x) =>
+        x.contains(":infobae") match{
+          case true => ""
+          case false => x
+        }
+      case None => ""
+    }
   }
 
 }
