@@ -1,6 +1,6 @@
 package daos
 
-import com.google.inject.{ImplementedBy, Inject}
+import com.google.inject.{ImplementedBy, Inject, Singleton}
 import models._
 import org.mongodb.scala._
 import org.mongodb.scala.bson.{BsonArray, BsonDocument}
@@ -10,7 +10,11 @@ import play.api.libs.json.Json
 import services.Mongo
 
 import scala.concurrent.Future
+
 import scala.collection.JavaConversions._
+
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+
 /**
   * Created by franco on 27/07/17.
   */

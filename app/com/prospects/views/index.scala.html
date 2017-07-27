@@ -1,4 +1,4 @@
-@(prospects: List[Graduate], form : Form[Graduate], condition : Boolean, filters : Map[String,String])
+@(prospects: List[Prospect], form : Form[Prospect], condition : Boolean, filters : Map[String,String])
 
 
 @css = {
@@ -75,7 +75,7 @@
               <!-- /.panel-heading -->
             <div class="panel-body">
               <div class="dataTable_wrapper">
-              @helper.form(action = routes.EgresadosController.search()){
+              @helper.form(action = routes.ProspectController.search){
                 <div class="form-group">
                   <div class="col-md-6">
                     <label>Firstname</label>
@@ -134,32 +134,32 @@
                 <thead>
                   <tr>
                     <th>Name</th>
-                    <th>Surname</th>
+                    <th>Last Name</th>
                     <th>Identification</th>
-                    <th>Student Code</th>
-                    <th>Graduation year</th>
-                    <th>Carrer</th>
+                    <th>Institution Code</th>
+                    <th>Exit date</th>
+                    <th>Title</th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody>
                   <ul>
                   @if(prospects.nonEmpty){
-                    @for(graduate : Graduate <- prospects){
+                    @for(prospect : Prospect <- prospects){
                       <tr class="graduate">
-                        <td>@graduate.firstName</td>
-                        <td>@graduate.lastName</td>
-                        <td>@graduate.documentId</td>
-                        <td>@graduate.studentCode</td>
-                        <td>@graduate.graduationDate</td>
-                        <td>@graduate.career</td>
+                        <td>@prospect.firstName</td>
+                        <td>@prospect.lastName</td>
+                        <td>@prospect.documentId</td>
+                        <td>@prospect.institutionCode</td>
+                        <td>@prospect.exitDate</td>
+                        <td>@prospect.title</td>
                         <td>
                           <div class="btns-ctn">
-                            <a title="Details" class="btn btn-primary" href="@routes.EgresadosController.showProfile(graduate._id)"><i class="fa fa-cog"></i></a>
-                            <button title="Delete" type="button" data-toggle="modal" data-target="#@graduate._id" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
+                            <a title="Details" class="btn btn-primary" href="@routes.ProspectController.show(prospect._id)"><i class="fa fa-cog"></i></a>
+                            <button title="Delete" type="button" data-toggle="modal" data-target="#@prospect._id" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
                           </div>
                             <!-- Modal -->
-                          <div class="modal fade" id="@graduate._id" role="dialog">
+                          <div class="modal fade" id="@prospect._id" role="dialog">
                             <div class="modal-dialog">
                               <div class="modal-content">
                                 <div class="modal-header">
@@ -170,7 +170,7 @@
                                   <p>Are you sure you want to delete this graduate?</p>
                                 </div>
                                 <div class="modal-footer">
-                                  <a href="@routes.EgresadosController.deleteGraduate(graduate._id)" type="button" class="btn btn-danger">Delete</a>
+                                  <a href="@routes.ProspectController.delete(prospect._id)" type="button" class="btn btn-danger">Delete</a>
                                   <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
                                 </div>
                               </div>

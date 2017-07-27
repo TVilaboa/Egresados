@@ -1,6 +1,6 @@
 package daos
 
-import com.google.inject.{ImplementedBy, Inject}
+import com.google.inject.{ImplementedBy, Inject, Singleton}
 import com.mongodb.client.result.UpdateResult
 import models.Institution
 import org.mongodb.scala._
@@ -9,6 +9,8 @@ import play.api.libs.json.Json
 import services.Mongo
 
 import scala.concurrent.Future
+
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 /**
   * Created by franco on 27/07/17.

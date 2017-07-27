@@ -95,7 +95,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
 
     val graduates : List[Graduate]= Await.result(graduateService.all(), Duration.Inf).toList
 
-    Ok(com.prospects.views.html.index.render(graduates, graduateForm, true, Map[String,String]()))
+    Ok(views.html.search.render(graduates, graduateForm, true, Map[String,String]()))
   }
 
   def search = Action {
@@ -125,7 +125,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       if(studentCode.nonEmpty)
         graduates = graduates.filter(x => x.studentCode.toLowerCase.contains(studentCode.toLowerCase))
 
-      Ok(com.prospects.views.html.index.render(graduates, graduateForm, false, graduateForm.bindFromRequest.data))
+      Ok(views.html.search.render(graduates, graduateForm, false, graduateForm.bindFromRequest.data))
     }
   }
 
