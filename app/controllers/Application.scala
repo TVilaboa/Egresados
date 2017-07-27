@@ -5,7 +5,7 @@ import generators._
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import actions.SecureAction
-import org.joda.time.DateTime
+import org.joda.time.{DateTime, DateTimeZone}
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 
 import scala.io.Source
@@ -56,9 +56,19 @@ class Application @Inject()(secureAction: SecureAction) extends Controller {
 
     val errorLogs : List[String] = Source.fromFile("logs/error.log").getLines().toList
     val errorTuples : List[(DateTime,String,String,String)] = errorLogs.map(parseLogEntry)
+    var lastError : DateTime =  new DateTime( 0x0, 1, 1, 0, 0, 0, DateTimeZone.UTC )
+    if(errorTuples.nonEmpty){
+      lastError = errorTuples.minBy(_._1.toDate.getTime)._1
+    }
 
-    val lastError : DateTime = errorTuples.minBy(_._1.toDate.getTime)._1
-    val lastSuccess : DateTime = successTuples.minBy(_._1.toDate.getTime)._1
+    var lastSuccess : DateTime =  new DateTime( 0x0, 1, 1, 0, 0, 0, DateTimeZone.UTC )
+
+
+    if(errorTuples.nonEmpty){
+      lastSuccess = successTuples.minBy(_._1.toDate.getTime)._1
+    }
+
+
 
     if(lastError.isAfter(lastSuccess))
       Ok(views.html.index.render(lastError,
