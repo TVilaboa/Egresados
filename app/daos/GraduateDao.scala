@@ -158,6 +158,15 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
       }
     }
 
+    var country = ""
+    try{
+      country =   doc.get("country").get.asString().getValue
+    } catch {
+      case e: NoSuchElementException => {
+        println("Error: El egresado no tiene especificado el pais de residencia")
+      }
+    }
+
     Graduate(
       doc.get("_id").get.asString().getValue,
       doc.get("firstName").get.asString().getValue,
@@ -172,7 +181,8 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
       infobaeNews,
       clarinNews,
       elCronistaNews,
-      linkedinUserProfile
+      linkedinUserProfile,
+      country
     )
   }
 

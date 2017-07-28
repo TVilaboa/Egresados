@@ -19,7 +19,8 @@ case class Graduate(  _id: String,
                       infobaeNews: List[News],
                       clarinNews: List[News],
                       elCronistaNews:List[News],
-                      linkedinUserProfile: LinkedinUserProfile
+                      linkedinUserProfile: LinkedinUserProfile,
+                      country: String
                    )
 
 object Graduate {

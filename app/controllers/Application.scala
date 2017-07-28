@@ -1,5 +1,7 @@
 package controllers
 
+import java.util.Locale
+
 import com.google.inject.Inject
 import generators._
 import play.api.i18n.MessagesApi
