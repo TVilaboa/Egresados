@@ -6,6 +6,7 @@ package models
 case class Prospect(  _id : String,
                       firstName : String,
                       lastName : String,
+                      documentType : String,
                       documentId : String,
                       birthDate : String,
                       entryDate : String,

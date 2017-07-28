@@ -115,6 +115,7 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
       document.get("_id").get.asString().getValue,
       document.get("firstName").get.asString().getValue,
       document.get("lastName").get.asString().getValue,
+      document.get("documentType").get.asString().getValue,
       document.get("documentId").get.asString().getValue,
       document.get("birthDate").get.asString().getValue,
       document.get("entryDate").get.asString().getValue,

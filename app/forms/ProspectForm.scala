@@ -7,7 +7,7 @@ import play.api.libs.json.Json
   */
 object ProspectForm {
 
-  case class ProspectData( firstName : String, lastName : String, documentId : String, birthDate : String,
+  case class ProspectData( firstName : String, lastName : String, documentType : String, documentId : String, birthDate : String,
                            entryDate : String, exitDate : String, title : String)
 
   implicit val dataFormat = Json.format[ProspectData]

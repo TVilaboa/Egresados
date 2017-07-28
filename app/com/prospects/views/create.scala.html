@@ -1,0 +1,192 @@
+
+@css = {
+  <!-- Application Style CSS -->
+  <link href="@routes.Assets.at("stylesheets/application.css")" rel="stylesheet">
+}
+
+@scripts = {
+  <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.validate.min.js")"></script>
+  <script type="text/javascript">
+          /**
+           * Script that allows only to type the selected characters
+           * */
+          function allowedCharacters(e){
+            var key = e.keyCode || e.which;
+            var keyword = String.fromCharCode(key).toLowerCase();
+            var allowed = " áéíóúabcdefghijklmnñopqrstuvwxyz";
+            var specialCharacters = "8-37-39-46";
+
+            var isSpecial = false;
+            for(var i in specialCharacters){
+              if(key == specialCharacters[i]){
+                isSpecial = true;
+                break;
+              }
+            }
+
+            if(allowed.indexOf(keyword)==-1 && !isSpecial){
+              return false;
+            }
+          }
+
+          $(document).ready(function() {
+//            $('#messageSpan').hide();
+
+            $('#firstName').on('keypress',function(event){
+              return allowedCharacters(event);
+            });
+
+            $('#lastName').on('keypress',function(event){
+              return allowedCharacters(event);
+            });
+
+            $('#title').on('keypress',function(event){
+              return allowedCharacters(event);
+            });
+          });
+
+  </script>
+  <script type="text/javascript">
+//    TODO incorporar validaciones de fechas
+          $(function(){
+            $('#prospectForm').validate({
+              rules : {
+                firstName : {require : true},
+                lastName : {require : true},
+                documentId : {require : true},
+                birthdate : {require : true},
+                institution : {require : true},
+                institutionCode : {require : true},
+                title : {require : true},
+                entryDate : {require : true},
+                exitDate : {require : true}
+              },
+              messages : {
+                firstName : {require : 'Ingrese un nombre válido'},
+                lastName : {require : 'Ingrese un apellido válido'},
+                documentId : {require : 'Ingrese un numero de documento válido'},
+                birthdate : {require : 'Ingrese una fecha de nacimiento'},
+                institution : {require : 'Seleccione la institución a la que pertenece el prospecto'},
+                institutionCode : {require : 'Ingrese el número de referencia del prospecto en la instititución'},
+                title : {require : 'Ingrese el valor del título que posee el prospecto'},
+                entryDate : {require : 'Indique la fecha de ingreso del prospecto'},
+                exitDate : {require : 'Indique la fecha de Egreso del prospecto'}
+              },
+              submitHandler : function(form){
+                $.ajax({
+                  url : form.action,
+                  type : form.method,
+                  data : $(form).serialize(),
+                  success : function(res){
+                    alert(res);
+                  }
+                });
+              }
+            });
+          });
+  </script>
+}
+
+@layout(title = "Prospect Tracker | Add Prospect", scripts, css) {
+
+  <div id="wrapper">
+    <div id="page-wrapper">
+
+      <div class="row"> 
+        <div class="col-lg-12">
+          <h1 class="page-header">Nuevo Prospecto</h1>
+          @*<div id="messageSpan" class="alert alert-danger" role="alert">*@
+            @*<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="false"></span>*@
+            @*<span class="sr-only">Error:</span>*@
+            @*<span>Agregar</span>*@
+          @*</div>*@
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="panel panel-default"> 
+            <div class="panel-body">
+              @helper.form(action = routes.ProspectController.store(), 'id -> "prospectForm", 'class -> "form-horizontal") {
+                <fieldset>
+                  <legend>Personal Information</legend>
+                  <div class="row form-group">
+                    <div class="col-md-6">
+                      <label for="firstName">Firstname</label>
+                      <input type="text" class="form-control" name="firstName" id="firstName" placeholder="FirstName">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="lastName">Lastname</label>
+                      <input type="text" class="form-control" name="lastName" id="lastName" placeholder="LastName">
+                    </div>
+                  </div>
+                  <div class="row form-group">
+                    <div class="col-md-6">
+                      <label for="documentType">Document Type</label>
+                      <select name="documentType" id="documentType" class="form-control">
+                        <option></option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="dni">Document ID</label>
+                      <input type="text" class="form-control" name="documentId" id="dni" placeholder="DNI">
+                    </div>
+                  </div>
+                  <div class="row form-group">
+                    <div class="col-md-6">
+                      <label for="birthday">Birth Date</label>
+                      <input type="date" name="birthdate" id="birthdate" class="form-control" placeholder="dd/MM/yyyy">
+                    </div>
+                  </div>
+                </fieldset>
+                <fieldset>
+                  <legend>Institutional Information</legend>
+                  <div class="row form-group">
+                    <div class="col-md-6">
+                      <label for="institution">Institution</label>
+                      <select name="institution" id="institution" class="form-control">
+                        <option></option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="institutionCode">Docket Code</label>
+                      <input type="text" class="form-control" name="institutionCode" id="institutionCode" placeholder="Docket Code">
+                    </div>
+                  </div>
+                  <div class="row form-group">
+                    <div class="col-md-6">
+                      <label for="career">Title</label>
+                      <input type="text" name="title" class="form-control" id="title" placeholder="Title">
+                    </div>
+                  </div>
+                  <div class="row form-group">
+                    <div class="col-md-6">
+                      <label for="entryDate">Entry Date</label>
+                      <input type="date" name="entryDate" id="entryDate" class="form-control" placeholder="dd/MM/yyyy">
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="exitDate">Exit Date</label>
+                      <input type="date" name="exitDate" id="exitDate" class="form-control" placeholder="dd/MM/yyyy">
+                    </div>
+                  </div>
+                </fieldset>
+                <div class="row form-group">
+                  <div class="col-md-6">
+                    <a href="" class="btn btn-default btn-lg pull-right">Cancel</a>
+                  </div>
+                  <div class="col-md-6">
+                    <button type="submit" class="btn btn-primary btn-lg pull-left"><span><i class="fa fa-graduation-cap"> Add</i></span></button>
+                  </div>
+                </div>
+              }
+               
+            </div> 
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+}
