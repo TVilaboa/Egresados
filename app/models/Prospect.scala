@@ -22,6 +22,18 @@ case class Prospect(  _id : String,
                       country: String
                    ) {
 
+  def toMap: Map[String,String] = Map("_id"->_id,
+                                      "firstName"->firstName,
+                                      "lastName"->lastName,
+                                      "documentType"->documentType,
+                                      "documentId"->documentId,
+                                      "birthDate"->birthDate,
+                                      "entryDate"->entryDate,
+                                      "exitDate"->exitDate,
+                                      "institution"->institution._id,
+                                      "institutionCode"->institutionCode,
+                                      "title"->title,
+                                      "country"->country)
 }
 
 object Prospect {

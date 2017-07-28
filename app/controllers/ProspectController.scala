@@ -1,18 +1,23 @@
 package controllers
 
+import java.io.IOException
 import java.text.SimpleDateFormat
+import java.util.UUID
 
 import com.google.inject.Inject
+import com.mongodb.MongoWriteException
 import models._
 import org.joda.time.DateTime
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, AnyContentAsFormUrlEncoded, Controller}
 import services.{InstitutionService, ProspectService}
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
+
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 /**
   * Created by franco on 27/07/17.
@@ -127,9 +132,52 @@ class ProspectController @Inject()(prospectService: ProspectService,
     Ok(com.prospects.views.html.create.render(default, documentTypes, institutions))
   }
 
-  def store = Action{
+  def store = Action.async{
     implicit request =>{
-      Ok("")
+      val uuid : String = UUID.randomUUID().toString
+
+      val input : Map[String,String] = form.bindFromRequest().data
+
+      if(form.bindFromRequest.hasErrors)
+        Future{ BadRequest(com.prospects.views.html.create(input)) }
+      else{
+
+        val institution: Institution = Await.result(institutionService.find(input("institution")), Duration.Inf)
+
+        val prospect: Prospect = Prospect(uuid,
+                                          input("firstName"),
+                                          input("lastName"),
+                                          input("documentType"),
+                                          input("documentId"),
+                                          input("birthDate"),
+                                          input("entryDate"),
+                                          input("exitDate"),
+                                          institution,
+                                          input("institutionCode"),
+                                          input("title"),
+                                          List[News](),
+                                          List[News](),
+                                          List[News](),
+                                          List[News](),
+                                          LinkedinUserProfile(UUID.randomUUID().toString,
+                                                              "",
+                                                              List[LinkedinJob](),
+                                                              List[LinkedinEducation](),
+                                                              ""),
+                                          request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("country").head)
+
+        try{
+          prospectService.save(prospect).map((_) => {
+            Redirect(s"$uuid")
+          }).recoverWith {
+            case e: MongoWriteException => Future {Forbidden}
+            case e => Future {Forbidden}
+          }
+        }
+        catch{
+          case e: IOException => Future{Redirect(request.headers("referer"))}
+        }
+      }
     }
   }
 

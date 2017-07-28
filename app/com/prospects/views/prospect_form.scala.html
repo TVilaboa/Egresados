@@ -4,11 +4,11 @@
   <div class="row form-group">
     <div class="col-md-6">
       <label for="firstName">Firstname</label>
-      <input type="text" class="form-control" name="firstName" id="firstName" placeholder="FirstName">
+      <input type="text" class="form-control" name="firstName" id="firstName" placeholder="FirstName" value="@prospect("firstName")">
     </div>
     <div class="col-md-6">
       <label for="lastName">Lastname</label>
-      <input type="text" class="form-control" name="lastName" id="lastName" placeholder="LastName">
+      <input type="text" class="form-control" name="lastName" id="lastName" placeholder="LastName" value="@prospect("lastName")">
     </div>
   </div>
   <div class="row form-group">
@@ -16,19 +16,23 @@
       <label for="documentType">Document Type</label>
       <select name="documentType" id="documentType" class="form-control">
         @for(documentType: String <- documentTypes){
-          <option value="@documentType">@documentType.toUpperCase</option>
+          @if(prospect("documentType").equals(documentType)){
+            <option value="@documentType" selected>@documentType.toUpperCase</option>
+          } else{
+            <option value="@documentType" >@documentType.toUpperCase</option>
+          }
         }
       </select>
     </div>
     <div class="col-md-6">
-      <label for="dni">Document ID</label>
-      <input type="text" class="form-control" name="documentId" id="dni" placeholder="DNI">
+      <label for="documentId">Document ID</label>
+      <input type="text" class="form-control" name="documentId" id="documentId" placeholder="DNI" value="@prospect("documentId")">
     </div>
   </div>
   <div class="row form-group">
     <div class="col-md-6">
-      <label for="birthday">Birth Date</label>
-      <input type="date" name="birthdate" id="birthdate" class="form-control" placeholder="dd/MM/yyyy">
+      <label for="birthDate">Birth Date</label>
+      <input type="date" name="birthDate" id="birthDate" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("birthDate")">
     </div>
   </div>
 </fieldset>
@@ -39,34 +43,39 @@
       <label for="institution">Institution</label>
       <select name="institution" id="institution" class="form-control">
       @for(institution: Institution <- institutions){
-        <option value="@institution._id">@institution.name</option>
+        @if(prospect("institution").equals(institution._id)){
+          <option value="@institution._id" selected>@institution.name</option>
+        } else{
+          <option value="@institution._id" >@institution.name</option>
+        }
       }
       </select>
     </div>
     <div class="col-md-6">
       <label for="institutionCode">Docket Code</label>
-      <input type="text" class="form-control" name="institutionCode" id="institutionCode" placeholder="Docket Code">
+      <input type="text" class="form-control" name="institutionCode" id="institutionCode" placeholder="Docket Code" value="@prospect("institutionCode")">
     </div>
   </div>
   <div class="row form-group">
     <div class="col-md-6">
       <label for="career">Title</label>
-      <input type="text" name="title" class="form-control" id="title" placeholder="Title">
+      <input type="text" name="title" class="form-control" id="title" placeholder="Title" value="@prospect("title")">
     </div>
   </div>
   <div class="row form-group">
     <div class="col-md-6">
       <label for="entryDate">Entry Date</label>
-      <input type="date" name="entryDate" id="entryDate" class="form-control" placeholder="dd/MM/yyyy">
+      <input type="date" name="entryDate" id="entryDate" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("entryDate")">
     </div>
 
     <div class="col-md-6">
       <label for="exitDate">Exit Date</label>
-      <input type="date" name="exitDate" id="exitDate" class="form-control" placeholder="dd/MM/yyyy">
+      <input type="date" name="exitDate" id="exitDate" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("exitDate")">
     </div>
   </div>
 </fieldset>
 <div class="row form-group">
+  <input type="hidden" name="_id"  value="@prospect("_id")">
   <div class="col-md-6">
     <a href="" class="btn btn-default btn-lg pull-right">Cancel</a>
   </div>
