@@ -23,6 +23,19 @@ POST        /login               controllers.UserAuthController.login
 POST        /logout              controllers.AuthController.logout
 GET         /logout              controllers.UserAuthController.logout
 
+# Prospects
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+GET         /prospects/search             controllers.ProspectController.index
+POST        /prospects/search             controllers.ProspectController.search
+GET         /prospects/add                controllers.ProspectController.create
+POST        /prospects/add                controllers.ProspectController.store
+GET         /prospects/:id                controllers.ProspectController.show(id : String)
+GET         /prospects/:id/edit           controllers.ProspectController.edit(id : String)
+POST        /prospects/:id/edit           controllers.ProspectController.update(id : String)
+GET         /prospect/:id/delete          controllers.ProspectController.delete(id: String)
+GET         /prospects-batch              controllers.ProspectController.createBatch
+POST        /egresados-batch              controllers.ProspectController.storeBatch
+
 #EgresadosController
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 GET         /egresados/search             controllers.EgresadosController.showSearchForm

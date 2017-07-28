@@ -71,8 +71,6 @@ object TestScrapers {
       if(news.isDefined)
         println(Json.toJson(news.get).toString())
     }
-
-
   }
 
   private def testLinkedIn() : Unit = {
