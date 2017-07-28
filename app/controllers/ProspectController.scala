@@ -9,7 +9,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
-import services.ProspectService
+import services.{InstitutionService, ProspectService}
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -18,7 +18,11 @@ import scala.concurrent.duration.Duration
   * Created by franco on 27/07/17.
   */
 class ProspectController @Inject()(prospectService: ProspectService,
+                                   institutionService: InstitutionService,
                                    val messagesApi: MessagesApi) extends Controller with I18nSupport{
+
+  implicit val documentTypes: List[String] = List("dni","cuit","cuil")
+  implicit val institutions : Seq[Institution] = Await.result(institutionService.all(),Duration.Inf)
 
   val form = Form(mapping(
     "_id" -> text(),
@@ -108,7 +112,19 @@ class ProspectController @Inject()(prospectService: ProspectService,
   }
 
   def create = Action{
-    Ok(com.prospects.views.html.create.render())
+    val default: Map[String, String] = Map("_id"->"",
+                                           "firstName"->"",
+                                           "lastName"->"",
+                                           "documentType"->"",
+                                           "documentId"->"",
+                                           "birthDate"->"",
+                                           "entryDate"->"",
+                                           "exitDate"->"",
+                                           "institution"->"",
+                                           "institutionCode"->"",
+                                           "title"->"")
+
+    Ok(com.prospects.views.html.create.render(default, documentTypes, institutions))
   }
 
   def store = Action{

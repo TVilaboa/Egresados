@@ -1,4 +1,4 @@
-
+@(prospect: Map[String, String])(implicit documentTypes: List[String], institutions: Seq[Institution])
 @css = {
   <!-- Application Style CSS -->
   <link href="@routes.Assets.at("stylesheets/application.css")" rel="stylesheet">
@@ -107,78 +107,9 @@
         <div class="col-lg-12">
           <div class="panel panel-default"> 
             <div class="panel-body">
-              @helper.form(action = routes.ProspectController.store(), 'id -> "prospectForm", 'class -> "form-horizontal") {
-                <fieldset>
-                  <legend>Personal Information</legend>
-                  <div class="row form-group">
-                    <div class="col-md-6">
-                      <label for="firstName">Firstname</label>
-                      <input type="text" class="form-control" name="firstName" id="firstName" placeholder="FirstName">
-                    </div>
-                    <div class="col-md-6">
-                      <label for="lastName">Lastname</label>
-                      <input type="text" class="form-control" name="lastName" id="lastName" placeholder="LastName">
-                    </div>
-                  </div>
-                  <div class="row form-group">
-                    <div class="col-md-6">
-                      <label for="documentType">Document Type</label>
-                      <select name="documentType" id="documentType" class="form-control">
-                        <option></option>
-                      </select>
-                    </div>
-                    <div class="col-md-6">
-                      <label for="dni">Document ID</label>
-                      <input type="text" class="form-control" name="documentId" id="dni" placeholder="DNI">
-                    </div>
-                  </div>
-                  <div class="row form-group">
-                    <div class="col-md-6">
-                      <label for="birthday">Birth Date</label>
-                      <input type="date" name="birthdate" id="birthdate" class="form-control" placeholder="dd/MM/yyyy">
-                    </div>
-                  </div>
-                </fieldset>
-                <fieldset>
-                  <legend>Institutional Information</legend>
-                  <div class="row form-group">
-                    <div class="col-md-6">
-                      <label for="institution">Institution</label>
-                      <select name="institution" id="institution" class="form-control">
-                        <option></option>
-                      </select>
-                    </div>
-                    <div class="col-md-6">
-                      <label for="institutionCode">Docket Code</label>
-                      <input type="text" class="form-control" name="institutionCode" id="institutionCode" placeholder="Docket Code">
-                    </div>
-                  </div>
-                  <div class="row form-group">
-                    <div class="col-md-6">
-                      <label for="career">Title</label>
-                      <input type="text" name="title" class="form-control" id="title" placeholder="Title">
-                    </div>
-                  </div>
-                  <div class="row form-group">
-                    <div class="col-md-6">
-                      <label for="entryDate">Entry Date</label>
-                      <input type="date" name="entryDate" id="entryDate" class="form-control" placeholder="dd/MM/yyyy">
-                    </div>
 
-                    <div class="col-md-6">
-                      <label for="exitDate">Exit Date</label>
-                      <input type="date" name="exitDate" id="exitDate" class="form-control" placeholder="dd/MM/yyyy">
-                    </div>
-                  </div>
-                </fieldset>
-                <div class="row form-group">
-                  <div class="col-md-6">
-                    <a href="" class="btn btn-default btn-lg pull-right">Cancel</a>
-                  </div>
-                  <div class="col-md-6">
-                    <button type="submit" class="btn btn-primary btn-lg pull-left"><span><i class="fa fa-graduation-cap"> Add</i></span></button>
-                  </div>
-                </div>
+              @helper.form(action = routes.ProspectController.store(), 'id -> "prospectForm", 'class -> "form-horizontal") {
+                @com.prospects.views.html.prospect_form(prospect, "Add")
               }
                
             </div> 
