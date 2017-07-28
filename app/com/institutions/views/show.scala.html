@@ -1,0 +1,46 @@
+@(institution: Option[Institution])
+@layout(title = "Prospect Tracker | Institution") {
+
+  <div id="page-wrapper">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">Institution</h1>
+      </div>
+    </div>
+
+      <!-- /.row -->
+    <div class="row">
+      <div class="col-lg-12">
+      @if(institution.isDefined) {
+        <div class="panel panel-default">
+          <div class="alert alert-success">
+          @helper.form(action = routes.InstitutionController.edit(institution.get._id)) {
+            <div align="right">
+              <button type="submit" class="btn btn-info"><span><i class="fa fa-pencil"></i> Edit</span></button>
+            </div>
+          }
+          </div>
+          <div class="panel-body">
+            <div class="row form-group">
+              <div class="col-md-6 reference">
+                <label for="name">Nombre:</label>
+                <h3 id="name">@institution.get.name</h3>
+              </div>
+              <div class="col-md-6 reference">
+                <label for="address">Dirección:</label>
+                <h3 id="address">@institution.get.address</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      } else {
+        <div class="alert alert-danger">
+          <strong>No se puede visualizar la institución seleccionada</strong>
+        </div>
+      }
+      </div>
+    </div>
+  </div>
+}
+
+

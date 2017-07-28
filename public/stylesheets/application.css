@@ -9,3 +9,11 @@
 fieldset legend{
     color: #2b669a;
 }
+
+.reference label{
+    text-transform: uppercase !important;
+}
+
+.reference h3{
+    color: #2b669a !important;
+}
