@@ -66,7 +66,8 @@ class ProspectController @Inject()(prospectService: ProspectService) extends Con
         "title" -> text(),
         "educationPeriod" -> text(),
         "educationDescription" -> text()) (LinkedinEducation.apply) (LinkedinEducation.unapply)),
-      "profileUrl" -> text()) (LinkedinUserProfile.apply) (LinkedinUserProfile.unapply)
+      "profileUrl" -> text()) (LinkedinUserProfile.apply) (LinkedinUserProfile.unapply),
+    "country" -> default(text,"")
   )(Prospect.apply)(Prospect.unapply))
 
   def index = Action{

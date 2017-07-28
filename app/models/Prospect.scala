@@ -17,7 +17,8 @@ case class Prospect(  _id : String,
                       infobaeNews : List[News],
                       clarinNews : List[News],
                       cronistaNews : List[News],
-                      linkedInProfile : LinkedinUserProfile
+                      linkedInProfile : LinkedinUserProfile,
+                      country: String
                    ) {
 
 }

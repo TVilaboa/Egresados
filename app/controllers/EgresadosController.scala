@@ -82,7 +82,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
           "educationPeriod" -> text(),
           "educationDescription" -> text()) (LinkedinEducation.apply) (LinkedinEducation.unapply)),
         "profileUrl" -> text()) (LinkedinUserProfile.apply) (LinkedinUserProfile.unapply),
-      "country" -> text()
+      "country" -> default(text,"")
     )(Graduate.apply)(Graduate.unapply)
   )
 

@@ -107,6 +107,9 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
     //Get LinkedInProfile
     val linkedInProfile : LinkedinUserProfile = try{ transformProfile(document.get("linkedInProfile").get.asDocument())} catch {case  e : Exception => LinkedinUserProfile("","",Nil,Nil,"")}
 
+    //Get LinkedInProfile
+    val country : String = try{ document.get("country").get.asString().getValue} catch {case  e : Exception => "" }
+
     //Generate Prospect
     Prospect(
       document.get("_id").get.asString().getValue,
@@ -123,7 +126,8 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
       infobaeNews,
       clarinNews,
       cronistaNews,
-      linkedInProfile
+      linkedInProfile,
+      country
     )
   }
 
