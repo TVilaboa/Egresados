@@ -26,7 +26,8 @@ class InstitutionController  @Inject()(institutionService: InstitutionService,
   val form: Form[Institution] = Form(mapping(
     "_id" -> text(),
     "name" -> text.verifying(_.nonEmpty),
-    "address" -> text.verifying(_.nonEmpty))
+    "address" -> text.verifying(_.nonEmpty),
+    "active"->boolean)
   (Institution.apply)(Institution.unapply))
 
   def index = Action{
@@ -49,7 +50,7 @@ class InstitutionController  @Inject()(institutionService: InstitutionService,
       if(form.bindFromRequest.hasErrors)
         Future{ BadRequest(com.institutions.views.html.create(input)) }
       else{
-        val institution : Institution = Institution(uuid,input("name"),input("address"))
+        val institution : Institution = Institution(uuid,input("name"),input("address"), active = true)
 
         try{
           institutionService.save(institution).map((_) => {
@@ -72,18 +73,28 @@ class InstitutionController  @Inject()(institutionService: InstitutionService,
   }
 
   def edit(id: String) = Action{
-    Ok("")
+    val institution : Institution = Await.result(institutionService.find(id), Duration.Inf)
+    Ok(com.institutions.views.html.edit.render(institution.toMap))
   }
 
   def update(id: String) = Action{
     implicit request => {
-      Ok("")
+      val input : Map[String,String] = form.bindFromRequest().data
+
+      if(form.bindFromRequest.hasErrors)
+        BadRequest(com.institutions.views.html.edit(input))
+
+      institutionService.update(form.bindFromRequest.get)
+
+      Redirect(routes.InstitutionController.show(input("_id")))
     }
   }
 
   def delete(id: String) = Action{
     implicit request => {
-      Ok("")
+      val institution : Institution = Await.result(institutionService.find(id), Duration.Inf)
+      institutionService.drop(institution)
+      Redirect(routes.InstitutionController.index())
     }
   }
 

@@ -88,8 +88,8 @@
           <div class="panel panel-default"> 
             <div class="panel-body">
 
-              @helper.form(action = routes.InstitutionController.store(), 'id -> "institutionForm", 'class -> "form-horizontal") {
-                @com.institutions.views.html.institution_form(institution, "Add")
+              @helper.form(action = routes.InstitutionController.update(institution("_id")), 'id -> "institutionForm", 'class -> "form-horizontal") {
+                @com.institutions.views.html.institution_form(institution, "Update")
               }
                
             </div> 

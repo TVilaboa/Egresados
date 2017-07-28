@@ -1,4 +1,4 @@
-@(institution: Map[String,String])
+@(institution: Map[String,String], action: String)
 <fieldset>
   <legend>Institution Information</legend>
   <div class="row form-group">
@@ -18,6 +18,6 @@
     <a href="" class="btn btn-default btn-lg pull-right">Cancel</a>
   </div>
   <div class="col-md-6">
-    <button type="submit" class="btn btn-primary btn-lg pull-left"><span><i class="fa fa-university"> Add</i></span></button>
+    <button type="submit" class="btn btn-primary btn-lg pull-left"><span><i class="fa fa-university"> @action</i></span></button>
   </div>
 </div>

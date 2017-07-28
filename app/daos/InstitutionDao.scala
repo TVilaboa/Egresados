@@ -65,6 +65,10 @@ class MongoInstitutionDao @Inject()(mongo: Mongo) extends InstitutionDao {
   }
 
   private def transformDocument(document: Document) : Institution = {
-    Institution(document.get("_id").get.asString().getValue,document.get("name").get.asString().getValue,document.get("address").get.asString().getValue)
+    Institution(document.get("_id").get.asString().getValue,
+                document.get("name").get.asString().getValue,
+                document.get("address").get.asString().getValue,
+                document.get("active").get.asBoolean().getValue
+    )
   }
 }

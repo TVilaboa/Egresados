@@ -102,7 +102,7 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
     val clarinNews: List[News] = try{ transformNews(document.get("clarinNews").get.asArray())} catch {case  e : Exception => List[News]()}
 
     //Get institution
-    val institution : Institution = try{ transformInstitution(document.get("institution").get.asDocument())} catch {case  e : Exception => Institution("","","")}
+    val institution : Institution = try{ transformInstitution(document.get("institution").get.asDocument())} catch {case  e : Exception => Institution("","","",active = false)}
 
     //Get LinkedInProfile
     val linkedInProfile : LinkedinUserProfile = try{ transformProfile(document.get("linkedInProfile").get.asDocument())} catch {case  e : Exception => LinkedinUserProfile("","",Nil,Nil,"")}
@@ -144,7 +144,7 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
   }
 
   private def transformInstitution(bson : BsonDocument): Institution = {
-    Institution(bson.get("_id").asString().getValue,bson.get("name").asString().getValue,bson.get("address").asString().getValue)
+    Institution(bson.get("_id").asString().getValue,bson.get("name").asString().getValue,bson.get("address").asString().getValue,bson.get("active").asBoolean().getValue)
   }
 
   private def transformProfile(bson : BsonDocument): LinkedinUserProfile = {
