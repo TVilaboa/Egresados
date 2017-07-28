@@ -23,6 +23,16 @@ POST        /login               controllers.UserAuthController.login
 POST        /logout              controllers.AuthController.logout
 GET         /logout              controllers.UserAuthController.logout
 
+# Institutions
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+GET         /institutions                    controllers.InstitutionController.index
+GET         /institutions/add                controllers.InstitutionController.create
+POST        /institutions/add                controllers.InstitutionController.store
+GET         /institutions/:id                controllers.InstitutionController.show(id : String)
+GET         /institutions/:id/edit           controllers.InstitutionController.edit(id : String)
+POST        /institutions/:id/edit           controllers.InstitutionController.update(id : String)
+GET         /institutions/:id/delete         controllers.InstitutionController.delete(id: String)
+
 # Prospects
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 GET         /prospects/search             controllers.ProspectController.index
