@@ -35,7 +35,8 @@ GET         /institutions/:id/delete         controllers.InstitutionController.d
 
 # Prospects
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-GET         /prospects/search             controllers.ProspectController.index
+GET         /prospects                    controllers.ProspectController.index
+GET         /prospects/search             controllers.ProspectController.lookup
 POST        /prospects/search             controllers.ProspectController.search
 GET         /prospects/add                controllers.ProspectController.create
 POST        /prospects/add                controllers.ProspectController.store

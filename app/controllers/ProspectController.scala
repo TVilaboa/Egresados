@@ -89,9 +89,15 @@ class ProspectController @Inject()(prospectService: ProspectService,
   def index = Action{
     val prospects : List[Prospect] = Await.result(prospectService.all(), Duration.Inf).toList
 
+    Ok(com.prospects.views.html.index.render(prospects))
+  }
+
+  def lookup = Action{
+    val prospects : List[Prospect] = Await.result(prospectService.all(), Duration.Inf).toList
+
     val default: Map[String,String] = Map("firstName"->"","lastName"->"","documentId"->"","title"->"","exitDate"->"","institutionCode"->"")
 
-    Ok(com.prospects.views.html.index.render(prospects, form, default))
+    Ok(com.prospects.views.html.search.render(prospects, form, default))
   }
 
   def search = Action{
@@ -112,7 +118,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
         x.exitDate.toLowerCase.contains(date.toLowerCase)
       }
 
-      Ok(com.prospects.views.html.index.render(filtered, form, filter))
+      Ok(com.prospects.views.html.search.render(filtered, form, filter))
     }
   }
 
