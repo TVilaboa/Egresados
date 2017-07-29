@@ -164,7 +164,8 @@ class ProspectController @Inject()(prospectService: ProspectService,
                                                               List[LinkedinJob](),
                                                               List[LinkedinEducation](),
                                                               ""),
-                                          request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("country").head)
+//                                          request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("country").head)
+                                          "")
 
         try{
           prospectService.save(prospect).map((_) => {
