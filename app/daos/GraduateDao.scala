@@ -158,14 +158,12 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
       }
     }
 
-    var country = ""
-    try{
-      country =   doc.get("country").get.asString().getValue
-    } catch {
-      case e: NoSuchElementException => {
-        println("Error: El egresado no tiene especificado el pais de residencia")
-      }
-    }
+    //Get Country
+    val country : String = try{ doc.get("country").get.asString().getValue} catch {case  e : Exception => "" }
+
+    //Get Emails
+    val primaryEmail : String = try{ doc.get("primaryEmail").get.asString().getValue} catch {case  e : Exception => "" }
+    val secondaryEmail : String = try{ doc.get("secondaryEmail").get.asString().getValue} catch {case  e : Exception => "" }
 
     Graduate(
       doc.get("_id").get.asString().getValue,
@@ -182,7 +180,9 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
       clarinNews,
       elCronistaNews,
       linkedinUserProfile,
-      country
+      country,
+      primaryEmail,
+      secondaryEmail
     )
   }
 

@@ -1,4 +1,4 @@
-@(graduate: Option[Graduate])
+@(graduate : Option[Graduate],graduateForm: Form[Graduate])(implicit  request: RequestHeader,messages: Messages)
 @layout(title = "Graduate Profile") {
 
     <div id="page-wrapper">
@@ -39,6 +39,15 @@
                             <label>Apellido:</label>
                             @graduate.get.lastName
                         </div>
+                        <div class="form-group">
+                            <label>Email primario:</label>
+                            @graduate.get.primaryEmail
+                        </div>
+                        <div class="form-group">
+                            <label>Email secundario:</label>
+                            @graduate.get.secondaryEmail
+                        </div>
+
                         <div class="form-group">
                             <label>DNI:</label>
                             @graduate.get.documentId
