@@ -177,9 +177,10 @@ class ProspectController @Inject()(prospectService: ProspectService,
                                                               List[LinkedinEducation](),
                                                               ""),
 
-          input("country"),
-          input("primaryEmail"),
-          input("secondaryEmail")
+//                                          input("country"),
+                                          "",
+                                          input("primaryEmail"),
+                                          input("secondaryEmail")
         )
 
         try{
@@ -234,8 +235,10 @@ class ProspectController @Inject()(prospectService: ProspectService,
                                          original.clarinNews,
                                          original.cronistaNews,
                                          original.linkedInProfile,
-//                                          request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("country").head)
-                                         "")
+//                                          input("country")
+                                         "",
+                                         input("primaryEmail"),
+                                         input("secondaryEmail"))
         Await.result(prospectService.update(updated),Duration.Inf)
         Future{Redirect(routes.ProspectController.show(original._id))}
       }
