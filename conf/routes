@@ -69,6 +69,7 @@ POST        /valid                        controllers.EgresadosController.valida
 
 #LinkedInScraper
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+GET          /linkedin/search2/:id         controllers.LinkedinUserProfileController.search(id:String)
 GET          /linkedin/search/:id         controllers.LinkedinUserProfileController.saveLinkedinUserProfile(id:String)
 GET          /linkedin/searchAll          controllers.LinkedinUserProfileController.saveAllLinkedinUserProfile
 GET          /linkedin/delete/:id         controllers.LinkedinUserProfileController.deleteProfile(id:String)

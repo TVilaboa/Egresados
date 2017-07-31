@@ -1,0 +1,213 @@
+@(prospect: Option[Prospect])
+@css = {
+  <!-- Application Style CSS -->
+  <link href="@routes.Assets.at("stylesheets/application.css")" rel="stylesheet">
+}
+@scripts = {
+
+}
+@layout(title = "Prospect Tracker | Prospect Profile", scripts, css) {
+
+  <div id="page-wrapper">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">Prospect Profile</h1>
+      </div>
+    </div>
+
+      <!-- /.row -->
+    <div class="row">
+      <div class="col-lg-12">
+      @if(prospect.isDefined){
+        <div class="panel panel-default">
+          <div class="alert alert-info">
+            <div class="row">
+              <div class="col-md-6">
+                <h4>@prospect.get.getFullName</h4>
+              </div>
+              <div class="col-md-6">
+              @helper.form(action = routes.ProspectController.edit(prospect.get._id)) {
+                <div align="right">
+                  <button type="submit" class="btn btn-info"><span><i class="fa fa-pencil"></i> Edit</span></button>
+                </div>
+              </div>
+            </div>
+            }
+          </div>
+          <div class="panel-body">
+            <fieldset>
+              <legend>Personal Information</legend>
+              <div class="row form-group">
+                <div class="col-md-4">
+                  <span><strong>Nombre: </strong>@prospect.get.firstName</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Apellido: </strong>@prospect.get.lastName</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Documento: </strong>@prospect.get.getIdentification</span>
+                </div>
+              </div>
+              <div class="row form-group">
+                <div class="col-md-4">
+                  <span><strong>País de Residencia: </strong>@prospect.get.country</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Fecha de Nacimiento: </strong>@prospect.get.birthDate</span>
+                </div>
+                <div class="col-md-4"></div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Institutional Information</legend>
+              <div class="row form-group">
+                <div class="col-md-4">
+                  <span><strong>Institución: </strong>@prospect.get.institution.name</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Código de prospecto: </strong>@prospect.get.institutionCode</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Título: </strong>@prospect.get.title</span>
+                </div>
+              </div>
+              <div class="row form-group">
+                <div class="col-md-4">
+                  <span><strong>Fecha de Ingreso: </strong>@prospect.get.entryDate</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Fecha de Egreso: </strong>@prospect.get.exitDate</span>
+                </div>
+                <div class="col-md-4"></div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>News Tracking</legend>
+              @com.prospects.views.html.prospect_news.render(prospect.get.nacionNews,"Noticias: La Nación", "lanacion", prospect.get._id)
+              <hr>
+              @com.prospects.views.html.prospect_news.render(prospect.get.clarinNews,"Noticias: Clarín", "clarin", prospect.get._id)
+              <hr>
+              @com.prospects.views.html.prospect_news.render(prospect.get.cronistaNews,"Noticias: El Cronista", "elcronista", prospect.get._id)
+              <hr>
+              @com.prospects.views.html.prospect_news.render(prospect.get.infobaeNews,"Noticias: Infobae", "infobae", prospect.get._id)
+            </fieldset>
+            <fieldset>
+              <legend>LinkedIn Tracking</legend>
+              <div class="row form-group">
+                @if(prospect.get.linkedInProfile.profileUrl.isEmpty){
+                  <div class="col-md-2">
+                    <span>No se encontró un perfil de LinkedIn</span>
+                  </div>
+                  <div class="col-md-2">
+                    @helper.form(action = routes.LinkedinUserProfileController.search(prospect.get._id)){
+                      <button class="btn btn-info"><span><i class="fa fa-search"></i> Buscar Perfil</span></button>
+                    }
+                  </div>
+                  <div class="col-md-8"></div>
+                } else{
+                  <div class="col-lg-12">
+                    <div class="row form-group">
+                      <div class="col-lg-12">
+                        <label for="profile">Perfil del Prospecto:</label>
+                        <span id="profile"><a href="@prospect.get.linkedInProfile.profileUrl">@prospect.get.getFullName</a></span>
+                      </div>
+                    </div>
+                    <div class="row form-group">
+                      <div class="col-lg-12">
+                        <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-jobs">
+                          <thead>
+                            <tr>
+                              <th>Institucion</th>
+                              <th>Rol</th>
+                              <th>Periodo</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <ul>
+                            @for(job: LinkedinJob <- prospect.get.linkedInProfile.jobList) {
+                              <tr class="graduate">
+                                <td>@job.workplace</td>
+                                <td>@job.position</td>
+                                <td>@job.activityPeriod</td>
+                              </tr>
+                            }
+                            </ul>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div class="row form-group">
+                      <div class="col-lg-12">
+                        <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-education">
+                          <thead>
+                            <tr>
+                              <th>Institucion</th>
+                              <th>Titulo</th>
+                              <th>Periodo</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <ul>
+                            @for(item: LinkedinEducation <- prospect.get.linkedInProfile.educationList) {
+                              <tr class="graduate">
+                                <td>@item.institute</td>
+                                <td>@item.title</td>
+                                <td>@item.educationPeriod</td>
+                              </tr>
+                            }
+                            </ul>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Actions</legend>
+              <div class="row form-group">
+                <div class="col-md-6">
+                @helper.form(action = routes.EgresadosController.renderValidate(prospect.get._id)) {
+                  <button type="button" class="btn btn-info btn-lg pull-right">Validar Links</button>
+                }
+                </div>
+                <div class="col-md-6">
+                  <button data-toggle="modal" data-target="#delete" value="delete" class="btn btn-danger btn-lg pull-left">Eliminar Prospecto</button>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+            <!-- Modal -->
+        <div class="modal fade" id="myModal" role="dialog">
+          <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Delete graduate</h4>
+              </div>
+              <div class="modal-body">
+                <p>Are you sure you want to delete this graduate?</p>
+              </div>
+              <div class="modal-footer">
+                @helper.form(action = routes.ProspectController.delete(prospect.get._id)){
+                  <button type="button" class="btn btn-danger">Delete</button>
+                }
+                <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      } else {
+        <div class="alert alert-danger">
+          <strong>No existe el prospecto correspondiente</strong>
+        </div>
+      }
+      </div>
+    </div>
+
+  </div>
+}
+
+

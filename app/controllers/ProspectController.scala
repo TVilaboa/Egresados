@@ -189,11 +189,13 @@ class ProspectController @Inject()(prospectService: ProspectService,
   }
 
   def show(id : String) = Action{
-    Ok("")
+    val prospect: Prospect = Await.result(prospectService.find(id), Duration.Inf)
+    Ok(com.prospects.views.html.show.render(Option(prospect)))
   }
 
   def edit(id : String) = Action{
-      Ok("")
+    val prospect: Prospect = Await.result(prospectService.find(id), Duration.Inf)
+    Ok("")
   }
 
   def update(id : String) = Action{

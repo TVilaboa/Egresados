@@ -19,6 +19,8 @@ import scala.concurrent.{Await, Future}
 
 class LinkedinUserProfileController @Inject() (linkedinUserProfileService: LinkedinUserProfileService,graduateService: GraduateService) extends Controller{
 
+  def search(id: String) = TODO
+
   def saveLinkedinUserProfile(id : String) = Action {
     val generator: LinkedInUrlGenerator = new LinkedInUrlGenerator()
     var graduate : Graduate = Await.result(graduateService.find(id),Duration.Inf)

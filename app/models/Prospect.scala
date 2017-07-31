@@ -34,6 +34,10 @@ case class Prospect(  _id : String,
                                       "institutionCode"->institutionCode,
                                       "title"->title,
                                       "country"->country)
+
+  def getFullName: String = s"$firstName $lastName"
+
+  def getIdentification: String = s"${documentType.toUpperCase()} $documentId"
 }
 
 object Prospect {
