@@ -11,12 +11,11 @@ import org.joda.time.DateTime
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContentAsFormUrlEncoded, Controller}
-import services.{InstitutionService, ProspectService}
+import play.api.mvc.{Action, Controller}
+import services._
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
-
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 /**
@@ -24,6 +23,11 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
   */
 class ProspectController @Inject()(prospectService: ProspectService,
                                    institutionService: InstitutionService,
+                                   linkedInService: LinkedinUserProfileService,
+                                   lanacionService: LaNacionNewsService,
+                                   infobaeService: InfobaeNewsService,
+                                   clarinService: ClarinNewsService,
+                                   cronistaService: ElCronistaNewsService,
                                    val messagesApi: MessagesApi) extends Controller with I18nSupport{
 
   implicit val documentTypes: List[String] = List("dni","cuit","cuil")
@@ -235,7 +239,21 @@ class ProspectController @Inject()(prospectService: ProspectService,
 
   def delete(id : String) = Action{
     implicit request => {
-      Ok("")
+      val prospect: Prospect = Await.result(prospectService.find(id),Duration.Inf)
+
+      //Delete LinkedIn information
+      val profile: LinkedinUserProfile = prospect.linkedInProfile
+      linkedInService.drop(profile)
+
+      //Delete News Information
+      prospect.nacionNews.map(lanacionService.drop)
+      prospect.infobaeNews.map(infobaeService.drop)
+      prospect.clarinNews.map(clarinService.drop)
+      prospect.cronistaNews.map(cronistaService.drop)
+
+      //Delete Prospect
+      prospectService.drop(prospect)
+      Redirect(routes.ProspectController.index())
     }
   }
 
