@@ -20,7 +20,9 @@ case class Graduate(  _id: String,
                       clarinNews: List[News],
                       elCronistaNews:List[News],
                       linkedinUserProfile: LinkedinUserProfile,
-                      country: String
+                      country: String,
+                      primaryEmail: String,
+                      secondaryEmail: String
                    )
 
 object Graduate {

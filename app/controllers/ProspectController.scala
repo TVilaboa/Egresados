@@ -87,7 +87,9 @@ class ProspectController @Inject()(prospectService: ProspectService,
                                                                  "educationPeriod" -> text(),
                                                                  "educationDescription" -> text()) (LinkedinEducation.apply) (LinkedinEducation.unapply)),
                                  "profileUrl" -> text()) (LinkedinUserProfile.apply) (LinkedinUserProfile.unapply),
-    "country" -> default(text,"")
+    "country" -> default(text,""),
+    "primaryEmail" -> default(text,""),
+    "secondaryEmail" -> default(text,"")
   )(Prospect.apply)(Prospect.unapply))
 
   def index = Action{
@@ -174,8 +176,11 @@ class ProspectController @Inject()(prospectService: ProspectService,
                                                               List[LinkedinJob](),
                                                               List[LinkedinEducation](),
                                                               ""),
-//                                          request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("country").head)
-                                          "")
+
+          input("country"),
+          input("primaryEmail"),
+          input("secondaryEmail")
+        )
 
         try{
           prospectService.save(prospect).map((_) => {

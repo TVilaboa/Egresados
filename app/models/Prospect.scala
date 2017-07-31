@@ -19,7 +19,9 @@ case class Prospect(  _id : String,
                       clarinNews : List[News],
                       cronistaNews : List[News],
                       linkedInProfile : LinkedinUserProfile,
-                      country: String
+                      country: String,
+                      primaryEmail: String,
+                      secondaryEmail: String
                    ) {
 
   def toMap: Map[String,String] = Map("_id"->_id,
@@ -33,6 +35,9 @@ case class Prospect(  _id : String,
                                       "institution"->institution._id,
                                       "institutionCode"->institutionCode,
                                       "title"->title,
+                                      "country"->country,
+                                      "primaryEmail" -> primaryEmail,
+                                      "secondaryEmail" -> secondaryEmail)
                                       "country"->country)
 
   def getFullName: String = s"$firstName $lastName"
