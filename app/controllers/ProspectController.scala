@@ -195,12 +195,41 @@ class ProspectController @Inject()(prospectService: ProspectService,
 
   def edit(id : String) = Action{
     val prospect: Prospect = Await.result(prospectService.find(id), Duration.Inf)
-    Ok("")
+    Ok(com.prospects.views.html.edit.render(prospect.toMap, documentTypes, institutions))
   }
 
-  def update(id : String) = Action{
+  def update(id : String) = Action.async{
     implicit request => {
-      Ok("")
+      val input : Map[String,String] = form.bindFromRequest().data
+
+      val original: Prospect = Await.result(prospectService.find(id),Duration.Inf)
+
+      if(form.bindFromRequest.hasErrors)
+        Future{ BadRequest(com.prospects.views.html.create(input)) }
+      else{
+        val institution: Institution = Await.result(institutionService.find(input("institution")), Duration.Inf)
+
+        val updated: Prospect = Prospect(id,
+                                         input("firstName"),
+                                         input("lastName"),
+                                         input("documentType"),
+                                         input("documentId"),
+                                         input("birthDate"),
+                                         input("entryDate"),
+                                         input("exitDate"),
+                                         institution,
+                                         input("institutionCode"),
+                                         input("title"),
+                                         original.nacionNews,
+                                         original.infobaeNews,
+                                         original.clarinNews,
+                                         original.cronistaNews,
+                                         original.linkedInProfile,
+//                                          request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data("country").head)
+                                         "")
+        Await.result(prospectService.update(updated),Duration.Inf)
+        Future{Redirect(routes.ProspectController.show(original._id))}
+      }
     }
   }
 
