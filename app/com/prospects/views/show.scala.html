@@ -176,9 +176,7 @@
               <legend>Actions</legend>
               <div class="row form-group">
                 <div class="col-md-6">
-                @helper.form(action = routes.EgresadosController.renderValidate(prospect.get._id)) {
-                  <button type="button" class="btn btn-info btn-lg pull-right">Validar Links</button>
-                }
+                  <a href="@routes.ProspectController.showValidation(prospect.get._id)" class="btn btn-info btn-lg pull-right">Validar Links</a>
                 </div>
                 <div class="col-md-6">
                   <button data-toggle="modal" data-target="#delete" value="delete" class="btn btn-danger btn-lg pull-left">Eliminar Prospecto</button>

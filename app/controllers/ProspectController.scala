@@ -11,12 +11,13 @@ import org.joda.time.DateTime
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, Controller, Request}
 import services._
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 
 /**
   * Created by franco on 27/07/17.
@@ -273,6 +274,59 @@ class ProspectController @Inject()(prospectService: ProspectService,
   def storeBatch = Action{
     implicit request => {
       Ok("")
+    }
+  }
+
+  def showValidation(id: String) = Action{
+    val prospect: Prospect = Await.result(prospectService.find(id),Duration.Inf)
+    Ok(com.prospects.views.html.link_validation.render(Option(prospect)))
+  }
+
+  def postValidation(id: String) = Action(parse.json){
+    implicit request: Request[JsValue] => {
+      val prospect: Prospect = Await.result(prospectService.find(id),Duration.Inf)
+
+      val links: Map[String, JsValue] = request.body match{
+        case JsObject(fields) => fields.toMap
+        case _ => Map[String, JsValue]()
+      }
+
+      links("type").toString() match{
+        case "lanacion" =>
+          val items : List[String] = links("links").asInstanceOf[JsArray].value.map(x=>x.toString()).toList
+          val filtered: (List[News],List[News]) = prospect.nacionNews.partition(x=> items.contains(x._id))
+          val updated : Prospect = prospect.copy(nacionNews = filtered._1)
+          prospectService.update(updated)
+          filtered._2.map(x => lanacionService.drop(x))
+          Ok(Json.toJson(Map("status"->"OK", "erased"->"lanacion")))
+
+        case "infobae" =>
+          val items : List[String] = links("links").asInstanceOf[JsArray].value.map(x=>x.toString()).toList
+          val filtered: (List[News],List[News]) = prospect.infobaeNews.partition(x=> items.contains(x._id))
+          val updated : Prospect = prospect.copy(infobaeNews = filtered._1)
+          prospectService.update(updated)
+          filtered._2.map(x => infobaeService.drop(x))
+          Ok(Json.toJson(Map("status"->"OK", "erased"->"infobae")))
+
+        case "clarin" =>
+          val items : List[String] = links("links").asInstanceOf[JsArray].value.map(x=>x.toString()).toList
+          val filtered: (List[News],List[News]) = prospect.clarinNews.partition(x=> items.contains(x._id))
+          val updated : Prospect = prospect.copy(clarinNews = filtered._1)
+          prospectService.update(updated)
+          filtered._2.map(x => clarinService.drop(x))
+          Ok(Json.toJson(Map("status"->"OK", "erased"->"clarin")))
+
+        case "elcronista" =>
+          val items : List[String] = links("links").asInstanceOf[JsArray].value.map(x=>x.toString()).toList
+          val filtered: (List[News],List[News]) = prospect.cronistaNews.partition(x=> items.contains(x._id))
+          val updated : Prospect = prospect.copy(cronistaNews = filtered._1)
+          prospectService.update(updated)
+          filtered._2.map(x => cronistaService.drop(x))
+          Ok(Json.toJson(Map("status"->"OK", "erased"->"elcronista")))
+
+        case _ =>
+          Ok(Json.toJson(Map("status"->"nothing")))
+      }
     }
   }
 }
