@@ -38,7 +38,6 @@ case class Prospect(  _id : String,
                                       "country"->country,
                                       "primaryEmail" -> primaryEmail,
                                       "secondaryEmail" -> secondaryEmail)
-                                      "country"->country)
 
   def getFullName: String = s"$firstName $lastName"
 
