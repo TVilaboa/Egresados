@@ -139,7 +139,10 @@ class ProspectController @Inject()(prospectService: ProspectService,
                                            "exitDate"->"",
                                            "institution"->"",
                                            "institutionCode"->"",
-                                           "title"->"")
+                                           "title"->"",
+                                           "primaryEmail"->"",
+                                           "secondaryEmail"->"",
+                                           "country"->"")
 
     Ok(com.prospects.views.html.create.render(default, documentTypes, institutions))
   }
@@ -177,8 +180,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
                                                               List[LinkedinEducation](),
                                                               ""),
 
-//                                          input("country"),
-                                          "",
+                                          input("country"),
                                           input("primaryEmail"),
                                           input("secondaryEmail")
         )
@@ -235,8 +237,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
                                          original.clarinNews,
                                          original.cronistaNews,
                                          original.linkedInProfile,
-//                                          input("country")
-                                         "",
+                                         input("country"),
                                          input("primaryEmail"),
                                          input("secondaryEmail"))
         Await.result(prospectService.update(updated),Duration.Inf)

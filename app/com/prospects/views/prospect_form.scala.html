@@ -1,3 +1,5 @@
+@import java.util.Locale
+
 @(prospect: Map[String, String], action: String)(implicit documentTypes : List[String], institutions: Seq[Institution])
 <fieldset>
   <legend>Personal Information</legend>
@@ -33,6 +35,28 @@
     <div class="col-md-6">
       <label for="birthDate">Birth Date</label>
       <input type="date" name="birthDate" id="birthDate" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("birthDate")">
+    </div>
+    <div class="col-md-6">
+      <label for="country">País de Residencia: </label>
+      <select name="country" id="country" class="form-control">
+      @for(country: (String,String)<- Locale.getISOCountries.map(c => new Locale("",c).getDisplayCountry) zip Locale.getISOCountries.map(c => new Locale("",c).getDisplayCountry)){
+        @if(prospect("country").equals(country._1)){
+          <option value="@country._1" selected>@country._2</option>
+        } else{
+          <option value="@country._1" >@country._2</option>
+        }
+      }
+      </select>
+    </div>
+  </div>
+  <div class="row form-group">
+    <div class="col-md-6">
+      <label for="primaryEmail">Email Primario</label>
+      <input type="email" class="form-control" name="primaryEmail" id="primaryEmail" placeholder="some@@mail.com" value="@prospect("primaryEmail")">
+    </div>
+    <div class="col-md-6">
+      <label for="secondaryEmail">Email Secundario</label>
+      <input type="email" class="form-control" name="secondaryEmail" id="secondaryEmail" placeholder="some@@mail.com" value="@prospect("secondaryEmail")">
     </div>
   </div>
 </fieldset>
