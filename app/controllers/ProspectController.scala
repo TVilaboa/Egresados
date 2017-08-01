@@ -373,7 +373,9 @@ class ProspectController @Inject()(prospectService: ProspectService,
         }
       }
 
-      val map : Map[String, JsValue] = Map("status"->Json.toJson("OK"), "items" ->Json.toJson(data.map(x=> Json.toJson(x.toMap)).toList))
+      val map : Map[String, JsValue] = Map("status"->Json.toJson("OK"),
+                                           "items" ->Json.toJson(data.map(x=> Json.toJson(x.toMap))),
+                                           "institutions" -> Json.toJson(uploadInstitutes.map(x=> Json.toJson(x.toMap))))
       Ok(Json.toJson(map))
     }
   }
