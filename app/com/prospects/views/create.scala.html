@@ -1,4 +1,4 @@
-@(prospect: Map[String, String])(implicit documentTypes: List[String], institutions: Seq[Institution])
+@(prospect: Map[String, String],message: String = "")(implicit documentTypes: List[String], institutions: Seq[Institution])
 @css = {
   <!-- Application Style CSS -->
   <link href="@routes.Assets.at("stylesheets/application.css")" rel="stylesheet">
@@ -85,6 +85,12 @@
             });
           });
   </script>
+  <script>
+          $( document ).ready(function() {
+            document.getElementById("prospectForm").noValidate = false;
+          });
+
+  </script>
 }
 
 @layout(title = "Prospect Tracker | Add Prospect", scripts, css) {
@@ -92,27 +98,29 @@
   <div id="wrapper">
     <div id="page-wrapper">
 
-      <div class="row"> 
+      <div class="row">
         <div class="col-lg-12">
-          <h1 class="page-header">Nuevo Prospecto</h1>
-          @*<div id="messageSpan" class="alert alert-danger" role="alert">*@
-            @*<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="false"></span>*@
-            @*<span class="sr-only">Error:</span>*@
-            @*<span>Agregar</span>*@
-          @*</div>*@
+          <h1 class="page-header">New Prospect</h1>
+            @if(message != ""){
+                <div id="messageSpan" class="alert alert-danger" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="false"></span>
+                    <span class="sr-only">Error:</span>
+                    <span>@message</span>
+                </div>
+            }
         </div>
       </div>
 
       <div class="row">
         <div class="col-lg-12">
-          <div class="panel panel-default"> 
+          <div class="panel panel-default">
             <div class="panel-body">
 
               @helper.form(action = routes.ProspectController.store(), 'id -> "prospectForm", 'class -> "form-horizontal") {
                 @com.prospects.views.html.prospect_form(prospect, "Add")
               }
-               
-            </div> 
+              
+            </div>
           </div>
         </div>
       </div>

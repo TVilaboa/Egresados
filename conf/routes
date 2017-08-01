@@ -38,10 +38,10 @@ GET         /institutions/:id/delete         controllers.InstitutionController.d
 GET         /prospects                    controllers.ProspectController.index
 GET         /prospects/search             controllers.ProspectController.lookup
 POST        /prospects/search             controllers.ProspectController.search
-GET         /prospects/add                controllers.ProspectController.create
+GET         /prospects/add                controllers.ProspectController.create(message : String ?= "")
 POST        /prospects/add                controllers.ProspectController.store
 GET         /prospects/:id                controllers.ProspectController.show(id : String)
-GET         /prospects/:id/edit           controllers.ProspectController.edit(id : String)
+GET         /prospects/:id/edit           controllers.ProspectController.edit(id : String,message : String ?= "")
 POST        /prospects/:id/edit           controllers.ProspectController.update(id : String)
 GET         /prospect/:id/delete          controllers.ProspectController.delete(id: String)
 GET         /prospects-batch              controllers.ProspectController.createBatch

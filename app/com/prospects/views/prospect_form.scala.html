@@ -6,11 +6,11 @@
   <div class="row form-group">
     <div class="col-md-6">
       <label for="firstName">Firstname</label>
-      <input type="text" class="form-control" name="firstName" id="firstName" placeholder="FirstName" value="@prospect("firstName")">
+      <input type="text" required class="form-control" name="firstName" id="firstName" placeholder="FirstName" value="@prospect("firstName")">
     </div>
     <div class="col-md-6">
       <label for="lastName">Lastname</label>
-      <input type="text" class="form-control" name="lastName" id="lastName" placeholder="LastName" value="@prospect("lastName")">
+      <input type="text" required class="form-control" name="lastName" id="lastName" placeholder="LastName" value="@prospect("lastName")">
     </div>
   </div>
   <div class="row form-group">
@@ -28,7 +28,7 @@
     </div>
     <div class="col-md-6">
       <label for="documentId">Document ID</label>
-      <input type="text" class="form-control" name="documentId" id="documentId" placeholder="DNI" value="@prospect("documentId")">
+      <input type="text"  class="form-control" name="documentId" id="documentId" placeholder="DNI" value="@prospect("documentId")">
     </div>
   </div>
   <div class="row form-group">
@@ -52,11 +52,11 @@
   <div class="row form-group">
     <div class="col-md-6">
       <label for="primaryEmail">Email Primario</label>
-      <input type="email" class="form-control" name="primaryEmail" id="primaryEmail" placeholder="some@@mail.com" value="@prospect("primaryEmail")">
+      <input type="email" required class="form-control" name="primaryEmail" id="primaryEmail" placeholder="some@@mail.com" value="@prospect("primaryEmail")">
     </div>
     <div class="col-md-6">
       <label for="secondaryEmail">Email Secundario</label>
-      <input type="email" class="form-control" name="secondaryEmail" id="secondaryEmail" placeholder="some@@mail.com" value="@prospect("secondaryEmail")">
+      <input type="email"  class="form-control" name="secondaryEmail" id="secondaryEmail" placeholder="some@@mail.com" value="@prospect("secondaryEmail")">
     </div>
   </div>
 </fieldset>

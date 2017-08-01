@@ -1,6 +1,7 @@
 package controllers
 
 import java.io.IOException
+import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.UUID
 
@@ -129,23 +130,25 @@ class ProspectController @Inject()(prospectService: ProspectService,
     }
   }
 
-  def create = Action{
-    val default: Map[String, String] = Map("_id"->"",
-                                           "firstName"->"",
-                                           "lastName"->"",
-                                           "documentType"->"",
-                                           "documentId"->"",
-                                           "birthDate"->"",
-                                           "entryDate"->"",
-                                           "exitDate"->"",
-                                           "institution"->"",
-                                           "institutionCode"->"",
-                                           "title"->"",
-                                           "primaryEmail"->"",
-                                           "secondaryEmail"->"",
-                                           "country"->"")
+  def create(message: String = "",default: Map[String, String] = null) = Action{
+    val prospect: Map[String, String]= if(default != null) default else Map("_id"->"",
+      "firstName"->"",
+      "lastName"->"",
+      "documentType"->"",
+      "documentId"->"",
+      "birthDate"->"",
+      "entryDate"->"",
+      "exitDate"->"",
+      "institution"->"",
+      "institutionCode"->"",
+      "title"->"",
+      "primaryEmail"->"",
+      "secondaryEmail"->"",
+      "country"->"")
 
-    Ok(com.prospects.views.html.create.render(default, documentTypes, institutions))
+
+
+    Ok(com.prospects.views.html.create.render(prospect,message, documentTypes, institutions))
   }
 
   def store = Action.async{
@@ -186,17 +189,35 @@ class ProspectController @Inject()(prospectService: ProspectService,
                                           input("secondaryEmail")
         )
 
-        try{
-          prospectService.save(prospect).map((_) => {
-            Redirect(s"$uuid")
-          }).recoverWith {
-            case e: MongoWriteException => Future {Forbidden}
-            case e => Future {Forbidden}
+        val prospects: List[Prospect] = Await.result(prospectService.all(), Duration.Inf).toList
+
+        if (!prospects.exists(g => (g.primaryEmail != "" && g.secondaryEmail != "" && g._id != prospect._id) && (g.primaryEmail == prospect.primaryEmail || g.secondaryEmail == prospect.primaryEmail
+          || g.primaryEmail == prospect.secondaryEmail || g.secondaryEmail == prospect.secondaryEmail))) {
+
+
+          try{
+            prospectService.save(prospect).map((_) => {
+              Redirect(s"$uuid")
+            }).recoverWith {
+              case e: MongoWriteException => Future {Forbidden}
+              case e => Future {Forbidden}
+            }
+          }
+          catch{
+            case e: IOException => Future{Redirect(request.headers("referer"))}
           }
         }
-        catch{
-          case e: IOException => Future{Redirect(request.headers("referer"))}
+        else
+        {
+          val message = "Primary or secondary emails are already taken by another prospect"
+
+
+           create(message,prospect.toMap).apply(request)
+
+
         }
+
+
       }
     }
   }
@@ -206,46 +227,69 @@ class ProspectController @Inject()(prospectService: ProspectService,
     Ok(com.prospects.views.html.show.render(Option(prospect)))
   }
 
-  def edit(id : String) = Action{
+  def edit(id : String,message: String = "") = Action{
     val prospect: Prospect = Await.result(prospectService.find(id), Duration.Inf)
-    Ok(com.prospects.views.html.edit.render(prospect.toMap, documentTypes, institutions))
+    Ok(com.prospects.views.html.edit.render(prospect.toMap,message, documentTypes, institutions))
   }
 
-  def update(id : String) = Action.async{
+  def update(id : String) = Action.async {
     implicit request => {
-      val input : Map[String,String] = form.bindFromRequest().data
+      val input: Map[String, String] = form.bindFromRequest().data
 
-      val original: Prospect = Await.result(prospectService.find(id),Duration.Inf)
+      val original: Prospect = Await.result(prospectService.find(id), Duration.Inf)
 
-      if(form.bindFromRequest.hasErrors)
-        Future{ BadRequest(com.prospects.views.html.create(input)) }
-      else{
+      if (form.bindFromRequest.hasErrors)
+        Future {
+          BadRequest(com.prospects.views.html.create(input))
+        }
+      else {
         val institution: Institution = Await.result(institutionService.find(input("institution")), Duration.Inf)
 
         val updated: Prospect = Prospect(id,
-                                         input("firstName"),
-                                         input("lastName"),
-                                         input("documentType"),
-                                         input("documentId"),
-                                         input("birthDate"),
-                                         input("entryDate"),
-                                         input("exitDate"),
-                                         institution,
-                                         input("institutionCode"),
-                                         input("title"),
-                                         original.nacionNews,
-                                         original.infobaeNews,
-                                         original.clarinNews,
-                                         original.cronistaNews,
-                                         original.linkedInProfile,
-                                         input("country"),
-                                         input("primaryEmail"),
-                                         input("secondaryEmail"))
-        Await.result(prospectService.update(updated),Duration.Inf)
-        Future{Redirect(routes.ProspectController.show(original._id))}
+          input("firstName"),
+          input("lastName"),
+          input("documentType"),
+          input("documentId"),
+          input("birthDate"),
+          input("entryDate"),
+          input("exitDate"),
+          institution,
+          input("institutionCode"),
+          input("title"),
+          original.nacionNews,
+          original.infobaeNews,
+          original.clarinNews,
+          original.cronistaNews,
+          original.linkedInProfile,
+          input("country"),
+          input("primaryEmail"),
+          input("secondaryEmail"))
+        val prospects: List[Prospect] = Await.result(prospectService.all(), Duration.Inf).toList
+
+        if (!prospects.exists(g => (g.primaryEmail != "" && g.secondaryEmail != "" && g._id != updated._id) && (g.primaryEmail == updated.primaryEmail || g.secondaryEmail == updated.primaryEmail
+          || g.primaryEmail == updated.secondaryEmail || g.secondaryEmail == updated.secondaryEmail))) {
+
+
+          Await.result(prospectService.update(updated), Duration.Inf)
+          Future {
+            Redirect(routes.ProspectController.show(original._id))
+          }
+        }
+          else
+          {
+            val message = "Primary or secondary emails are already taken by another prospect"
+            Future {
+              //Redirect("/update/" + graduate._id + "?message=" + URLEncoder.encode(message, "UTF-8") )
+              Redirect(routes.ProspectController.edit(original._id,message))
+
+            }
+          }
+        }
       }
     }
-  }
+
+
+
 
   def delete(id : String) = Action{
     implicit request => {
