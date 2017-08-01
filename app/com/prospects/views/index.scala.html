@@ -1,4 +1,4 @@
-@(prospects: List[Prospect])
+@(prospects: List[Prospect],message: String = "")
 
 @css = {
   <!-- DataTables CSS -->
@@ -65,6 +65,13 @@
       <div class="row">
         <div class="col-lg-12">
           <h1 class="page-header">Prospects</h1>
+            @if(message != ""){
+                <div id="messageSpan" class="alert alert-success" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="false"></span>
+                    <span class="sr-only">Error:</span>
+                    <span>@message</span>
+                </div>
+            }
         </div>
       </div>
 
