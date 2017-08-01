@@ -5,6 +5,7 @@ import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.UUID
 
+import com.github.tototoshi.csv.{CSVReader, DefaultCSVFormat}
 import com.google.inject.Inject
 import com.mongodb.MongoWriteException
 import models._
@@ -318,6 +319,62 @@ class ProspectController @Inject()(prospectService: ProspectService,
   def storeBatch = Action{
     implicit request => {
       Ok("")
+    }
+  }
+
+  def uploadFile = Action(parse.multipartFormData){
+    implicit request =>{
+
+      var uploadInstitutes : Seq[Institution] = institutions
+
+      val data = request.body.files.flatMap{x =>
+
+        val filename = x.filename
+        val contentType = x.contentType
+        val csvFile = x.ref.file
+
+        val reader = CSVReader.open(csvFile)
+
+        reader.allWithHeaders().map{z =>
+
+          //Get or create the institution
+          val institution: Option[Institution] = z.get("Institucion") match{
+            case Some(string) =>
+              uploadInstitutes.find(_.name.equals(string)) match {
+                case Some(institute) => Option(institute)
+                case None =>
+                  val aux : Institution = Institution(UUID.randomUUID().toString,string,"", active = true)
+                  uploadInstitutes = uploadInstitutes :+ aux
+                  Option(aux)
+              }
+            case None => Option(uploadInstitutes.head)
+          }
+
+          Prospect(UUID.randomUUID().toString,
+                   z.getOrElse("Nombre",""),
+                   z.getOrElse("Apellido",""),
+                   z.getOrElse("Tipo",""),
+                   z.getOrElse("Documento",""),
+                   z.getOrElse("Nacimiento",""),
+                   z.getOrElse("Ingreso",""),
+                   z.getOrElse("Egreso",""),
+                   institution.get,
+                   z.getOrElse("Legajo",""),
+                   z.getOrElse("Titulo",""),
+                   List[News](),
+                   List[News](),
+                   List[News](),
+                   List[News](),
+                   LinkedinUserProfile(UUID.randomUUID().toString,"",List[LinkedinJob](),List[LinkedinEducation](),""),
+                   z.getOrElse("Pais",""),
+                   z.getOrElse("Email_1",""),
+                   z.getOrElse("Email_2","")
+          )
+        }
+      }
+
+      val map : Map[String, JsValue] = Map("status"->Json.toJson("OK"), "items" ->Json.toJson(data.map(x=> Json.toJson(x.toMap)).toList))
+      Ok(Json.toJson(map))
     }
   }
 

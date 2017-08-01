@@ -31,9 +31,26 @@
       transitionEffect: "slide",
       onStepChanging: function(event, current, next){
         if(next === 1){
-          console.log(current)
-          //TODO implementar ajax post de files, generación de Prospects para el step 2
-          //Al terminar todos los prospects deben ser guardados
+          console.log(current);
+          var data = new FormData();
+          $.each($('#file')[0].files,function(i, file){
+            data.append('file[]', file);
+          });
+
+          $.ajax({
+            url: '@routes.ProspectController.uploadFile',
+            data : data,
+            cache : false,
+            contentType : false,
+            processData : false,
+            type : 'POST',
+            success: function(response){
+              alert(response)
+            },
+            error: function(response){
+
+            }
+          });
         }
         return true;
       }
@@ -93,7 +110,7 @@
                       <div class="input-group">
                         <label class="input-group-btn">
                           <span class="btn btn-primary">Buscar&hellip;
-                            <input type="file" name="csv" accept=".csv" style="display: none;" multiple>
+                            <input id="file" type="file" name="csv" accept=".csv" style="display: none;" multiple>
                           </span>
                         </label>
                         <input type="text" class="form-control" readonly>
