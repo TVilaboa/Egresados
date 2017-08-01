@@ -312,7 +312,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
   }
 
   def createBatch = Action{
-    Ok("")
+    Ok(com.prospects.views.html.batch_upload.render())
   }
 
   def storeBatch = Action{

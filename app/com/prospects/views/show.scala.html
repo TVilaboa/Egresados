@@ -108,7 +108,9 @@
                   </div>
                   <div class="col-md-2">
                     @helper.form(action = routes.LinkedinUserProfileController.search(prospect.get._id)){
-                      <button class="btn btn-info"><span><i class="fa fa-search"></i> Buscar Perfil</span></button>
+                      <button class="btn btn-info">
+                        <span><i class="fa fa-linkedin"></i> Buscar Perfil LinkedIn</span>
+                      </button>
                     }
                   </div>
                   <div class="col-md-8"></div>
@@ -176,10 +178,14 @@
               <legend>Actions</legend>
               <div class="row form-group">
                 <div class="col-md-6">
-                  <a href="@routes.ProspectController.showValidation(prospect.get._id)" class="btn btn-info btn-lg pull-right">Validar Links</a>
+                  <a href="@routes.ProspectController.showValidation(prospect.get._id)" class="btn btn-info btn-lg pull-right">
+                    <span><i class="fa fa-tasks"></i> Validar Links</span>
+                  </a>
                 </div>
                 <div class="col-md-6">
-                  <button data-toggle="modal" data-target="#delete" value="delete" class="btn btn-danger btn-lg pull-left">Eliminar Prospecto</button>
+                  <button data-toggle="modal" data-target="#delete" value="delete" class="btn btn-danger btn-lg pull-left">
+                    <span><i class="fa fa-trash-o"></i> Eliminar</span>
+                  </button>
                 </div>
               </div>
             </fieldset>

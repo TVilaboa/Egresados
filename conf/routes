@@ -45,7 +45,7 @@ GET         /prospects/:id/edit           controllers.ProspectController.edit(id
 POST        /prospects/:id/edit           controllers.ProspectController.update(id : String)
 GET         /prospect/:id/delete          controllers.ProspectController.delete(id: String)
 GET         /prospects-batch              controllers.ProspectController.createBatch
-POST        /egresados-batch              controllers.ProspectController.storeBatch
+POST        /prospects-batch              controllers.ProspectController.storeBatch
 GET         /prospects/:id/validate       controllers.ProspectController.showValidation(id: String)
 POST        /prospects/:id/validate       controllers.ProspectController.postValidation(id: String)
 
