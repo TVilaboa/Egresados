@@ -35,7 +35,7 @@ GET         /institutions/:id/delete         controllers.InstitutionController.d
 
 # Prospects
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-GET         /prospects                    controllers.ProspectController.index
+GET         /prospects                    controllers.ProspectController.index(message : String ?= "")
 GET         /prospects/search             controllers.ProspectController.lookup
 POST        /prospects/search             controllers.ProspectController.search
 GET         /prospects/add                controllers.ProspectController.create(message : String ?= "")

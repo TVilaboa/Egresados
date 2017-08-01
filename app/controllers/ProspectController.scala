@@ -94,10 +94,10 @@ class ProspectController @Inject()(prospectService: ProspectService,
     "secondaryEmail" -> default(text,"")
   )(Prospect.apply)(Prospect.unapply))
 
-  def index = Action{
+  def index(message: String = "") = Action{
     val prospects : List[Prospect] = Await.result(prospectService.all(), Duration.Inf).toList
 
-    Ok(com.prospects.views.html.index.render(prospects))
+    Ok(com.prospects.views.html.index.render(prospects,message))
   }
 
   def lookup = Action{
@@ -307,7 +307,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
 
       //Delete Prospect
       prospectService.drop(prospect)
-      Redirect(routes.ProspectController.index())
+      Redirect(routes.ProspectController.index(prospect.getFullName + " has been deleted successfully"))
     }
   }
 
