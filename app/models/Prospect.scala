@@ -1,5 +1,7 @@
 package models
 
+import play.api.libs.json.{JsValue, Json}
+
 /**
   * Created by franco on 27/07/17.
   */
@@ -29,10 +31,12 @@ case class Prospect(  _id : String,
                                       "lastName"->lastName,
                                       "documentType"->documentType,
                                       "documentId"->documentId,
+                                      "identification"->getIdentification,
                                       "birthDate"->birthDate,
                                       "entryDate"->entryDate,
                                       "exitDate"->exitDate,
                                       "institution"->institution._id,
+                                      "institutionName"->institution.name,
                                       "institutionCode"->institutionCode,
                                       "title"->title,
                                       "country"->country,
@@ -42,6 +46,19 @@ case class Prospect(  _id : String,
   def getFullName: String = s"$firstName $lastName"
 
   def getIdentification: String = s"${documentType.toUpperCase()} $documentId"
+
+  def toJson : JsValue = Json.toJson(Map("_id"->Json.toJson(_id),
+                                         "fullname"->Json.toJson(getFullName),
+                                         "identification"->Json.toJson(getIdentification),
+                                         "birthDate"->Json.toJson(birthDate),
+                                         "country"->Json.toJson(country),
+                                         "primaryEmail"->Json.toJson(primaryEmail),
+                                         "secondaryEmail"->Json.toJson(secondaryEmail),
+                                         "institution"->institution.toJson,
+                                         "entry"->Json.toJson(entryDate),
+                                         "exit"->Json.toJson(exitDate),
+                                         "code"->Json.toJson(institutionCode),
+                                         "title"->Json.toJson(title)))
 }
 
 object Prospect {

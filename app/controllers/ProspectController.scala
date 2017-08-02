@@ -1,11 +1,10 @@
 package controllers
 
 import java.io.IOException
-import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.UUID
 
-import com.github.tototoshi.csv.{CSVReader, DefaultCSVFormat}
+import com.github.tototoshi.csv.CSVReader
 import com.google.inject.Inject
 import com.mongodb.MongoWriteException
 import models._
@@ -325,7 +324,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
   def uploadFile = Action(parse.multipartFormData){
     implicit request =>{
 
-      var uploadInstitutes : Seq[Institution] = institutions
+      var uploadInstitutes : Seq[Institution] = Seq[Institution]()
 
       val data = request.body.files.flatMap{x =>
 
@@ -340,14 +339,19 @@ class ProspectController @Inject()(prospectService: ProspectService,
           //Get or create the institution
           val institution: Option[Institution] = z.get("Institucion") match{
             case Some(string) =>
-              uploadInstitutes.find(_.name.equals(string)) match {
-                case Some(institute) => Option(institute)
+              institutions.find(_.name.equals(string)) match {
+                case Some(institute) =>
+                  uploadInstitutes = uploadInstitutes :+ institute
+                  Option(institute)
                 case None =>
                   val aux : Institution = Institution(UUID.randomUUID().toString,string,"", active = true)
                   uploadInstitutes = uploadInstitutes :+ aux
                   Option(aux)
               }
-            case None => Option(uploadInstitutes.head)
+            case None =>
+              val institute : Institution = institutions.head
+              uploadInstitutes = uploadInstitutes :+ institute
+              Option(institute)
           }
 
           Prospect(UUID.randomUUID().toString,
@@ -376,8 +380,19 @@ class ProspectController @Inject()(prospectService: ProspectService,
       val map : Map[String, JsValue] = Map("status"->Json.toJson("OK"),
                                            "items" ->Json.toJson(data.map(x=> Json.toJson(x.toMap))),
                                            "institutions" -> Json.toJson(uploadInstitutes.map(x=> Json.toJson(x.toMap))))
-      Ok(Json.toJson(map))
+
+      Ok(Json.toJson(Map("status"->Json.toJson("OK"))))
+
     }
+  }
+
+  def loadPotentialProspects = Action{
+
+//    val prospects : Seq[Map[String,String]] = Seq[Map[String,String]]()
+    val prospects : Seq[Prospect] = Await.result(prospectService.all(), Duration.Inf)
+
+    val data : Map[String,Seq[JsValue]] = Map("data"->prospects.map(_.toJson))
+    Ok(Json.toJson(data))
   }
 
   def showValidation(id: String) = Action{

@@ -47,6 +47,7 @@ GET         /prospect/:id/delete          controllers.ProspectController.delete(
 GET         /prospects-batch              controllers.ProspectController.createBatch
 POST        /prospects-batch              controllers.ProspectController.storeBatch
 POST        /prospects-file-upload        controllers.ProspectController.uploadFile
+POST        /prospects-load               controllers.ProspectController.loadPotentialProspects
 GET         /prospects/:id/validate       controllers.ProspectController.showValidation(id: String)
 POST        /prospects/:id/validate       controllers.ProspectController.postValidation(id: String)
 
