@@ -54,11 +54,11 @@ case class Prospect(  _id : String,
                                          "country"->Json.toJson(country),
                                          "primaryEmail"->Json.toJson(primaryEmail),
                                          "secondaryEmail"->Json.toJson(secondaryEmail),
-                                         "institution"->institution.toJson,
                                          "entry"->Json.toJson(entryDate),
                                          "exit"->Json.toJson(exitDate),
                                          "code"->Json.toJson(institutionCode),
-                                         "title"->Json.toJson(title)))
+                                         "title"->Json.toJson(title),
+                                         "institution"->institution.toJson))
 }
 
 object Prospect {

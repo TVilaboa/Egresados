@@ -23,5 +23,6 @@ libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "1.0.1"
 
 libraryDependencies += "com.github.t3hnar" % "scala-bcrypt_2.11" % "2.5"
 
+libraryDependencies += "org.ehcache" % "ehcache" % "3.3.1"
 
 fork in run := false

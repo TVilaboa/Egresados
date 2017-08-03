@@ -16,9 +16,10 @@ import play.api.mvc.{Action, Controller, Request}
 import services._
 
 import scala.concurrent.{Await, Future}
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
+import play.cache.DefaultCacheApi
 
 /**
   * Created by franco on 27/07/17.
@@ -30,6 +31,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
                                    infobaeService: InfobaeNewsService,
                                    clarinService: ClarinNewsService,
                                    cronistaService: ElCronistaNewsService,
+                                   cache : DefaultCacheApi,
                                    val messagesApi: MessagesApi) extends Controller with I18nSupport{
 
   implicit val documentTypes: List[String] = List("dni","cuit","cuil")
@@ -377,6 +379,8 @@ class ProspectController @Inject()(prospectService: ProspectService,
         }
       }
 
+      cache.set("prospects", data, 600)
+
       val map : Map[String, JsValue] = Map("status"->Json.toJson("OK"),
                                            "items" ->Json.toJson(data.map(x=> Json.toJson(x.toMap))),
                                            "institutions" -> Json.toJson(uploadInstitutes.map(x=> Json.toJson(x.toMap))))
@@ -388,11 +392,15 @@ class ProspectController @Inject()(prospectService: ProspectService,
 
   def loadPotentialProspects = Action{
 
-//    val prospects : Seq[Map[String,String]] = Seq[Map[String,String]]()
-    val prospects : Seq[Prospect] = Await.result(prospectService.all(), Duration.Inf)
+    val prospects : Seq[Prospect] = cache.get[Seq[Prospect]]("prospects")
 
-   //val data : Map[String,Seq[JsValue]] = Map("data"->prospects.map(_.toJson))
-    Ok(Json.toJson(prospects.map(_.toJson)))
+    prospects match{
+      case x: Seq[Prospect] =>
+        cache.remove("prospects")
+        val data : JsValue = Json.toJson(prospects.map(_.toJson))
+        Ok(data)
+      case null => Ok(Json.toJson(Seq[JsValue]()))
+    }
   }
 
   def showValidation(id: String) = Action{
