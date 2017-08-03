@@ -60,23 +60,23 @@ GET          /linkedin/delete/:id         controllers.LinkedinUserProfileControl
 
 #LaNacionController
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-GET         /lanacion/search/:id          controllers.LaNacionNewsController.saveNews(id : String)
-GET         /lanacion/searchAll           controllers.LaNacionNewsController.saveAllLaNacionNews
+GET         /lanacion/search/:id          controllers.LaNacionNewsController.search(id : String)
+GET         /lanacion/searchAll           controllers.LaNacionNewsController.searchAll
 
 #ClarinController
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-GET         /clarin/search/:id            controllers.ClarinNewsController.saveNews(id : String)
-GET         /clarin/searchAll             controllers.ClarinNewsController.saveAllClarinNews
+GET         /clarin/search/:id            controllers.ClarinNewsController.search(id : String)
+GET         /clarin/searchAll             controllers.ClarinNewsController.searchAll
 
 #ElCronistaController
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-GET         /elCronista/search/:id         controllers.ElCronistaNewsController.saveNews(id : String)
-GET         /elCronista/searchAll          controllers.ElCronistaNewsController.saveAllElCronistaNews
+GET         /elCronista/search/:id         controllers.ElCronistaNewsController.search(id : String)
+GET         /elCronista/searchAll          controllers.ElCronistaNewsController.searchAll
 
 #InfobaeController
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-GET         /infobae/search/:id           controllers.InfobaeNewsController.saveNews(id : String)
-GET         /infobae/searchAll            controllers.InfobaeNewsController.saveAllInfobaeNews
+GET         /infobae/search/:id           controllers.InfobaeNewsController.search(id : String)
+GET         /infobae/searchAll            controllers.InfobaeNewsController.searchAll
 
 
 #EgresadosController
