@@ -391,8 +391,8 @@ class ProspectController @Inject()(prospectService: ProspectService,
 //    val prospects : Seq[Map[String,String]] = Seq[Map[String,String]]()
     val prospects : Seq[Prospect] = Await.result(prospectService.all(), Duration.Inf)
 
-    val data : Map[String,Seq[JsValue]] = Map("data"->prospects.map(_.toJson))
-    Ok(Json.toJson(data))
+   //val data : Map[String,Seq[JsValue]] = Map("data"->prospects.map(_.toJson))
+    Ok(Json.toJson(prospects.map(_.toJson)))
   }
 
   def showValidation(id: String) = Action{

@@ -22,17 +22,26 @@
 
   <!-- Page-Level Demo Scripts - Tables - Use for reference -->
   <script>
-    // We can attach the `fileselect` event to all file inputs on the page
+          var prospectsTable;
+          // We can attach the `fileselect` event to all file inputs on the page
     $(document).on('change', ':file', function() {
-      var input = $(this),
+      var input = $('#prospectsFile'),
                   numFiles = input.get(0).files ? input.get(0).files.length : 1,
                   label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-      input.trigger('fileselect', [numFiles, label]);
+        var text = $(':text');
+               var log = numFiles > 1 ? numFiles + ' files selected' : label;
+
+        if( text.length ) {
+            text.val(log);
+        }
+        else {
+            if( log ) alert(log);
+        }
     });
 
     $(document).ready(function() {
       // We can watch for our custom `fileselect` event like this
-      $(':file').on('fileselect', function(event, numFiles, label) {
+      $('#prospectsFile').on('fileselect', function(event, numFiles, label) {
 
         var input = $(this).parents('.input-group').find(':text'),
                     log = numFiles > 1 ? numFiles + ' files selected' : label;
@@ -46,32 +55,12 @@
 
       });
 
-      var table = $('#dataTables-example').DataTable({
-        ajax: {
-          url: '@routes.ProspectController.loadPotentialProspects()',
-          dataSrc: 'data',
-          type: 'POST'
-        },
-        columns:[
-          {data : '_id'},
-          {data : 'fullname'},
-          {data : 'identification'},
-          {data : 'birthDate'},
-          {data : 'country'},
-          {data : 'primaryEmail'},
-          {data : 'secondaryEmail'},
-          {data : 'institution.name'},
-          {data : 'entry'},
-          {data : 'exit'},
-          {data : 'code'},
-          {data : 'title'}
-        ],
-        deferRender: true,
-        responsive: true,
-        scrollX : true
-      });
 
-      $(table).find('tbody').on( 'click', 'tr', function () {
+
+
+
+
+      $(prospectsTable).find('tbody').on( 'click', 'tr', function () {
         $(this).toggleClass('selected');
       } );
 
@@ -84,7 +73,7 @@
         onStepChanging: function(event, current, next){
           if(next === 1){
             var data = new FormData();
-            $.each($('#file')[0].files,function(i, file){
+            $.each($('#prospectsFile')[0].files,function(i, file){
               data.append('file[]', file);
             });
 
@@ -98,7 +87,31 @@
               success: function(response){
                 if(response.status === 'OK'){
 //                  console.log(response.status);
-                  table.ajax.url( '@routes.ProspectController.loadPotentialProspects()' ).load();
+                    prospectsTable = $('#dataTables-example').DataTable({
+                        data:[],
+                        ajax: {
+                            url: '@routes.ProspectController.loadPotentialProspects()',
+                            dataSrc: '',
+                            type: 'POST'
+                        },
+                        columns:[
+                           // {data : '_id',visible:false},
+                            {data : 'fullname'},
+                            {data : 'identification'},
+                            {data : 'birthDate'},
+                            {data : 'country'},
+                            {data : 'primaryEmail'},
+                            {data : 'secondaryEmail'},
+                            {data : 'institution.name'},
+                            {data : 'entry'},
+                            {data : 'exit'},
+                            {data : 'code'},
+                            {data : 'title'}
+                        ],
+                        deferRender: true,
+                        responsive: true,
+                        scrollX : true
+                    });
                 }
               },
               error: function(response){
@@ -138,7 +151,7 @@
                       <div class="input-group">
                         <label class="input-group-btn">
                           <span class="btn btn-primary">Buscar&hellip;
-                            <input id="file" type="file" name="csv" accept=".csv" style="display: none;" multiple>
+                            <input id="prospectsFile" type="file" name="csv" accept=".csv" style="display: none;" multiple >
                           </span>
                         </label>
                         <input type="text" class="form-control" readonly>
@@ -153,7 +166,7 @@
                       <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                         <thead>
                           <tr>
-                            <th class="hidden">#</th>
+                            @*<th class="hidden">#</th>*@
                             <th>Nombre</th>
                             <th>Identificacion</th>
                             <th>Fecha de Nacimiento</th>
