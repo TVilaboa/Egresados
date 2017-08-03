@@ -42,3 +42,12 @@ fieldset legend{
     cursor: inherit;
     display: block;
 }
+
+.content.clearfix{
+    height: 100% !important;
+    min-height: 650px !important;
+}
+
+.wizard > .content > .body {
+    height: 100%;
+}
