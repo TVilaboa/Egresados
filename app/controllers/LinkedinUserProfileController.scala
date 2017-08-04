@@ -1,13 +1,13 @@
 package controllers
 
 
+import actions.SecureAction
 import com.google.inject.Inject
 import generators.LinkedInUrlGenerator
-import models.{Graduate, LinkedinUserProfile, LinkedinEducation, LinkedinJob}
+import models.{Graduate, LinkedinEducation, LinkedinJob, LinkedinUserProfile}
 import play.api.mvc.{Action, Controller}
 import scrapers.LinkedinUserProfileScraper
 import services.{GraduateService, LinkedinUserProfileService}
-
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.duration.Duration
@@ -17,11 +17,11 @@ import scala.concurrent.{Await, Future}
   * Created by Nacho on 23/09/2016.
   */
 
-class LinkedinUserProfileController @Inject() (linkedinUserProfileService: LinkedinUserProfileService,graduateService: GraduateService) extends Controller{
+class LinkedinUserProfileController @Inject() (linkedinUserProfileService: LinkedinUserProfileService,graduateService: GraduateService, secureAction: SecureAction) extends Controller{
 
   def search(id: String) = TODO
 
-  def saveLinkedinUserProfile(id : String) = Action {
+  def saveLinkedinUserProfile(id : String) =secureAction {
     val generator: LinkedInUrlGenerator = new LinkedInUrlGenerator()
     var graduate : Graduate = Await.result(graduateService.find(id),Duration.Inf)
     val link: List[String] = generator.getSearchedUrl(Option(graduate.firstName + " " +graduate.lastName),Option("Universidad Austral"))
@@ -41,7 +41,7 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
 
   }
 
-  def saveAllLinkedinUserProfile = Action {
+  def saveAllLinkedinUserProfile =secureAction {
     val generator: LinkedInUrlGenerator = new LinkedInUrlGenerator()
     var graduates = Seq[Graduate]()
     val all: Future[Seq[Graduate]] = graduateService.all()
@@ -65,7 +65,7 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
       Redirect("/")
   }
 
-  def deleteProfile(id:String) = Action {
+  def deleteProfile(id:String) =secureAction {
     //Get graduate from DB.
     val profile : LinkedinUserProfile = Await.result(linkedinUserProfileService.find(id),Duration.Inf)
     linkedinUserProfileService.drop(profile)

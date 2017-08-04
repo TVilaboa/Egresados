@@ -4,9 +4,9 @@ import actions.SecureAction
 import com.google.inject.Inject
 import generators.{ClarinUrlGenerator, ClarinUrlGeneratorObject}
 import models.{Graduate, News}
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.Controller
 import scrapers.ClarinScraper
-import services.{GraduateService, ClarinNewsService}
+import services.{ClarinNewsService, GraduateService}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
@@ -40,7 +40,7 @@ class ClarinNewsController @Inject()(newsClarinService: ClarinNewsService, gradu
 
   }
 
-  def deleteNews(id:String) = Action {
+  def deleteNews(id:String) = secureAction {
     //Get graduate from DB.
     val news : News = Await.result(newsClarinService.find(id),Duration.Inf)
     Await.result(newsClarinService.drop(news), Duration.Inf)
@@ -48,7 +48,7 @@ class ClarinNewsController @Inject()(newsClarinService: ClarinNewsService, gradu
   }
 
 
-  def saveAllClarinNews = Action {
+  def saveAllClarinNews = secureAction {
     val scraper : ClarinScraper = new ClarinScraper()
     val all : Future[Seq[Graduate]] = graduateService.all()
     val graduates : Seq[Graduate] = Await.result(all,Duration.Inf)

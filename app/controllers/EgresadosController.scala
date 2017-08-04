@@ -88,14 +88,14 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     )(Graduate.apply)(Graduate.unapply)
   )
 
-  def showSearchForm = Action{
+  def showSearchForm =secureAction{
 
     val graduates : List[Graduate]= Await.result(graduateService.all(), Duration.Inf).toList
 
     Ok(views.html.search.render(graduates, graduateForm, true, Map[String,String]()))
   }
 
-  def search = Action {
+  def search =secureAction {
     implicit request => {
       val firstName : String = graduateForm.bindFromRequest.data("firstName")
       val lastName : String = graduateForm.bindFromRequest.data("lastName")
@@ -126,7 +126,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     }
   }
 
-  def showGraduateForm = Action { implicit request => {
+  def showGraduateForm =secureAction { implicit request => {
     Ok(views.html.addGraduate.render())
   }
   }
@@ -136,7 +136,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
   }
 
-  def renderValidate(id:String) = Action {
+  def renderValidate(id:String) =secureAction {
       var graduate: Option[Graduate] = None
       val result: Future[Graduate] = graduateService.find(id)
       result onSuccess {
@@ -156,7 +156,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
 
 
-  def addGraduate = Action.async { implicit request =>
+  def addGraduate =secureAction.async { implicit request =>
 
     try {
       val graduate = Graduate(
@@ -201,7 +201,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     }
   }
 
-  def showProfile(id:String) = Action { implicit request =>
+  def showProfile(id:String) =secureAction { implicit request =>
       var graduate: Option[Graduate] = None
       val result: Future[Graduate] = graduateService.find(id)
       result onSuccess {
@@ -219,7 +219,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
       Ok(views.html.graduateProfile(graduate,graduateForm))
   }
 
-  def showUpdatingForm (id:String,message: String) = Action { implicit request =>
+  def showUpdatingForm (id:String,message: String) =secureAction { implicit request =>
 
     var graduate: Option[Graduate] = None
     val result: Future[Graduate] = graduateService.find(id)
@@ -239,7 +239,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     Ok(views.html.updateGraduate(graduate.get,graduateForm,message))
   }
 
-  def update (id:String) = Action { implicit request =>
+  def update (id:String) =secureAction { implicit request =>
 
 
    // val graduate = graduateForm.bindFromRequest().get
@@ -360,7 +360,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
   }
 
-  def importCSV = Action(parse.multipartFormData) { implicit request => {
+  def importCSV =secureAction(parse.multipartFormData) { implicit request => {
     request.body.file("csv").map { csv =>
       val filename = csv.filename
       val contentType = csv.contentType
@@ -441,7 +441,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
   }
   }
 
-  def deleteGraduate(id:String) = Action {
+  def deleteGraduate(id:String) =secureAction {
     //Get graduate from DB.
     val graduate : Graduate = Await.result(graduateService.find(id),Duration.Inf)
     val laNacionNewsList: List[News] = graduate.laNacionNews
@@ -465,7 +465,7 @@ class EgresadosController @Inject()(graduateService: GraduateService,sessionServ
     Redirect("/egresados/search")
   }
 
-  def validateLinks = Action { implicit request =>
+  def validateLinks =secureAction { implicit request =>
     val laNacionLinks = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("laNacionLinks[]")
     val infobaeLinks = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("infobaeLinks[]")
     val linkedInLinks = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].data.get("linkedInLinks[]")

@@ -3,23 +3,24 @@ package controllers
 import java.sql.Timestamp
 import java.util.Date
 
+import actions.SecureAction
 import com.google.inject.Inject
-import generators.{InfobaeUrlGeneratorObject, InfobaeUrlGenerator, LaNacionUrlGeneratorObject, LaNacionUrlGenerator}
+import generators.{InfobaeUrlGenerator, InfobaeUrlGeneratorObject, LaNacionUrlGenerator, LaNacionUrlGeneratorObject}
 import models._
 import play.api.mvc.{Action, Controller}
 import scrapers.{InfobaeScraper, LaNacionScraper}
-import services.{InfobaeNewsService, GraduateService, LaNacionNewsService}
+import services.{GraduateService, InfobaeNewsService, LaNacionNewsService}
 
 import scala.collection.mutable.ListBuffer
-import scala.concurrent.{Future, Await}
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
 
 /**
   * Created by Brian Re & Michele Re on 26/09/2016.
   */
-class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,graduateService: GraduateService) extends Controller{
+class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,graduateService: GraduateService, secureAction: SecureAction) extends Controller{
 
-  def saveNews(id : String) = Action {
+  def saveNews(id : String) =secureAction {
     val generator: InfobaeUrlGenerator = new InfobaeUrlGenerator()
     var graduate : Graduate = Await.result(graduateService.find(id),Duration.Inf)
     val fullName : Option[String]= Option(graduate.firstName + " " +graduate.lastName)
@@ -49,7 +50,7 @@ class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,gr
 
   }
 
-  def saveAllInfobaeNews = Action {
+  def saveAllInfobaeNews =secureAction {
     val scraper : InfobaeScraper = new InfobaeScraper()
     val all : Future[Seq[Graduate]] = graduateService.all()
     val graduates : Seq[Graduate] = Await.result(all,Duration.Inf)

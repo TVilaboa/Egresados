@@ -44,7 +44,7 @@ class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService
 
   }
 
-  def deleteNews(id:String) = Action {
+  def deleteNews(id:String) =secureAction {
     //Get graduate from DB.
     val news : News = Await.result(newsLaNacionService.find(id),Duration.Inf)
     Await.result(newsLaNacionService.drop(news), Duration.Inf)
@@ -52,7 +52,7 @@ class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService
   }
 
 
-  def saveAllLaNacionNews = Action {
+  def saveAllLaNacionNews =secureAction {
     val scraper : LaNacionScraper = new LaNacionScraper()
     val all : Future[Seq[Graduate]] = graduateService.all()
     val graduates : Seq[Graduate] = Await.result(all,Duration.Inf)

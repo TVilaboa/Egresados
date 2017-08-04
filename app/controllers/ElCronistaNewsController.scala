@@ -40,7 +40,7 @@ class ElCronistaNewsController @Inject()(newsElCronistaService: ElCronistaNewsSe
 
   }
 
-  def deleteNews(id:String) = Action {
+  def deleteNews(id:String) =secureAction {
     //Get graduate from DB.
     val news : News = Await.result(newsElCronistaService.find(id),Duration.Inf)
     Await.result(newsElCronistaService.drop(news), Duration.Inf)
@@ -48,7 +48,7 @@ class ElCronistaNewsController @Inject()(newsElCronistaService: ElCronistaNewsSe
   }
 
 
-  def saveAllElCronistaNews = Action {
+  def saveAllElCronistaNews =secureAction {
     val scraper : ElCronistaScraper = new ElCronistaScraper()
     val all : Future[Seq[Graduate]] = graduateService.all()
     val graduates : Seq[Graduate] = Await.result(all,Duration.Inf)
