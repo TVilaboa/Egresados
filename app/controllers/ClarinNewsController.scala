@@ -42,12 +42,12 @@ class ClarinNewsController @Inject()(newsClarinService: ClarinNewsService,
     val news : Seq[News] = links.map{x=> scraper.getArticleData(x,name,0)}.filter(_.isDefined).map(_.get)
 
     if(news.nonEmpty){
-      val activeNews: List[String] = prospect.infobaeNews.map(_.url)
+      val activeNews: List[String] = prospect.clarinNews.map(_.url)
       val difference : List[News] = news.filter(n=> !activeNews.contains(n.url)).toList
       difference.map(newsClarinService.save)
 
-      val all : List[News] = prospect.infobaeNews ::: difference
-      Await.result(prospectService.update(prospect.copy(infobaeNews = all)), Duration.Inf)
+      val all : List[News] = prospect.clarinNews ::: difference
+      Await.result(prospectService.update(prospect.copy(clarinNews = all)), Duration.Inf)
     }
   }
 

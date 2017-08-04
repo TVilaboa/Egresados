@@ -70,8 +70,8 @@ GET         /clarin/searchAll             controllers.ClarinNewsController.searc
 
 #ElCronistaController
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-GET         /elCronista/search/:id         controllers.ElCronistaNewsController.search(id : String)
-GET         /elCronista/searchAll          controllers.ElCronistaNewsController.searchAll
+GET         /elcronista/search/:id         controllers.ElCronistaNewsController.search(id : String)
+GET         /elcronista/searchAll          controllers.ElCronistaNewsController.searchAll
 
 #InfobaeController
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
