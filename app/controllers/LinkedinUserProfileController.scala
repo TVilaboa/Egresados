@@ -1,5 +1,6 @@
 package controllers
 
+import actions.SecureAction
 import com.google.inject.Inject
 import generators.LinkedInUrlGeneratorObject
 import models._
@@ -16,9 +17,9 @@ import scala.concurrent.Await
 
 class LinkedinUserProfileController @Inject() (linkedinUserProfileService: LinkedinUserProfileService,
                                                scraper : LinkedinUserProfileScraper,
-                                               prospectService: ProspectService) extends Controller{
+                                               prospectService: ProspectService,secureAction: SecureAction) extends Controller{
 
-  def search(id: String) = Action{
+  def search(id: String) =secureAction{
     val prospect : Prospect = Await.result(prospectService.find(id), Duration.Inf)
 
     runSearch(prospect)
@@ -26,7 +27,7 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
     Redirect(routes.ProspectController.show(id))
   }
 
-  def searchAll = Action{
+  def searchAll =secureAction{
     val prospects : Seq[Prospect] = Await.result(prospectService.all(), Duration.Inf)
 
     prospects.foreach(x=>runSearch(x))
@@ -46,7 +47,7 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
     }
   }
 
-  def deleteProfile(id:String) = Action {
+  def deleteProfile(id:String) =secureAction {
     val profile : LinkedinUserProfile = Await.result(linkedinUserProfileService.find(id),Duration.Inf)
     linkedinUserProfileService.drop(profile)
     Redirect(routes.Application.homeFeed())

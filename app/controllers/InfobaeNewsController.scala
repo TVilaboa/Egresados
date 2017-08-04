@@ -1,5 +1,6 @@
 package controllers
 
+import actions.SecureAction
 import com.google.inject.Inject
 import generators.InfobaeUrlGeneratorObject
 import models._
@@ -15,9 +16,9 @@ import scala.concurrent.duration.Duration
   */
 class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,
                                        prospectService: ProspectService,
-                                       scraper: InfobaeScraper) extends Controller{
+                                       scraper: InfobaeScraper,secureAction: SecureAction) extends Controller{
 
-  def search(id: String) = Action{
+  def search(id: String) =secureAction{
     val prospect : Prospect = Await.result(prospectService.find(id), Duration.Inf)
 
     runSearch(prospect)
@@ -25,7 +26,7 @@ class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,
     Redirect(routes.ProspectController.show(id))
   }
 
-  def searchAll = Action{
+  def searchAll =secureAction{
     val prospects : Seq[Prospect] = Await.result(prospectService.all(), Duration.Inf)
 
     prospects.foreach(x=>runSearch(x))
