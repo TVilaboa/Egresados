@@ -44,7 +44,7 @@ class UserAuthController @Inject()(userService: UserService,
     b
   }
 
-  def login =secureAction.async { implicit request =>
+  def login = Action.async { implicit request =>
     try{
       userService.findByUsername(loginForm.bindFromRequest().data("user")).map((user: User) => {
         val insertedPassword =loginForm.bindFromRequest().data("password")
@@ -96,11 +96,11 @@ class UserAuthController @Inject()(userService: UserService,
     )
   )
 
-  def signupView =secureAction {
+  def signupView =Action {
 //    userService.create(userForm.get._1, userForm.get._2, userForm.get._3, userForm.get._4, 0)
     Ok(html.sign_up(userForm))
   }
-  def signup =secureAction.async { implicit request =>
+  def signup =Action.async { implicit request =>
     try {
       val user = User(
         UUID.randomUUID().toString,
