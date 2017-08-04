@@ -1,78 +1,51 @@
 package controllers
 
-import java.sql.Timestamp
-import java.util.Date
-
-import actions.SecureAction
 import com.google.inject.Inject
-import generators.{InfobaeUrlGenerator, InfobaeUrlGeneratorObject, LaNacionUrlGenerator, LaNacionUrlGeneratorObject}
+import generators.InfobaeUrlGeneratorObject
 import models._
 import play.api.mvc.{Action, Controller}
-import scrapers.{InfobaeScraper, LaNacionScraper}
-import services.{GraduateService, InfobaeNewsService, LaNacionNewsService}
+import scrapers.InfobaeScraper
+import services.{InfobaeNewsService, ProspectService}
 
-import scala.collection.mutable.ListBuffer
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 /**
   * Created by Brian Re & Michele Re on 26/09/2016.
   */
-class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,graduateService: GraduateService, secureAction: SecureAction) extends Controller{
+class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,
+                                       prospectService: ProspectService,
+                                       scraper: InfobaeScraper) extends Controller{
 
-  def saveNews(id : String) =secureAction {
-    val generator: InfobaeUrlGenerator = new InfobaeUrlGenerator()
-    var graduate : Graduate = Await.result(graduateService.find(id),Duration.Inf)
-    val fullName : Option[String]= Option(graduate.firstName + " " +graduate.lastName)
-    val links = InfobaeUrlGeneratorObject.search(fullName,Option("Universidad Austral"))
-    val scraper: InfobaeScraper = new InfobaeScraper()
-    var news: List[News] = List[News]()
-    var element: Option[News] = null
-    for(link <- links) {
-      element = scraper.getArticleData(link,fullName,0)
-      if (element.isDefined) {
-        newsInfobaeService.save(element.get)
-        news = element.get :: news
-      }
-    }
-    graduate = graduate.copy(infobaeNews = news)
-    var result = Await.result(graduateService.update(graduate),Duration.Inf)
-    val userNews: InfobaeUserNews = new InfobaeUserNews(news, new Timestamp(new Date().getTime))
-    for(news <- userNews.news) {
-      println(news.url)
-      println(news.title)
-      println(news.date)
-      println(news.tuft)
-      println(news.author)
-      println("*********************************")
-    }
-    Redirect("/profile/" + graduate._id)
+  def search(id: String) = Action{
+    val prospect : Prospect = Await.result(prospectService.find(id), Duration.Inf)
 
+    runSearch(prospect)
+
+    Redirect(routes.ProspectController.show(id))
   }
 
-  def saveAllInfobaeNews =secureAction {
-    val scraper : InfobaeScraper = new InfobaeScraper()
-    val all : Future[Seq[Graduate]] = graduateService.all()
-    val graduates : Seq[Graduate] = Await.result(all,Duration.Inf)
-    graduates.foreach{grad : Graduate =>
-      var newsList: List[News] = List[News]()
-      val fullName : Option[String]= Option(grad.firstName + " " +grad.lastName)
-      val links = InfobaeUrlGeneratorObject.search(fullName,Option("Universidad Austral"))
-      var element: Option[News] = null
-      links.foreach{link : String =>
-        val name = grad.firstName + ""
-        element = scraper.getArticleData(link, fullName,0)
-        if (element.isDefined) {
-          newsInfobaeService.save(element.get)
-          newsList = element.get :: newsList
-        }
-      }
-      val graduate = grad.copy(infobaeNews = newsList)
-      Await.result(graduateService.update(graduate),Duration.Inf)
-    }
+  def searchAll = Action{
+    val prospects : Seq[Prospect] = Await.result(prospectService.all(), Duration.Inf)
 
-    Redirect("/")
+    prospects.foreach(x=>runSearch(x))
+
+    Redirect(routes.ProspectController.index(""))
   }
 
+  def runSearch(prospect: Prospect) : Unit = {
+    val name : Option[String] = Option(prospect.getFullName)
+    val links : Seq[String] = InfobaeUrlGeneratorObject.search(name, Option(prospect.institution.name))
 
+    val news : Seq[News] = links.map{x=> scraper.getArticleData(x,name,0)}.filter(_.isDefined).map(_.get)
+
+    if(news.nonEmpty){
+      val activeNews: List[String] = prospect.infobaeNews.map(_.url)
+      val difference : List[News] = news.filter(n=> !activeNews.contains(n.url)).toList
+      difference.map(newsInfobaeService.save)
+
+      val all : List[News] = prospect.infobaeNews ::: difference
+      Await.result(prospectService.update(prospect.copy(infobaeNews = all)), Duration.Inf)
+    }
+  }
 }

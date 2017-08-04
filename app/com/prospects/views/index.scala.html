@@ -24,24 +24,25 @@
               dom: 'Bfrtip',
               responsive: true,
               select: true,
+              scrollX: true,
               buttons: [
                 {
                     extend : 'excel',
                     exportOptions:{
-                        columns : [0, 1, 2, 3, 4]
+                        columns : [0, 1, 2, 3, 4, 5, 6]
                     }
                 },
                 {
                     extend : 'csv',
                     exportOptions:{
-                        columns : [0, 1, 2, 3, 4]
+                        columns : [0, 1, 2, 3, 4, 5, 6]
                     }
                 },
                 {
                     text : 'JSON',
                     action: function ( e, dt, button, config ) {
                         var data = dt.buttons.exportData({
-                            columns : [0, 1, 2, 3, 4]
+                            columns : [0, 1, 2, 3, 4, 5, 6]
                         });
 
                         $.fn.dataTable.fileSave(

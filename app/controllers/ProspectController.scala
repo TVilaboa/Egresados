@@ -320,7 +320,20 @@ class ProspectController @Inject()(prospectService: ProspectService,
 
   def storeBatch =secureAction{
     implicit request => {
-      Ok("")
+
+      val selected : Seq[String] = request.body.asFormUrlEncoded.get("prospect[]")
+      val prospects : Seq[Prospect] = cache.get[Seq[Prospect]]("prospects")
+      cache.remove("prospects")
+
+      val added : Seq[Prospect] = prospects.filter(x => selected.contains(x._id))
+
+      val addedInstitutes : Seq[Institution] =  added.map(_.institution).filter(i=> !institutions.contains(i))
+
+      addedInstitutes.map(institutionService.save)
+
+      added.map(prospectService.save)
+
+      Redirect(routes.ProspectController.index(s"${added.size} prospects successfully added"))
     }
   }
 
@@ -344,7 +357,6 @@ class ProspectController @Inject()(prospectService: ProspectService,
             case Some(string) =>
               institutions.find(_.name.equals(string)) match {
                 case Some(institute) =>
-                  uploadInstitutes = uploadInstitutes :+ institute
                   Option(institute)
                 case None =>
                   val aux : Institution = Institution(UUID.randomUUID().toString,string,"", active = true)
@@ -353,7 +365,6 @@ class ProspectController @Inject()(prospectService: ProspectService,
               }
             case None =>
               val institute : Institution = institutions.head
-              uploadInstitutes = uploadInstitutes :+ institute
               Option(institute)
           }
 
@@ -381,13 +392,9 @@ class ProspectController @Inject()(prospectService: ProspectService,
       }
 
       cache.set("prospects", data, 600)
-
-      val map : Map[String, JsValue] = Map("status"->Json.toJson("OK"),
-                                           "items" ->Json.toJson(data.map(x=> Json.toJson(x.toMap))),
-                                           "institutions" -> Json.toJson(uploadInstitutes.map(x=> Json.toJson(x.toMap))))
+      cache.set("institutions", uploadInstitutes, 600)
 
       Ok(Json.toJson(Map("status"->Json.toJson("OK"))))
-
     }
   }
 
@@ -397,7 +404,6 @@ class ProspectController @Inject()(prospectService: ProspectService,
 
     prospects match{
       case x: Seq[Prospect] =>
-        cache.remove("prospects")
         val data : JsValue = Json.toJson(prospects.map(_.toJson))
         Ok(data)
       case null => Ok(Json.toJson(Seq[JsValue]()))

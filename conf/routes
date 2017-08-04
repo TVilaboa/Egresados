@@ -52,6 +52,32 @@ GET         /prospects-load               controllers.ProspectController.loadPot
 GET         /prospects/:id/validate       controllers.ProspectController.showValidation(id: String)
 POST        /prospects/:id/validate       controllers.ProspectController.postValidation(id: String)
 
+#LinkedInScraper
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+GET          /linkedin/search/:id         controllers.LinkedinUserProfileController.search(id:String)
+GET          /linkedin/searchAll          controllers.LinkedinUserProfileController.searchAll
+GET          /linkedin/delete/:id         controllers.LinkedinUserProfileController.deleteProfile(id:String)
+
+#LaNacionController
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+GET         /lanacion/search/:id          controllers.LaNacionNewsController.search(id : String)
+GET         /lanacion/searchAll           controllers.LaNacionNewsController.searchAll
+
+#ClarinController
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+GET         /clarin/search/:id            controllers.ClarinNewsController.search(id : String)
+GET         /clarin/searchAll             controllers.ClarinNewsController.searchAll
+
+#ElCronistaController
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+GET         /elcronista/search/:id         controllers.ElCronistaNewsController.search(id : String)
+GET         /elcronista/searchAll          controllers.ElCronistaNewsController.searchAll
+
+#InfobaeController
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+GET         /infobae/search/:id           controllers.InfobaeNewsController.search(id : String)
+GET         /infobae/searchAll            controllers.InfobaeNewsController.searchAll
+
 
 #EgresadosController
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -72,33 +98,6 @@ GET         /stats                        controllers.EgresadosController.getLin
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 GET         /validate/:id                 controllers.EgresadosController.renderValidate(id: String)
 POST        /valid                        controllers.EgresadosController.validateLinks
-
-#LinkedInScraper
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-GET          /linkedin/search2/:id         controllers.LinkedinUserProfileController.search(id:String)
-GET          /linkedin/search/:id         controllers.LinkedinUserProfileController.saveLinkedinUserProfile(id:String)
-GET          /linkedin/searchAll          controllers.LinkedinUserProfileController.saveAllLinkedinUserProfile
-GET          /linkedin/delete/:id         controllers.LinkedinUserProfileController.deleteProfile(id:String)
-
-#LaNacionController
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-GET         /lanacion/search/:id          controllers.LaNacionNewsController.saveNews(id : String)
-GET         /lanacion/searchAll           controllers.LaNacionNewsController.saveAllLaNacionNews
-
-#ClarinController
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-GET         /clarin/search/:id            controllers.ClarinNewsController.saveNews(id : String)
-GET         /clarin/searchAll             controllers.ClarinNewsController.saveAllClarinNews
-
-#ElCronistaController
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-GET         /elCronista/search/:id         controllers.ElCronistaNewsController.saveNews(id : String)
-GET         /elCronista/searchAll          controllers.ElCronistaNewsController.saveAllElCronistaNews
-
-#InfobaeController
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-GET         /infobae/search/:id           controllers.InfobaeNewsController.saveNews(id : String)
-GET         /infobae/searchAll            controllers.InfobaeNewsController.saveAllInfobaeNews
 
 #RestApi
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

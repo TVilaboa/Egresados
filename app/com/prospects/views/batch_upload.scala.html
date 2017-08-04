@@ -87,7 +87,7 @@
                         },
                         columns:[
                             {render: function(info, type,row){
-                                return '<input type="checkbox" class="editor-active" value="'+ row._id + '">';
+                                return '<input name="prospect[]" type="checkbox" class="editor-active" value="'+ row._id + '">';
                             },
                             className: 'dt-body-center',
                             orderable : false
@@ -140,6 +140,9 @@
             });
           }
           return true;
+        },
+        onFinished: function(event, current){
+            $('#batch-steps').submit();
         }
       });
 
