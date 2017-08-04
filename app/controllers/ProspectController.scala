@@ -4,6 +4,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.UUID
 
+import actions.SecureAction
 import com.github.tototoshi.csv.CSVReader
 import com.google.inject.Inject
 import com.mongodb.MongoWriteException
@@ -32,7 +33,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
                                    clarinService: ClarinNewsService,
                                    cronistaService: ElCronistaNewsService,
                                    cache : DefaultCacheApi,
-                                   val messagesApi: MessagesApi) extends Controller with I18nSupport{
+                                   val messagesApi: MessagesApi, secureAction: SecureAction) extends Controller with I18nSupport{
 
   implicit val documentTypes: List[String] = List("dni","cuit","cuil")
   implicit val institutions : Seq[Institution] = Await.result(institutionService.all(),Duration.Inf)
@@ -96,13 +97,13 @@ class ProspectController @Inject()(prospectService: ProspectService,
     "secondaryEmail" -> default(text,"")
   )(Prospect.apply)(Prospect.unapply))
 
-  def index(message: String = "") = Action{
+  def index(message: String = "") =secureAction{
     val prospects : List[Prospect] = Await.result(prospectService.all(), Duration.Inf).toList
 
     Ok(com.prospects.views.html.index.render(prospects,message))
   }
 
-  def lookup = Action{
+  def lookup =secureAction{
     val prospects : List[Prospect] = Await.result(prospectService.all(), Duration.Inf).toList
 
     val default: Map[String,String] = Map("firstName"->"","lastName"->"","documentId"->"","title"->"","exitDate"->"","institutionCode"->"")
@@ -110,7 +111,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
     Ok(com.prospects.views.html.search.render(prospects, form, default))
   }
 
-  def search = Action{
+  def search =secureAction{
     implicit request =>{
       val prospects : List[Prospect] = Await.result(prospectService.all(), Duration.Inf).toList
 
@@ -132,7 +133,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
     }
   }
 
-  def create(message: String = "",default: Map[String, String] = null) = Action{
+  def create(message: String = "",default: Map[String, String] = null) =secureAction{
     val prospect: Map[String, String]= if(default != null) default else Map("_id"->"",
       "firstName"->"",
       "lastName"->"",
@@ -153,7 +154,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
     Ok(com.prospects.views.html.create.render(prospect,message, documentTypes, institutions))
   }
 
-  def store = Action.async{
+  def store =secureAction.async{
     implicit request =>{
       val uuid : String = UUID.randomUUID().toString
 
@@ -224,17 +225,17 @@ class ProspectController @Inject()(prospectService: ProspectService,
     }
   }
 
-  def show(id : String) = Action{
+  def show(id : String) =secureAction{
     val prospect: Prospect = Await.result(prospectService.find(id), Duration.Inf)
     Ok(com.prospects.views.html.show.render(Option(prospect)))
   }
 
-  def edit(id : String,message: String = "") = Action{
+  def edit(id : String,message: String = "") =secureAction{
     val prospect: Prospect = Await.result(prospectService.find(id), Duration.Inf)
     Ok(com.prospects.views.html.edit.render(prospect.toMap,message, documentTypes, institutions))
   }
 
-  def update(id : String) = Action.async {
+  def update(id : String) =secureAction.async {
     implicit request => {
       val input: Map[String, String] = form.bindFromRequest().data
 
@@ -293,7 +294,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
 
 
 
-  def delete(id : String) = Action{
+  def delete(id : String) =secureAction{
     implicit request => {
       val prospect: Prospect = Await.result(prospectService.find(id),Duration.Inf)
 
@@ -313,11 +314,11 @@ class ProspectController @Inject()(prospectService: ProspectService,
     }
   }
 
-  def createBatch = Action{
+  def createBatch =secureAction{
     Ok(com.prospects.views.html.batch_upload.render())
   }
 
-  def storeBatch = Action{
+  def storeBatch =secureAction{
     implicit request => {
 
       val selected : Seq[String] = request.body.asFormUrlEncoded.get("prospect[]")
@@ -336,7 +337,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
     }
   }
 
-  def uploadFile = Action(parse.multipartFormData){
+  def uploadFile =secureAction(parse.multipartFormData){
     implicit request =>{
 
       var uploadInstitutes : Seq[Institution] = Seq[Institution]()
@@ -397,7 +398,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
     }
   }
 
-  def loadPotentialProspects = Action{
+  def loadPotentialProspects =secureAction{
 
     val prospects : Seq[Prospect] = cache.get[Seq[Prospect]]("prospects")
 
@@ -409,12 +410,12 @@ class ProspectController @Inject()(prospectService: ProspectService,
     }
   }
 
-  def showValidation(id: String) = Action{
+  def showValidation(id: String) =secureAction{
     val prospect: Prospect = Await.result(prospectService.find(id),Duration.Inf)
     Ok(com.prospects.views.html.link_validation.render(Option(prospect)))
   }
 
-  def postValidation(id: String) = Action(parse.json){
+  def postValidation(id: String) =secureAction(parse.json){
     implicit request: Request[JsValue] => {
       val prospect: Prospect = Await.result(prospectService.find(id),Duration.Inf)
 

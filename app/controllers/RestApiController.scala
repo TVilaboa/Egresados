@@ -24,7 +24,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
                                   linkedinUserProfileService: LinkedinUserProfileService,
                                   val messagesApi: MessagesApi) extends Controller {
 
-  def getAllInfobaeData = Action { implicit request => {
+  def getAllInfobaeData =secureAction { implicit request => {
     var info = List[News]()
     var graduates = Seq[Graduate]()
     val all: Future[Seq[Graduate]] = graduateService.all()
@@ -40,7 +40,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
     }
   }
 
-  def getAllEgresadosData = Action { implicit request => {
+  def getAllEgresadosData =secureAction { implicit request => {
     var info = Seq[Graduate]()
     val all: Future[Seq[Graduate]] = graduateService.all()
     info = Await.result(all,Duration.Inf)
@@ -51,7 +51,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
     }
   }}
 
-  def getAllLaNacionData = Action { implicit request => {
+  def getAllLaNacionData =secureAction { implicit request => {
     var info = List[News]()
     var graduates = Seq[Graduate]()
     val all: Future[Seq[Graduate]] = graduateService.all()
@@ -66,7 +66,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
     }
   }}
 
-  def getAllClarinData = Action { implicit request => {
+  def getAllClarinData =secureAction { implicit request => {
     var info = List[News]()
     var graduates = Seq[Graduate]()
     val all: Future[Seq[Graduate]] = graduateService.all()
@@ -81,7 +81,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
     }
   }}
 
-  def getAllElCronistaData = Action { implicit request => {
+  def getAllElCronistaData =secureAction { implicit request => {
     var info = List[News]()
     var graduates = Seq[Graduate]()
     val all: Future[Seq[Graduate]] = graduateService.all()
@@ -96,7 +96,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
     }
   }}
 
-  def getAllLinkedInData = Action { implicit request => {
+  def getAllLinkedInData =secureAction { implicit request => {
     var info = List[LinkedinUserProfile]()
     var graduates = Seq[Graduate]()
     val all: Future[Seq[Graduate]] = graduateService.all()
@@ -112,7 +112,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
   }}
 
 
-  def getOneInfobaeData(id:String) = Action {implicit request =>{
+  def getOneInfobaeData(id:String) =secureAction {implicit request =>{
     val find = graduateService.find(id)
     try {
       val one = Await.result(find, Duration.Inf)
@@ -126,7 +126,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
     }
   }}
 
-  def getOneLaNacionData(id:String) = Action {implicit request =>{
+  def getOneLaNacionData(id:String) =secureAction {implicit request =>{
     val find= graduateService.find(id)
     try {
       val one = Await.result(find, Duration.Inf)
@@ -140,7 +140,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
     }
   }}
 
-  def getOneClarinData(id:String) = Action {implicit request =>{
+  def getOneClarinData(id:String) =secureAction {implicit request =>{
     val find= graduateService.find(id)
     try {
       val one = Await.result(find, Duration.Inf)
@@ -154,7 +154,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
     }
   }}
 
-  def getOneElCronistaData(id:String) = Action {implicit request =>{
+  def getOneElCronistaData(id:String) =secureAction {implicit request =>{
     val find= graduateService.find(id)
     try {
       val one = Await.result(find, Duration.Inf)
@@ -169,7 +169,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
   }}
 
 
-  def getOneLinkedinData(id:String) = Action {implicit request =>{
+  def getOneLinkedinData(id:String) =secureAction {implicit request =>{
     val find= graduateService.find(id)
     try {
       val one = Await.result(find, Duration.Inf)
@@ -184,7 +184,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
   }}
 
 
-  def getAllEgresadosByCareer(career : String)= Action { implicit request => {
+  def getAllEgresadosByCareer(career : String)=secureAction { implicit request => {
     var info= Seq[Graduate]()
     val all: Future[Seq[Graduate]] = graduateService.all()
     info = Await.result(all,Duration.Inf)

@@ -19,7 +19,7 @@ class ClarinNewsController @Inject()(newsClarinService: ClarinNewsService,
                                      scraper: ClarinScraper,
                                      secureAction: SecureAction) extends Controller{
 
-  def search(id: String) = Action{
+  def search(id: String) =secureAction{
     val prospect : Prospect = Await.result(prospectService.find(id), Duration.Inf)
 
     runSearch(prospect)
@@ -27,7 +27,7 @@ class ClarinNewsController @Inject()(newsClarinService: ClarinNewsService,
     Redirect(routes.ProspectController.show(id))
   }
 
-  def searchAll = Action{
+  def searchAll =secureAction{
     val prospects : Seq[Prospect] = Await.result(prospectService.all(), Duration.Inf)
 
     prospects.foreach(x=>runSearch(x))
@@ -51,7 +51,7 @@ class ClarinNewsController @Inject()(newsClarinService: ClarinNewsService,
     }
   }
 
-  def deleteNews(id:String) = Action {
+  def deleteNews(id:String) =secureAction {
     //Get graduate from DB.
     val news : News = Await.result(newsClarinService.find(id),Duration.Inf)
     Await.result(newsClarinService.drop(news), Duration.Inf)
