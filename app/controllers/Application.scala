@@ -22,7 +22,7 @@ class Application @Inject()(secureAction: SecureAction) extends Controller {
     Ok(views.html.tables.render())
   }
 
-  def login = secureAction {
+  def login = Action {
     Ok(views.html.login.render(null,"",null))
   }
 
