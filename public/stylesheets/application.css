@@ -51,3 +51,7 @@ fieldset legend{
 .wizard > .content > .body {
     height: 100%;
 }
+
+.pagination{
+    display: inline-flex !important;
+}

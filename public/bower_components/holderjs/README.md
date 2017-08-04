@@ -11,7 +11,7 @@ Installing
 ----------
 
 * [Bower](http://bower.io/): `bower install holderjs`
-* [cdnjs](http://cdnjs.com/): <http://cdnjs.com/libraries/holder>
+* [cdnjs](https://cdnjs.com/): <https://cdnjs.com/libraries/holder>
 * [jsDelivr](http://www.jsdelivr.com): <http://www.jsdelivr.com/#!holder>
 * [Rails Assets](https://rails-assets.org): `gem 'rails-assets-holderjs'`
 * [Meteor](http://atmospherejs.com/): `mrt add holder`

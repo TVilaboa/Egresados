@@ -16,6 +16,7 @@
   <script src="@routes.Assets.at("bower_components/datatables/media/js/jquery.dataTables.min.js")"></script>
   <script src="@routes.Assets.at("bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js")"></script>
   <script src="@routes.Assets.at("bower_components/datatables-responsive/js/dataTables.responsive.js")"></script>
+    <script src="@routes.Assets.at("DataTablesEditor/js/dataTables.editor.js")"></script>
 
   <!-- JQuery Steps-->
   <script src="@routes.Assets.at("javascripts/jquery.steps-1.1.0/jquery.steps.js")"></script>
@@ -78,6 +79,60 @@
               type : 'POST',
               success: function(response){
                 if(response.status === 'OK'){
+
+
+
+                    var editor = new $.fn.dataTable.Editor( {
+                        //ajax: "../php/staff.php",
+                        idSrc:  '_id',
+                        table: "#dataTables-example",
+                        fields: [ {
+                            label: "#:",
+                            name: "_id"
+                        }, {
+                            label: "Nombre:",
+                            name: "fullname"
+                        }, {
+                            label: "Identificacion:",
+                            name: "identification"
+                        }, {
+                            label: "Fecha de Nacimiento:",
+                            name: "birthDate",
+                            type: "datetime"
+                        }, {
+                            label: "País de Origen:",
+                            name: "country"
+                        }, {
+                            label: "Mail Primario:",
+                            name: "primaryEmail"
+                        }, {
+                            label: "Mail Secundario:",
+                            name: "secondaryEmail"
+                        }, {
+                            label: "Institución:",
+                            name: "institution.name"
+                        }, {
+                            label: "Ingreso:",
+                            name: "entry",
+                            type: "datetime"
+                        }, {
+                            label: "Egreso:",
+                            name: "exit",
+                            type: "datetime"
+                        }, {
+                            label: "Legajo:",
+                            name: "code"
+                        }, {
+                            label: "Título:",
+                            name: "title"
+                        }
+                        ]
+                    } );
+
+                    // Activate an inline edit on click of a table cell
+                    $('#dataTables-example').on( 'click', 'tbody td:not(:first-child)', function (e) {
+                        editor.inline( this );
+                    } );
 
                     prospectsTable = $('#dataTables-example').DataTable({
                         ajax: {

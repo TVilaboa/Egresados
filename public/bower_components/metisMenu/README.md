@@ -26,31 +26,31 @@ bower install metisMenu
 1. Include Twitter Bootstrap StyleSheet
 
     ```html
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.0/css/bootstrap.min.css">
     ```
 
 2. Include metisMenu StyleSheet
 
     ```html
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap.metismenu/1.1.2/css/metismenu.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap.metismenu/1.1.2/css/metismenu.min.css">
     ```
 
 3. Include jQuery
 
     ```html
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     ```
 
 4. Include Twitter Bootstrap Script
 
     ```html
-    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.0/js/bootstrap.min.js"></script>
     ```
 
 5. Include metisMenu plugin's code
 
     ```html
-    <script src="//cdn.jsdelivr.net/bootstrap.metismenu/1.1.2/js/metismenu.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/bootstrap.metismenu/1.1.2/js/metismenu.min.js"></script>
     ```
 
 6. Call the plugin:
