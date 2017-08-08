@@ -6,14 +6,12 @@ import org.mongodb.scala._
 import org.mongodb.scala.bson.{BsonArray, BsonDocument}
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.result._
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Json
 import services.Mongo
 
-import scala.concurrent.Future
-
 import scala.collection.JavaConversions._
-
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import scala.concurrent.Future
 
 /**
   * Created by franco on 27/07/17.
@@ -32,7 +30,7 @@ trait ProspectDao {
 
   def findByInstitutionCode(institutionCode: String): Future[Prospect]
 
-  def findByInstitution(_institutionId : String):  Future[Prospect]
+  def findByInstitution(_institutionId: String): Future[Seq[Prospect]]
 
   def save(prospect: Prospect): Future[Completed]
 
@@ -78,7 +76,9 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
     })
   }
 
-  override def findByInstitution(_institutionId: String): Future[Prospect] = ???
+  override def findByInstitution(_institutionId: String): Future[Seq[Prospect]] = {
+    data.find(equal("institution._id", _institutionId)).toFuture().map(doc => doc.map(transformDocument))
+  }
 
   override def save(prospect: Prospect): Future[Completed] = {
     val json: String = Json.toJson(prospect).toString

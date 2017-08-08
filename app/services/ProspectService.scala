@@ -19,6 +19,8 @@ class ProspectService @Inject()(dao: ProspectDao) {
 
   def find(graduateId: String): Future[Prospect] = dao.find(graduateId)
 
+  def findByInstitution(_institutionId: String): Future[Seq[Prospect]] = dao.findByInstitution(_institutionId)
+
   def findByDocumentId(documentId: String): Future[Prospect] = dao.findByDocumentId(documentId)
 
   def findByFirstName(firstName: String): Future[Prospect] = dao.findByFirstName(firstName)

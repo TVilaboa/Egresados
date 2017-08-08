@@ -6,22 +6,22 @@ import java.util.UUID
 import actions.SecureAction
 import com.google.inject.Inject
 import com.mongodb.MongoWriteException
-import models.Institution
+import models.{Institution, Prospect}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Controller}
-import services.InstitutionService
-
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration.Duration
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.mvc.Controller
+import services.{InstitutionService, ProspectService}
+
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
 
 /**
   * Created by franco on 28/07/17.
   */
-class InstitutionController  @Inject()(institutionService: InstitutionService, secureAction: SecureAction,
-                                       val messagesApi: MessagesApi) extends Controller with I18nSupport{
+class InstitutionController @Inject()(institutionService: InstitutionService, prospectService: ProspectService, secureAction: SecureAction,
+                                      val messagesApi: MessagesApi) extends Controller with I18nSupport {
 
   val form: Form[Institution] = Form(mapping(
     "_id" -> text(),
@@ -68,8 +68,9 @@ class InstitutionController  @Inject()(institutionService: InstitutionService, s
   }
 
   def show(id: String) =secureAction {
+    val prospects: List[Prospect] = Await.result(prospectService.findByInstitution(id), Duration.Inf).toList
     val institution : Institution = Await.result(institutionService.find(id), Duration.Inf)
-    Ok(com.institutions.views.html.show(Option(institution)))
+    Ok(com.institutions.views.html.show(Option(institution), prospects))
   }
 
   def edit(id: String) =secureAction{
