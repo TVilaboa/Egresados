@@ -88,9 +88,16 @@
     <script>
             $( document ).ready(function() {
                 document.getElementById("prospectForm").noValidate = false;
+                var $inputs = $('input[name=secondaryEmail],input[name=primaryEmail]');
+                $inputs.on('input', function () {
+                    // Set the required property of the other input to false if this input is not empty.
+                    $inputs.not(this).prop('required', !$(this).val().length);
+                });
             });
 
     </script>
+
+
 }
 
 @layout(title = "Prospect Tracker | Edit Prospect", scripts, css) {
