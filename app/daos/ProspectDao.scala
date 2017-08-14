@@ -1,6 +1,7 @@
 package daos
 
 import com.google.inject.{ImplementedBy, Inject, Singleton}
+import enums.{InstitutionSector, InstitutionType}
 import models._
 import org.mongodb.scala._
 import org.mongodb.scala.bson.{BsonArray, BsonDocument}
@@ -102,7 +103,11 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
     val clarinNews: List[News] = try{ transformNews(document.get("clarinNews").get.asArray())} catch {case  e : Exception => List[News]()}
 
     //Get institution
-    val institution : Institution = try{ transformInstitution(document.get("institution").get.asDocument())} catch {case  e : Exception => Institution("","","",active = false)}
+    val institution: Institution = try {
+      transformInstitution(document.get("institution").get.asDocument())
+    } catch {
+      case e: Exception => Institution("", "", "", active = false, null, null)
+    }
 
     //Get LinkedInProfile
     val linkedInProfile : LinkedinUserProfile = try{ transformProfile(document.get("linkedInProfile").get.asDocument())} catch {case  e : Exception => LinkedinUserProfile("","",Nil,Nil,"")}
@@ -150,7 +155,9 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
   }
 
   private def transformInstitution(bson : BsonDocument): Institution = {
-    Institution(bson.get("_id").asString().getValue,bson.get("name").asString().getValue,bson.get("address").asString().getValue,bson.get("active").asBoolean().getValue)
+    Institution(bson.get("_id").asString().getValue, bson.get("name").asString().getValue, bson.get("address").asString().getValue, bson.get("active").asBoolean().getValue,
+      InstitutionType.withName(bson.get("institutionType").asString().getValue),
+      InstitutionSector.withName(bson.get("sector").asString().getValue))
   }
 
   private def transformProfile(bson : BsonDocument): LinkedinUserProfile = {

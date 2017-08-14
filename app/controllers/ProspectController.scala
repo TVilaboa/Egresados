@@ -8,19 +8,21 @@ import actions.SecureAction
 import com.github.tototoshi.csv.CSVReader
 import com.google.inject.Inject
 import com.mongodb.MongoWriteException
+import enums.EnumPlayUtils.enum
+import enums.{InstitutionSector, InstitutionType}
 import models._
 import org.joda.time.DateTime
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Controller, Request}
-import services._
-
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
+import play.api.mvc.{Controller, Request}
 import play.cache.DefaultCacheApi
+import services._
+
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 
 /**
   * Created by franco on 27/07/17.
@@ -47,10 +49,13 @@ class ProspectController @Inject()(prospectService: ProspectService,
     "birthDate" -> text(),
     "entryDate" -> text(),
     "exitDate" -> text(),
-    "institution"-> mapping("_id" -> text(),
-                            "name" -> text(),
-                            "address" -> text(),
-                            "active" -> boolean)(Institution.apply)(Institution.unapply),
+    "institution" -> mapping(
+      "_id" -> text(),
+      "name" -> text.verifying(_.nonEmpty),
+      "address" -> text.verifying(_.nonEmpty),
+      "active" -> boolean,
+      "institutionType" -> enum(InstitutionType),
+      "sector" -> enum(InstitutionSector))(Institution.apply)(Institution.unapply),
     "title" -> text(),
     "institutionCode" -> text(),
     "nacionNews" -> list(mapping("_id" -> text(),
@@ -359,7 +364,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
                 case Some(institute) =>
                   Option(institute)
                 case None =>
-                  val aux : Institution = Institution(UUID.randomUUID().toString,string,"", active = true)
+                  val aux: Institution = Institution(UUID.randomUUID().toString, string, "", active = true, null, null)
                   uploadInstitutes = uploadInstitutes :+ aux
                   Option(aux)
               }

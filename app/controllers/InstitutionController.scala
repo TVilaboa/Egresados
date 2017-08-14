@@ -6,6 +6,8 @@ import java.util.UUID
 import actions.SecureAction
 import com.google.inject.Inject
 import com.mongodb.MongoWriteException
+import enums.EnumPlayUtils._
+import enums.{InstitutionSector, InstitutionType}
 import models.{Institution, Prospect}
 import play.api.data.Form
 import play.api.data.Forms._
@@ -16,7 +18,6 @@ import services.{InstitutionService, ProspectService}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
-
 /**
   * Created by franco on 28/07/17.
   */
@@ -27,7 +28,9 @@ class InstitutionController @Inject()(institutionService: InstitutionService, pr
     "_id" -> text(),
     "name" -> text.verifying(_.nonEmpty),
     "address" -> text.verifying(_.nonEmpty),
-    "active"->boolean)
+    "active" -> boolean,
+    "institutionType" -> enum(InstitutionType),
+    "sector" -> enum(InstitutionSector))
   (Institution.apply)(Institution.unapply))
 
   def index =secureAction{
@@ -37,7 +40,7 @@ class InstitutionController @Inject()(institutionService: InstitutionService, pr
   }
 
   def create =secureAction{
-    val default: Map[String,String] = Map("_id"->"","name"->"","address"->"")
+    val default: Map[String, String] = Map("_id" -> "", "name" -> "", "address" -> "", "institutionType" -> "", "sector" -> "")
     Ok(com.institutions.views.html.create.render(default))
   }
 
@@ -50,7 +53,7 @@ class InstitutionController @Inject()(institutionService: InstitutionService, pr
       if(form.bindFromRequest.hasErrors)
         Future{ BadRequest(com.institutions.views.html.create(input)) }
       else{
-        val institution : Institution = Institution(uuid,input("name"),input("address"), active = true)
+        val institution: Institution = Institution(uuid, input("name"), input("address"), active = true, InstitutionType.withName(input("institutionType")), InstitutionSector.withName(input("sector")))
 
         try{
           institutionService.save(institution).map((_) => {

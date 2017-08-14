@@ -11,6 +11,39 @@
       <input value="@institution("address")" type="text" class="form-control" name="address" id="address" placeholder="Address">
     </div>
   </div>
+  <div class="row form-group">
+    <div class="col-md-6">
+      <label for="institutionType">Institution Type</label>
+      <select name="institutionType" title="institutionType" class="form-control">
+        <option value="">Seleccionar</option>
+        @for(iType <- enums.InstitutionType.values) {
+          @if(institution("institutionType").equals(iType.toString)) {
+            <option value="@iType.toString" selected>@iType.toString</option>
+
+          } else {
+            <option value="@iType.toString">@iType.toString</option>
+          }
+
+        }
+      </select>
+    </div>
+    <div class="col-md-6">
+      <label for="sector">Institution Sector</label>
+      <select name="sector" title="sector" class="form-control">
+
+        <option value="">Seleccionar</option>
+        @for(iSector <- enums.InstitutionSector.values) {
+          @if(institution("sector").equals(iSector.toString)) {
+            <option value="@iSector.toString" selected>@iSector.toString</option>
+
+          } else {
+            <option value="@iSector.toString">@iSector.toString</option>
+          }
+
+        }
+      </select>
+    </div>
+  </div>
 </fieldset>
 <div class="row form-group">
   <input type="hidden" name="_id" value="@institution("_id")">

@@ -2,15 +2,15 @@ package daos
 
 import com.google.inject.{ImplementedBy, Inject, Singleton}
 import com.mongodb.client.result.UpdateResult
+import enums.{InstitutionSector, InstitutionType}
 import models.Institution
 import org.mongodb.scala._
 import org.mongodb.scala.model.Filters._
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Json
 import services.Mongo
 
 import scala.concurrent.Future
-
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 /**
   * Created by franco on 27/07/17.
@@ -68,7 +68,9 @@ class MongoInstitutionDao @Inject()(mongo: Mongo) extends InstitutionDao {
     Institution(document.get("_id").get.asString().getValue,
                 document.get("name").get.asString().getValue,
                 document.get("address").get.asString().getValue,
-                document.get("active").get.asBoolean().getValue
+      document.get("active").get.asBoolean().getValue,
+      if (document.get("institutionType").isDefined) InstitutionType.withName(document.get("institutionType").get.asString().getValue) else null,
+      if (document.get("sector").isDefined) InstitutionSector.withName(document.get("sector").get.asString().getValue) else null
     )
   }
 }
