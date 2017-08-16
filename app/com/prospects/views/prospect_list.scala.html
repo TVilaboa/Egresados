@@ -26,11 +26,13 @@
             </tr>
           </thead>
           <tbody>
-            <ul>
+
             @if(prospects.nonEmpty){
               @for(prospect : Prospect <- prospects){
-                <tr class="graduate">
-                  <td>@prospect.getFullName</td>
+                  <tr class="graduate" >
+                      <td>@prospect.getFullName @if(prospect.linkedInProfile.profileUrl.isEmpty) {
+                          <img title="No Linkedin Profile" width="30px" height="30px" src="@routes.Assets.at("images/ic_error_red_48dp (1).png")"/>
+                      }</td>
                   <td>@prospect.getIdentification</td>
                   <td>@prospect.institution.name</td>
                   <td>@prospect.institutionCode</td>
