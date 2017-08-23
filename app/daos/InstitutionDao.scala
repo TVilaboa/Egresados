@@ -69,8 +69,8 @@ class MongoInstitutionDao @Inject()(mongo: Mongo) extends InstitutionDao {
                 document.get("name").get.asString().getValue,
                 document.get("address").get.asString().getValue,
       document.get("active").get.asBoolean().getValue,
-      if (document.get("institutionType").isDefined) InstitutionType.withName(document.get("institutionType").get.asString().getValue) else null,
-      if (document.get("sector").isDefined) InstitutionSector.withName(document.get("sector").get.asString().getValue) else null
+      if (document.get("institutionType").isDefined) InstitutionType.withName(document.get("institutionType").get.asString().getValue) else InstitutionType.Unspecified,
+      if (document.get("sector").isDefined) InstitutionSector.withName(document.get("sector").get.asString().getValue) else InstitutionSector.Unspecified
     )
   }
 }

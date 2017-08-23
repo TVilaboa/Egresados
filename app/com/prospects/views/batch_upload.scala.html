@@ -16,7 +16,7 @@
   <script src="@routes.Assets.at("bower_components/datatables/media/js/jquery.dataTables.min.js")"></script>
   <script src="@routes.Assets.at("bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js")"></script>
   <script src="@routes.Assets.at("bower_components/datatables-responsive/js/dataTables.responsive.js")"></script>
-    <script src="@routes.Assets.at("DataTablesEditor/js/dataTables.editor.js")"></script>
+    @*<script src="@routes.Assets.at("DataTablesEditor/js/dataTables.editor.js")"></script>*@
 
   <!-- JQuery Steps-->
   <script src="@routes.Assets.at("javascripts/jquery.steps-1.1.0/jquery.steps.js")"></script>
@@ -82,58 +82,88 @@
 
 
 
-                    var editor = new $.fn.dataTable.Editor( {
-                        //ajax: "../php/staff.php",
-                        idSrc:  '_id',
-                        table: "#dataTables-example",
-                        fields: [ {
-                            label: "#:",
-                            name: "_id"
-                        }, {
-                            label: "Nombre:",
-                            name: "fullname"
-                        }, {
-                            label: "Identificacion:",
-                            name: "identification"
-                        }, {
-                            label: "Fecha de Nacimiento:",
-                            name: "birthDate",
-                            type: "datetime"
-                        }, {
-                            label: "País de Origen:",
-                            name: "country"
-                        }, {
-                            label: "Mail Primario:",
-                            name: "primaryEmail"
-                        }, {
-                            label: "Mail Secundario:",
-                            name: "secondaryEmail"
-                        }, {
-                            label: "Institución:",
-                            name: "institution.name"
-                        }, {
-                            label: "Ingreso:",
-                            name: "entry",
-                            type: "datetime"
-                        }, {
-                            label: "Egreso:",
-                            name: "exit",
-                            type: "datetime"
-                        }, {
-                            label: "Legajo:",
-                            name: "code"
-                        }, {
-                            label: "Título:",
-                            name: "title"
-                        }
-                        ]
-                    } );
+                    /* var editor = new $.fn.dataTable.Editor( {
+                         //ajax: "../php/staff.php",
+                         idSrc:  '_id',
+                         table: "#dataTables-example",
+                         fields: [ {
+                             label: "#:",
+                             name: "_id"
+                         }, {
+                             label: "Nombre:",
+                             name: "fullname"
+                         }, {
+                             label: "Identificacion:",
+                             name: "identification"
+                         }, {
+                             label: "Fecha de Nacimiento:",
+                             name: "birthDate",
+                             type: "datetime"
+                         }, {
+                             label: "País de Origen:",
+                             name: "country"
+                         }, {
+                             label: "Mail Personal:",
+                             name: "primaryEmail"
+                         }, {
+                             label: "Mail Profesional:",
+                             name: "secondaryEmail"
+                         }, {
+                             label: "Institución:",
+                             name: "institution.name"
+                         }, {
+                             label: "Ingreso:",
+                             name: "entry",
+                             type: "datetime"
+                         }, {
+                             label: "Egreso:",
+                             name: "exit",
+                             type: "datetime"
+                         }, {
+                             label: "Legajo:",
+                             name: "code"
+                         }, {
+                             label: "Título:",
+                             name: "title"
+                         }
+                         ]
+                     } );*/
 
+                    var editor = new Object();
+                    editor.getColumnTypetext = function (row, e) {
+                        return "text";
+                    };
+                    editor.inline = function (row, e) {
+                        e.stopPropagation();
+                        $('#dataTables-example').off('click', 'tbody td:not(:first-child)', editInline);
+                        var originalData = $(e.target).text();
+                        var input = $('<input/>', {
+                            type: editor.getColumnTypetext(row, e),
+                            value: $(e.target).text(),
+                            id: 'editedRow'
+                        });
+                        $(e.target).html(input);
+
+
+                        var onOutsideClick = function (innerE) {
+                            innerE.stopPropagation();
+
+                            $(e.target).html($('#editedRow').val());
+
+                            $('#dataTables-example').on('click', 'tbody td:not(:first-child)', editInline);
+
+                        };
+                        $(document).one("click", document, onOutsideClick);
+                        input.on('click', function (innerE) {
+                            innerE.stopPropagation();
+                        });
+                    };
+
+                    var editInline = function (e) {
+                        editor.inline(this, e);
+                    };
                     // Activate an inline edit on click of a table cell
-                    $('#dataTables-example').on( 'click', 'tbody td:not(:first-child)', function (e) {
-                        editor.inline( this );
-                    } );
-
+                    $('#dataTables-example').on('click', 'tbody td:not(:first-child)', editInline);
                     prospectsTable = $('#dataTables-example').DataTable({
                         ajax: {
                             url: '@routes.ProspectController.loadPotentialProspects()',
@@ -252,10 +282,10 @@
                             <th>Mail Primario</th>
                             <th>Mail Secundario</th>
                             <th>Institución</th>
-                            <th>Legajo</th>
-                            <th>Título</th>
-                            <th>Ingreso</th>
+                              <th>Ingreso</th>
                             <th>Egreso</th>
+                              <th>Legajo</th>
+                              <th>Título</th>
                           </tr>
                         </thead>
                       </table>

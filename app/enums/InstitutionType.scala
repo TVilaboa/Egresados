@@ -8,7 +8,7 @@ import play.api.libs.json.{Reads, Writes}
 object InstitutionType extends Enumeration {
   type InstitutionType = Value
 
-  val Academical, Company = Value
+  val Unspecified, Academical, Company = Value
 
   implicit val enumReads: Reads[InstitutionType] = EnumPlayUtils.enumReads(InstitutionType)
 

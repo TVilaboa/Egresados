@@ -6,9 +6,9 @@ import play.api.libs.json._
 object InstitutionSector extends Enumeration {
   type InstitutionSector = Value
 
-  val Bank, BuildingTrade, Engineering, FinancialInstitutions, Food, Fuel, Power,
+  val Unspecified, Bank, BuildingTrade, Engineering, FinancialInstitutions, Food, Fuel, Power,
   Insurance, ITSector, Miscellaneous, PaperPrinting, Pharmaceuticals, Chemicals,
-  Services, RealEstate, Tannery, Telecommunication, Textile, Travel, Leisure = Value
+  Services, RealEstate, Tannery, Telecommunication, Textile, Travel, Leisure, Other = Value
 
 
   implicit val enumReads: Reads[InstitutionSector] = EnumPlayUtils.enumReads(InstitutionSector)

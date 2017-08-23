@@ -199,8 +199,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
 
         val prospects: List[Prospect] = Await.result(prospectService.all(), Duration.Inf).toList
 
-        if (!prospects.exists(g => (g.primaryEmail != "" && g.secondaryEmail != "" && g._id != prospect._id) && (g.primaryEmail == prospect.primaryEmail || g.secondaryEmail == prospect.primaryEmail
-          || g.primaryEmail == prospect.secondaryEmail || g.secondaryEmail == prospect.secondaryEmail))) {
+        if (!prospects.exists(g => (g._id != prospect._id) && prospectService.matchGraduates(prospect, g))) {
 
 
           try{
@@ -274,8 +273,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
           input("secondaryEmail"))
         val prospects: List[Prospect] = Await.result(prospectService.all(), Duration.Inf).toList
 
-        if (!prospects.exists(g => (g.primaryEmail != "" && g.secondaryEmail != "" && g._id != updated._id) && (g.primaryEmail == updated.primaryEmail || g.secondaryEmail == updated.primaryEmail
-          || g.primaryEmail == updated.secondaryEmail || g.secondaryEmail == updated.secondaryEmail))) {
+        if (!prospects.exists(g => (g._id != updated._id) && prospectService.matchGraduates(updated, g))) {
 
 
           Await.result(prospectService.update(updated), Duration.Inf)
@@ -325,26 +323,35 @@ class ProspectController @Inject()(prospectService: ProspectService,
 
   def storeBatch =secureAction{
     implicit request => {
+      //Primera llamada para que los cargue mientras se procesa lo otro
+      val eventualProspects = prospectService.all()
+
 
       val selected : Seq[String] = request.body.asFormUrlEncoded.get("prospect[]")
       val prospects : Seq[Prospect] = cache.get[Seq[Prospect]]("prospects")
       cache.remove("prospects")
 
-      val added : Seq[Prospect] = prospects.filter(x => selected.contains(x._id))
+
+      val existentProspects: List[Prospect] = Await.result(eventualProspects, Duration.Inf).toList
+
+      val added: Seq[Prospect] = prospects.filter(x => selected.contains(x._id) && !existentProspects.exists(p => p._id == x._id))
+      val updated: Seq[Prospect] = prospects.filter(x => selected.contains(x._id) && existentProspects.exists(p => p._id == x._id))
 
       val addedInstitutes : Seq[Institution] =  added.map(_.institution).filter(i=> !institutions.contains(i))
 
       addedInstitutes.map(institutionService.save)
 
       added.map(prospectService.save)
+      updated.map(prospectService.update)
 
-      Redirect(routes.ProspectController.index(s"${added.size} prospects successfully added"))
+      Redirect(routes.ProspectController.index(s"Successfully added ${added.size} and updated ${updated.size} prospects  "))
     }
   }
 
+
   def uploadFile =secureAction(parse.multipartFormData){
     implicit request =>{
-
+      val eventualProspects = prospectService.all()
       var uploadInstitutes : Seq[Institution] = Seq[Institution]()
 
       val data = request.body.files.flatMap{x =>
@@ -354,7 +361,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
         val csvFile = x.ref.file
 
         val reader = CSVReader.open(csvFile)
-
+        val existentProspects: List[Prospect] = Await.result(eventualProspects, Duration.Inf).toList
         reader.allWithHeaders().map{z =>
 
           //Get or create the institution
@@ -373,7 +380,8 @@ class ProspectController @Inject()(prospectService: ProspectService,
               Option(institute)
           }
 
-          Prospect(UUID.randomUUID().toString,
+
+          var csvProspect = Prospect(UUID.randomUUID().toString,
                    z.getOrElse("Nombre",""),
                    z.getOrElse("Apellido",""),
                    z.getOrElse("Tipo",""),
@@ -393,6 +401,12 @@ class ProspectController @Inject()(prospectService: ProspectService,
                    z.getOrElse("Email_1",""),
                    z.getOrElse("Email_2","")
           )
+
+          val headOption = existentProspects.find(p => prospectService.matchGraduates(csvProspect, p))
+          if (headOption.isDefined) {
+            csvProspect = csvProspect.copy(_id = headOption.head._id)
+          }
+          csvProspect
         }
       }
 

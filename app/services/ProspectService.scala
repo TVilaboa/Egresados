@@ -35,4 +35,10 @@ class ProspectService @Inject()(dao: ProspectDao) {
 
   def drop(prospect: Prospect): Future[Prospect] = dao.drop(prospect)
 
+  def matchGraduates(addedOrUpdated: Prospect, existent: Prospect): Boolean = {
+    (existent._id == addedOrUpdated._id) ||
+      ((existent.primaryEmail != "" && (existent.primaryEmail == addedOrUpdated.primaryEmail || existent.primaryEmail == addedOrUpdated.secondaryEmail)) ||
+        (existent.secondaryEmail != "" && (existent.secondaryEmail == addedOrUpdated.primaryEmail || existent.secondaryEmail == addedOrUpdated.secondaryEmail)))
+  }
+
 }
