@@ -1,5 +1,9 @@
 package controllers
 
+import java.text.SimpleDateFormat
+import java.util.{Calendar, Date}
+
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import actions.SecureAction
 import com.google.inject.Inject
 import generators.LinkedInUrlGeneratorObject
@@ -9,7 +13,7 @@ import scrapers.LinkedinUserProfileScraper
 import services.{LinkedinUserProfileService, ProspectService}
 
 import scala.concurrent.duration.Duration
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 
 /**
   * Created by Nacho on 23/09/2016.
@@ -20,17 +24,17 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
                                                prospectService: ProspectService,secureAction: SecureAction) extends Controller{
 
   def search(id: String) =secureAction{
-    val prospect : Prospect = Await.result(prospectService.find(id), Duration.Inf)
+    val prospect : Future[Prospect] = prospectService.find(id)
 
-    runSearch(prospect)
+    prospect.map(runSearch)
 
     Redirect(routes.ProspectController.show(id))
   }
 
   def searchAll =secureAction{
-    val prospects : Seq[Prospect] = Await.result(prospectService.all(), Duration.Inf)
+    val prospects : Future[Seq[Prospect]] = prospectService.all()
 
-    prospects.foreach(x=>runSearch(x))
+    prospects.map(x => x.foreach(runSearch))
 
     Redirect(routes.ProspectController.index(""))
   }
@@ -38,12 +42,18 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
   private def runSearch(prospect: Prospect) : Unit = {
     val links: List[String] = LinkedInUrlGeneratorObject.search(Option(prospect.getFullName), Option(prospect.institution.name))
 
-    val profiles : Seq[LinkedinUserProfile] = links.map{x=>scraper.getLinkedinProfile(x,0)}.filter(_.isDefined).map(_.get)
+    val profiles : Seq[LinkedinUserProfile] = links.map(x=> scraper.getLinkedinProfile(x,0)).filter(_.isDefined).map(_.get)
 
     if(profiles.nonEmpty){
       val profile: LinkedinUserProfile = profiles.head
-      Await.result(linkedinUserProfileService.save(profile), Duration.Inf)
-      Await.result(prospectService.update(prospect.copy(linkedInProfile = profile)), Duration.Inf)
+
+      val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
+      val now : Date = Calendar.getInstance().getTime
+
+      if(profile.actualPosition.nonEmpty)
+        linkedinUserProfileService.save(profile).map(x=> prospectService.update(prospect.copy(linkedInProfile = profile, updatedAt = format.format(now))))
+      else
+        linkedinUserProfileService.save(profile).map(x=> prospectService.update(prospect.copy(linkedInProfile = profile, errorDate = format.format(now))))
     }
   }
 

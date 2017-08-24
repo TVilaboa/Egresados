@@ -1,10 +1,5 @@
 package models
 
-
-import java.util.Date
-
-import play.data.format.Formats.DateTime
-
 /**
   * Created by Nacho on 20/9/16.
   */
@@ -15,7 +10,9 @@ case class LinkedinUserProfile(
                               jobList: List[LinkedinJob],
                               educationList: List[LinkedinEducation],
                               profileUrl: String
-                              )
+                              ){
+
+}
 
 object LinkedinUserProfile{
 
