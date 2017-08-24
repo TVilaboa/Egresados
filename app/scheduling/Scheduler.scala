@@ -3,7 +3,7 @@ package scheduling
 import javax.inject._
 
 import akka.actor.{ActorRef, ActorSystem}
-import org.joda.time.{DateTime, DateTimeZone, Interval, Period}
+import org.joda.time.{DateTime, DateTimeZone}
 import play.api.Configuration
 
 import scala.concurrent.ExecutionContext
@@ -12,8 +12,9 @@ import scala.concurrent.duration._
 /**
   * Created by franco on 27/01/17.w
   */
-class Scheduler @Inject()(val system: ActorSystem, @Named("scraper-actor") val schedulerActor: ActorRef, config : Configuration)(implicit ec: ExecutionContext){
-//  system.scheduler.scheduleOnce(0.microsecond, schedulerActor, ScrapAll)
+class Scheduler @Inject()(val system: ActorSystem,
+                          @Named("scraper-actor") val schedulerActor: ActorRef,
+                          config : Configuration)(implicit ec: ExecutionContext){
 
   val now : DateTime = new DateTime(DateTimeZone.UTC).toDateTimeISO
 
@@ -29,39 +30,24 @@ class Scheduler @Inject()(val system: ActorSystem, @Named("scraper-actor") val s
 
   definedInterval match{
     case "hour" =>
-      val next : DateTime = now.plusHours(1).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0).toDateTimeISO
-
-      val interval : Period = new Interval(now,next).toPeriod()
-      val timeToTask : Int = interval.getMinutes * 60 + interval.getSeconds
-
-      system.scheduler.schedule(timeToTask.seconds, 1.hour, schedulerActor, ScrapAll)
+      system.scheduler.schedule(Duration.Zero, 1.hour, schedulerActor, ScrapAll)
 
     case "day" =>
-      val next : DateTime = now.plusDays(1).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0).toDateTimeISO
-
-      val interval : Period = new Interval(now,next).toPeriod()
-      val timeToTask : Int = interval.getMinutes * 60 + interval.getSeconds
-
-      system.scheduler.schedule(timeToTask.seconds,1.day,schedulerActor, ScrapAll)
+      system.scheduler.schedule(Duration.Zero,1.day,schedulerActor, ScrapAll)
 
     case "week" =>
-      val next : DateTime = now.plusDays(7).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0).toDateTimeISO
-
-      val interval : Period = new Interval(now,next).toPeriod()
-      val timeToTask : Int = interval.getMinutes * 60 + interval.getSeconds
-
-      system.scheduler.schedule(timeToTask.seconds,7.day,schedulerActor, ScrapAll)
+      system.scheduler.schedule(Duration.Zero,7.day,schedulerActor, ScrapAll)
 
     case "month" =>
-      val next : DateTime = now.plusDays(30).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0).toDateTimeISO
-
-      val interval : Period = new Interval(now,next).toPeriod()
-      val timeToTask : Int = interval.getMinutes * 60 + interval.getSeconds
-
-      system.scheduler.schedule(timeToTask.seconds,30.day,schedulerActor, ScrapAll)
+      system.scheduler.schedule(Duration.Zero,30.day,schedulerActor, ScrapAll)
 
   }
 
+  // Code for finding time to interval
+//      val next : DateTime = now.plusHours(1).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0).toDateTimeISO
+
+//      val interval : Period = new Interval(now,next).toPeriod()
+//      val timeToTask : Int = interval.getMinutes * 60 + interval.getSeconds
 
 
 
