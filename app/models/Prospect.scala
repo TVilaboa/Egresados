@@ -23,7 +23,10 @@ case class Prospect(  _id : String,
                       linkedInProfile : LinkedinUserProfile,
                       country: String,
                       primaryEmail: String,
-                      secondaryEmail: String
+                      secondaryEmail: String,
+                      createdAt : String,
+                      updatedAt : String,
+                      errorDate : String
                    ) {
 
   def toMap: Map[String,String] = Map("_id"->_id,

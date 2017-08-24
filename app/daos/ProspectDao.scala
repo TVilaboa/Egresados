@@ -119,6 +119,11 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
     val primaryEmail : String = try{ document.get("primaryEmail").get.asString().getValue} catch {case  e : Exception => "" }
     val secondaryEmail : String = try{ document.get("secondaryEmail").get.asString().getValue} catch {case  e : Exception => "" }
 
+    //Get Dates
+    val createdAt : String = try{ document.get("createdAt").get.asString().getValue} catch {case  e : Exception => "" }
+    val updatedAt : String = try{ document.get("updatedAt").get.asString().getValue} catch {case  e : Exception => "" }
+    val errorDate : String = try{ document.get("errorDate").get.asString().getValue} catch {case  e : Exception => "" }
+
     //Generate Prospect
     Prospect(
       document.get("_id").get.asString().getValue,
@@ -139,7 +144,10 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
       linkedInProfile,
       country,
       primaryEmail,
-      secondaryEmail
+      secondaryEmail,
+      createdAt,
+      updatedAt,
+      errorDate
     )
   }
 

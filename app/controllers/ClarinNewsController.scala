@@ -1,15 +1,19 @@
 package controllers
 
+import java.text.SimpleDateFormat
+import java.util.{Calendar, Date}
+
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import actions.SecureAction
 import com.google.inject.Inject
 import generators.ClarinUrlGeneratorObject
 import models.{News, Prospect}
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.Controller
 import scrapers.ClarinScraper
 import services.{ClarinNewsService, ProspectService}
 
 import scala.concurrent.duration.Duration
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 
 /**
   * Created by matias on 21/09/2016.
@@ -20,17 +24,17 @@ class ClarinNewsController @Inject()(newsClarinService: ClarinNewsService,
                                      secureAction: SecureAction) extends Controller{
 
   def search(id: String) =secureAction{
-    val prospect : Prospect = Await.result(prospectService.find(id), Duration.Inf)
+    val prospect : Future[Prospect] = prospectService.find(id)
 
-    runSearch(prospect)
+    prospect.map(runSearch)
 
     Redirect(routes.ProspectController.show(id))
   }
 
-  def searchAll =secureAction{
-    val prospects : Seq[Prospect] = Await.result(prospectService.all(), Duration.Inf)
+  def searchAll = secureAction{
+    val prospects : Future[Seq[Prospect]] = prospectService.all()
 
-    prospects.foreach(x=>runSearch(x))
+    prospects.map(x => x.foreach(runSearch))
 
     Redirect(routes.ProspectController.index(""))
   }
@@ -46,12 +50,15 @@ class ClarinNewsController @Inject()(newsClarinService: ClarinNewsService,
       val difference : List[News] = news.filter(n=> !activeNews.contains(n.url)).toList
       difference.map(newsClarinService.save)
 
+      val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
+      val now : Date = Calendar.getInstance().getTime
+
       val all : List[News] = prospect.clarinNews ::: difference
-      Await.result(prospectService.update(prospect.copy(clarinNews = all)), Duration.Inf)
+      prospectService.update(prospect.copy(clarinNews = all, updatedAt = format.format(now)))
     }
   }
 
-  def deleteNews(id:String) =secureAction {
+  def deleteNews(id:String) = secureAction {
     //Get graduate from DB.
     val news : News = Await.result(newsClarinService.find(id),Duration.Inf)
     Await.result(newsClarinService.drop(news), Duration.Inf)

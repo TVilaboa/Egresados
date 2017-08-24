@@ -2,7 +2,7 @@ package controllers
 
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.UUID
+import java.util.{Calendar, Date, UUID}
 
 import actions.SecureAction
 import com.github.tototoshi.csv.CSVReader
@@ -99,7 +99,10 @@ class ProspectController @Inject()(prospectService: ProspectService,
                                  "profileUrl" -> text()) (LinkedinUserProfile.apply) (LinkedinUserProfile.unapply),
     "country" -> default(text,""),
     "primaryEmail" -> default(text,""),
-    "secondaryEmail" -> default(text,"")
+    "secondaryEmail" -> default(text,""),
+    "createdAt" -> text(),
+    "updatedAt" -> text(),
+    "errorDate" -> text()
   )(Prospect.apply)(Prospect.unapply))
 
   def index(message: String = "") =secureAction{
@@ -169,6 +172,10 @@ class ProspectController @Inject()(prospectService: ProspectService,
         Future{ BadRequest(com.prospects.views.html.create(input)) }
       else{
 
+        val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
+
+        val now : Date = Calendar.getInstance().getTime
+
         val institution: Institution = Await.result(institutionService.find(input("institution")), Duration.Inf)
 
         val prospect: Prospect = Prospect(uuid,
@@ -194,7 +201,10 @@ class ProspectController @Inject()(prospectService: ProspectService,
 
                                           input("country"),
                                           input("primaryEmail"),
-                                          input("secondaryEmail")
+                                          input("secondaryEmail"),
+                                          format.format(now),
+                                          "",
+                                          ""
         )
 
         val prospects: List[Prospect] = Await.result(prospectService.all(), Duration.Inf).toList
@@ -252,6 +262,10 @@ class ProspectController @Inject()(prospectService: ProspectService,
       else {
         val institution: Institution = Await.result(institutionService.find(input("institution")), Duration.Inf)
 
+        val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
+
+        val now : Date = Calendar.getInstance().getTime
+
         val updated: Prospect = Prospect(id,
           input("firstName"),
           input("lastName"),
@@ -270,7 +284,11 @@ class ProspectController @Inject()(prospectService: ProspectService,
           original.linkedInProfile,
           input("country"),
           input("primaryEmail"),
-          input("secondaryEmail"))
+          input("secondaryEmail"),
+          original.createdAt,
+          format.format(now),
+          original.errorDate
+        )
         val prospects: List[Prospect] = Await.result(prospectService.all(), Duration.Inf).toList
 
         if (!prospects.exists(g => (g._id != updated._id) && prospectService.matchGraduates(updated, g))) {
@@ -380,6 +398,9 @@ class ProspectController @Inject()(prospectService: ProspectService,
               Option(institute)
           }
 
+          val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
+
+          val now : Date = Calendar.getInstance().getTime
 
           var csvProspect = Prospect(UUID.randomUUID().toString,
                    z.getOrElse("Nombre",""),
@@ -399,7 +420,10 @@ class ProspectController @Inject()(prospectService: ProspectService,
                    LinkedinUserProfile(UUID.randomUUID().toString,"",List[LinkedinJob](),List[LinkedinEducation](),""),
                    z.getOrElse("Pais",""),
                    z.getOrElse("Email_1",""),
-                   z.getOrElse("Email_2","")
+                   z.getOrElse("Email_2",""),
+                   format.format(now),
+                   "",
+                   ""
           )
 
           val headOption = existentProspects.find(p => prospectService.matchGraduates(csvProspect, p))
