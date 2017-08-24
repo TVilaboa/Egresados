@@ -1,0 +1,36 @@
+@(schedulingInterval : String, schedulingHour : String)
+
+@css = {
+}
+
+@scripts = {
+}
+
+@layout(title = "Prospect Tracker | Scheduling Configuration",scripts,css){
+  <div id="page-wrapper">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">Configuración de Automatización</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="panel panel-body">
+          <div class="col-lg-6">
+            <div class="form-group">
+              <label for="scheduling-interval">Intervalo</label>
+              <input class="form-control" type="text" readonly value="@schedulingInterval" id="scheduling-interval">
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="form-group">
+              <label for="scheduling-hour">Horario (24 hs)</label>
+              <input class="form-control" type="text" readonly value="@schedulingHour" id="scheduling-hour">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+}

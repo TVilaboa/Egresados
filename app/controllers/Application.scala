@@ -11,11 +11,12 @@ import actions.SecureAction
 import models.Prospect
 import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
+import play.api.Configuration
 import services.ProspectService
 
 import scala.concurrent.Future
 
-class Application @Inject()(secureAction: SecureAction, prospectService: ProspectService) extends Controller {
+class Application @Inject()(secureAction: SecureAction, prospectService: ProspectService,config : Configuration) extends Controller {
 
   def index = {
     homeFeed
@@ -85,33 +86,11 @@ class Application @Inject()(secureAction: SecureAction, prospectService: Prospec
       Ok(com.home.views.html.index.render(errors,updates,format.format(errorDate),format.format(updateDate)))
 
     }
-//
-//    val successLogs : List[String] = Source.fromFile("logs/success.log").getLines().toList
-//    val successTuples : List[(DateTime,String,String,String)] = successLogs.map(parseLogEntry)
-//
-//    val errorLogs : List[String] = Source.fromFile("logs/error.log").getLines().toList
-//    val errorTuples : List[(DateTime,String,String,String)] = errorLogs.map(parseLogEntry)
-//    var lastError : DateTime =  new DateTime( 0x0, 1, 1, 0, 0, 0, DateTimeZone.UTC )
-//    if(errorTuples.nonEmpty){
-//      lastError = errorTuples.minBy(_._1.toDate.getTime)._1
-//    }
-//
-//    var lastSuccess : DateTime =  new DateTime( 0x0, 1, 1, 0, 0, 0, DateTimeZone.UTC )
-//
-//
-//    if(errorTuples.nonEmpty){
-//      lastSuccess = successTuples.minBy(_._1.toDate.getTime)._1
-//    }
-//
-//
-//
-//    if(lastError.isAfter(lastSuccess))
-//      Ok(views.html.index.render(lastError,
-//              successTuples.filter(_._1.equals(lastError)),
-//              errorTuples.filter(_._1.equals(lastError))))
-//    else
-//      Ok(views.html.index.render(lastSuccess,
-//        successTuples.filter(_._1.equals(lastSuccess)),
-//        errorTuples.filter(_._1.equals(lastSuccess))))
+  }
+
+  def showConfig = secureAction{
+    val schedulingInterval : String = config.getString("scheduling.interval").get
+    val schedulingHour : String = s"${config.getInt("scheduling.time").get}:00"
+    Ok(com.home.views.html.config.render(schedulingInterval,schedulingHour))
   }
 }
