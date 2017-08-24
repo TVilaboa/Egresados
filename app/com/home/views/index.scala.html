@@ -27,38 +27,21 @@
 
           $(document).ready(function() {
             $('#success-logs').DataTable({
-              responsive : true,
               select : true,
               columnDefs : [
                 {
-                  'targets': 2,
-                  'render': function(data, type, full, meta){
-                    if(type === 'display'){
-                      data = strtrunc(data, 80);
-                    }
-
-                    return data;
-                  }
+                  'targets': 2
 
                 }
               ]
             });
 
             $('#error-logs').DataTable({
-              responsive : true,
               select : true,
               columnDefs : [
                 {
-                  'targets': 2,
-                  'render': function(data, type, full, meta){
-                    if(type === 'display'){
-                      data = strtrunc(data, 80);
-                    }
-
-                    return data;
+                  'targets': 2
                   }
-
-                }
               ]
             });
 
@@ -171,7 +154,7 @@
                   <td>@prospect.updatedAt</td>
                   <td>@prospect.getFullName</td>
                   <td>
-                      <a title="Ver Prospecto" class="btn btn-primary" href="@routes.ProspectController.show(prospect._id)"><i class="fa fa-cog"></i></a>
+                    <a title="Ver Prospecto" class="btn btn-success" href="@routes.ProspectController.show(prospect._id)"><i class="fa fa-cog"></i></a>
                   </td>
                 </tr>
               }
@@ -200,7 +183,7 @@
                   <td>@prospect.getFullName</td>
                   <td>@prospect.linkedInProfile.profileUrl</td>
                   <td>
-                      <a title="Ver Prospecto" class="btn btn-primary" href="@routes.ProspectController.show(prospect._id)"><i class="fa fa-cog"></i></a>
+                    <a title="Ver Prospecto" class="btn btn-danger" href="@routes.ProspectController.show(prospect._id)"><i class="fa fa-cog"></i></a>
                   </td>
                 </tr>
               }

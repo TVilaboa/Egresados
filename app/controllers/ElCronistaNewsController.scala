@@ -48,13 +48,16 @@ class ElCronistaNewsController @Inject()(newsElCronistaService: ElCronistaNewsSe
     if(news.nonEmpty){
       val activeNews: List[String] = prospect.cronistaNews.map(_.url)
       val difference : List[News] = news.filter(n=> !activeNews.contains(n.url)).toList
-      difference.map(newsElCronistaService.save)
 
-      val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
-      val now : Date = Calendar.getInstance().getTime
+      if(difference.nonEmpty) {
+        difference.map(newsElCronistaService.save)
 
-      val all : List[News] = prospect.cronistaNews ::: difference
-      prospectService.update(prospect.copy(cronistaNews = all, updatedAt = format.format(now)))
+        val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
+        val now : Date = Calendar.getInstance().getTime
+
+        val all : List[News] = prospect.cronistaNews ::: difference
+        prospectService.update(prospect.copy(cronistaNews = all, updatedAt = format.format(now)))
+      }
     }
   }
 

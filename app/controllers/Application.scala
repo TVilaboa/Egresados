@@ -71,7 +71,7 @@ class Application @Inject()(secureAction: SecureAction, prospectService: Prospec
         case Nil => new Date()
       }
 
-      val updateDate : Date = partition._2 match{
+      val updateDate : Date = x match{
         case seq : Seq[Prospect] =>
           val dates : Seq[Date]= seq.filter(_.updatedAt.nonEmpty).map(x=> format.parse(x.updatedAt)).sortBy(_.getTime)
           if(dates.nonEmpty) dates.head
@@ -80,7 +80,7 @@ class Application @Inject()(secureAction: SecureAction, prospectService: Prospec
       }
 
       val errors : Seq[Prospect] = partition._1
-      val updates : Seq[Prospect] = partition._2.filter(e => e.updatedAt.equals(format.format(updateDate)))
+      val updates : Seq[Prospect] = x.filter(e => e.updatedAt.equals(format.format(updateDate)))
 
       Ok(com.home.views.html.index.render(errors,updates,format.format(errorDate),format.format(updateDate)))
 

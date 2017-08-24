@@ -46,13 +46,16 @@ class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,
     if(news.nonEmpty){
       val activeNews: List[String] = prospect.infobaeNews.map(_.url)
       val difference : List[News] = news.filter(n=> !activeNews.contains(n.url)).toList
-      difference.map(newsInfobaeService.save)
 
-      val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
-      val now : Date = Calendar.getInstance().getTime
+      if(difference.nonEmpty) {
+        difference.map(newsInfobaeService.save)
 
-      val all : List[News] = prospect.infobaeNews ::: difference
-      prospectService.update(prospect.copy(infobaeNews = all, updatedAt = format.format(now)))
+        val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
+        val now : Date = Calendar.getInstance().getTime
+
+        val all : List[News] = prospect.infobaeNews ::: difference
+        prospectService.update(prospect.copy(infobaeNews = all, updatedAt = format.format(now)))
+      }
     }
   }
 }

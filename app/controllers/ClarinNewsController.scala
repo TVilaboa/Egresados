@@ -48,13 +48,17 @@ class ClarinNewsController @Inject()(newsClarinService: ClarinNewsService,
     if(news.nonEmpty){
       val activeNews: List[String] = prospect.clarinNews.map(_.url)
       val difference : List[News] = news.filter(n=> !activeNews.contains(n.url)).toList
-      difference.map(newsClarinService.save)
 
-      val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
-      val now : Date = Calendar.getInstance().getTime
+      if(difference.nonEmpty){
+        difference.map(newsClarinService.save)
 
-      val all : List[News] = prospect.clarinNews ::: difference
-      prospectService.update(prospect.copy(clarinNews = all, updatedAt = format.format(now)))
+        val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
+        val now : Date = Calendar.getInstance().getTime
+
+        val all : List[News] = prospect.clarinNews ::: difference
+
+        prospectService.update(prospect.copy(clarinNews = all, updatedAt = format.format(now)))
+      }
     }
   }
 
