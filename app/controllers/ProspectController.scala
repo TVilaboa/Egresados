@@ -345,17 +345,38 @@ class ProspectController @Inject()(prospectService: ProspectService,
       val eventualProspects = prospectService.all()
 
 
-      val selected : Seq[String] = request.body.asFormUrlEncoded.get("prospect[]")
+      val encodedForm = request.body.asFormUrlEncoded.getOrElse(Map())
+      val selectedIds: Seq[String] = encodedForm.getOrElse("prospect[]._id", List[String]())
       val prospects : Seq[Prospect] = cache.get[Seq[Prospect]]("prospects")
       cache.remove("prospects")
-
+      var selectedProspects: List[Prospect] = List[Prospect]()
+      for (prospect <- prospects) {
+        val formIndex = selectedIds.indexOf(prospect._id)
+        if (formIndex >= 0) {
+          val institutionName = encodedForm("prospect[].institution.name")(formIndex)
+          val updatedProspect = prospect.copy(firstName = encodedForm("prospect[].firstName")(formIndex),
+            lastName = encodedForm("prospect[].lastName")(formIndex),
+            documentType = encodedForm("prospect[].documentType")(formIndex),
+            documentId = encodedForm("prospect[].documentId")(formIndex),
+            birthDate = encodedForm("prospect[].birthDate")(formIndex),
+            entryDate = encodedForm("prospect[].entryDate")(formIndex),
+            exitDate = encodedForm("prospect[].exitDate")(formIndex),
+            institution = institutions.find(i => i.name == institutionName).getOrElse(new Institution(UUID.randomUUID().toString, institutionName, "", active = true, InstitutionType.Unspecified, InstitutionSector.Unspecified)),
+            title = encodedForm("prospect[].title")(formIndex),
+            country = encodedForm("prospect[].country")(formIndex),
+            primaryEmail = encodedForm("prospect[].primaryEmail")(formIndex),
+            secondaryEmail = encodedForm("prospect[].secondaryEmail")(formIndex)
+          )
+          selectedProspects = updatedProspect :: selectedProspects
+        }
+      }
 
       val existentProspects: List[Prospect] = Await.result(eventualProspects, Duration.Inf).toList
 
-      val added: Seq[Prospect] = prospects.filter(x => selected.contains(x._id) && !existentProspects.exists(p => p._id == x._id))
-      val updated: Seq[Prospect] = prospects.filter(x => selected.contains(x._id) && existentProspects.exists(p => p._id == x._id))
+      val added: Seq[Prospect] = selectedProspects.filter(x => !existentProspects.exists(p => p._id == x._id))
+      val updated: Seq[Prospect] = selectedProspects.filter(x => existentProspects.exists(p => p._id == x._id))
 
-      val addedInstitutes : Seq[Institution] =  added.map(_.institution).filter(i=> !institutions.contains(i))
+      val addedInstitutes: Seq[Institution] = (added ++ updated).map(_.institution).filter(i => !institutions.contains(i))
 
       addedInstitutes.map(institutionService.save)
 

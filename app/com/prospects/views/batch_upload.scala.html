@@ -81,64 +81,81 @@
                 if(response.status === 'OK'){
 
 
-
-                    /* var editor = new $.fn.dataTable.Editor( {
-                         //ajax: "../php/staff.php",
-                         idSrc:  '_id',
-                         table: "#dataTables-example",
-                         fields: [ {
-                             label: "#:",
-                             name: "_id"
-                         }, {
-                             label: "Nombre:",
-                             name: "fullname"
-                         }, {
-                             label: "Identificacion:",
-                             name: "identification"
-                         }, {
-                             label: "Fecha de Nacimiento:",
-                             name: "birthDate",
-                             type: "datetime"
-                         }, {
-                             label: "País de Origen:",
-                             name: "country"
-                         }, {
-                             label: "Mail Personal:",
-                             name: "primaryEmail"
-                         }, {
-                             label: "Mail Profesional:",
-                             name: "secondaryEmail"
-                         }, {
-                             label: "Institución:",
-                             name: "institution.name"
-                         }, {
-                             label: "Ingreso:",
-                             name: "entry",
-                             type: "datetime"
-                         }, {
-                             label: "Egreso:",
-                             name: "exit",
-                             type: "datetime"
-                         }, {
-                             label: "Legajo:",
-                             name: "code"
-                         }, {
-                             label: "Título:",
-                             name: "title"
-                         }
-                         ]
-                     } );*/
-
-                    var editor = new Object();
+                    var editor = {};
+                    editor.fields = [{
+                        label: "#",
+                        name: "_id"
+                    }, {
+                        label: "Nombre",
+                        name: "firstName"
+                    }, {
+                        label: "Apellido",
+                        name: "lastName"
+                    }, {
+                        label: "Tipo de Documento",
+                        name: "documentType"
+                    }, {
+                        label: "Documento",
+                        name: "documentId"
+                    }, {
+                        label: "Fecha de Nacimiento",
+                        name: "birthDate",
+                        type: "date"
+                    }, {
+                        label: "País de Origen",
+                        name: "country"
+                    }, {
+                        label: "Mail Personal",
+                        name: "primaryEmail",
+                        type: "email"
+                    }, {
+                        label: "Mail Profesional",
+                        name: "secondaryEmail",
+                        type: "email"
+                    }, {
+                        label: "Institución",
+                        name: "institution.name"
+                    }, {
+                        label: "Ingreso",
+                        name: "entry",
+                        type: "date"
+                    }, {
+                        label: "Egreso",
+                        name: "exit",
+                        type: "date"
+                    }, {
+                        label: "Legajo",
+                        name: "code"
+                    }, {
+                        label: "Título",
+                        name: "title"
+                    }
+                    ];
                     editor.getColumnTypetext = function (row, e) {
-                        return "text";
+                        var headerName = $('#dataTableHead').find('th').eq(row.cellIndex).text();
+                        var mapping = editor.fields.filter(function (elem) {
+                            return elem.label === headerName;
+                        });
+                        if (mapping.length > 0) {
+                            return mapping[0].type && mapping[0].type !== "" ? mapping[0].type : "text";
+                        } else {
+                            return "text";
+                        }
+
                     };
                     editor.inline = function (row, e) {
-                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        $('#batch-steps').find('[href = "#finish"]').css('pointer-events', 'none');
                         $('#dataTables-example').off('click', 'tbody td:not(:first-child)', editInline);
                         var originalData = $(e.target).text();
+                        var originalInput = $(e.target).html().replace($(e.target).text(), "");
+                        var columnType = editor.getColumnTypetext(row, e);
+                        if (columnType === 'date') {
+                            //Habria que armar un calendar porque html5 te pone el formato que quiere
+                            columnType = 'text';
+                        }
                         var input = $('<input/>', {
-                            type: editor.getColumnTypetext(row, e),
+                            type: columnType,
                             value: $(e.target).text(),
                             id: 'editedRow'
                         });
@@ -146,11 +163,13 @@
 
 
                         var onOutsideClick = function (innerE) {
-                            innerE.stopPropagation();
-
-                            $(e.target).html($('#editedRow').val());
+                            innerE.stopImmediatePropagation();
+                            innerE.preventDefault();
+                            var $editedRow = $('#editedRow');
+                            $(e.target).html($editedRow.val() + originalInput.replace(originalData, $editedRow.val()));
 
                             $('#dataTables-example').on('click', 'tbody td:not(:first-child)', editInline);
+                            $('#batch-steps').find('[href = "#finish"]').css('pointer-events', 'auto');
 
                         };
                         $(document).one("click", document, onOutsideClick);
@@ -162,6 +181,11 @@
                     var editInline = function (e) {
                         editor.inline(this, e);
                     };
+
+                    var renderHidden = function (info, type, row, propertyName) {
+                        var value = propertyName.indexOf('.') > -1 ? row[propertyName.split('.')[0]][propertyName.split('.')[1]] : row[propertyName];
+                        return value + '<input name="prospect[].' + propertyName + '" type="hidden" class="editor-active" value="' + value + '">';
+                    };
                     // Activate an inline edit on click of a table cell
                     $('#dataTables-example').on('click', 'tbody td:not(:first-child)', editInline);
                     prospectsTable = $('#dataTables-example').DataTable({
@@ -171,24 +195,83 @@
                             type: 'POST'
                         },
                         columns:[
+
                             {render: function(info, type,row){
                                 return '<input name="prospect[]" type="checkbox" class="editor-active" value="'+ row._id + '">';
                             },
                             className: 'dt-body-center',
                             orderable : false
                             },
-                            {data : '_id'},
-                            {data : 'fullname'},
-                            {data : 'identification'},
-                            {data : 'birthDate'},
-                            {data : 'country'},
-                            {data : 'primaryEmail'},
-                            {data : 'secondaryEmail'},
-                            {data : 'institution.name'},
-                            {data : 'entry'},
-                            {data : 'exit'},
-                            {data : 'code'},
-                            {data : 'title'}
+                            {
+                                render: function (info, type, row) {
+                                    return renderHidden(info, type, row, "_id");
+                                }
+                            },
+                            {
+                                render: function (info, type, row) {
+                                    return renderHidden(info, type, row, "firstName");
+                                }
+                            },
+                            {
+                                render: function (info, type, row) {
+                                    return renderHidden(info, type, row, "lastName");
+                                }
+                            },
+                            {
+                                render: function (info, type, row) {
+                                    return renderHidden(info, type, row, "documentType");
+                                }
+                            },
+                            {
+                                render: function (info, type, row) {
+                                    return renderHidden(info, type, row, "documentId");
+                                }
+                            },
+                            {
+                                render: function (info, type, row) {
+                                    return renderHidden(info, type, row, "birthDate");
+                                }
+                            },
+                            {
+                                render: function (info, type, row) {
+                                    return renderHidden(info, type, row, "country");
+                                }
+                            },
+                            {
+                                render: function (info, type, row) {
+                                    return renderHidden(info, type, row, "primaryEmail");
+                                }
+                            },
+                            {
+                                render: function (info, type, row) {
+                                    return renderHidden(info, type, row, "secondaryEmail");
+                                }
+                            },
+                            {
+                                render: function (info, type, row) {
+                                    return renderHidden(info, type, row, "institution.name");
+                                }
+                            },
+                            {
+                                render: function (info, type, row) {
+                                    return renderHidden(info, type, row, "entryDate");
+                                }
+                            },
+                            {
+                                render: function (info, type, row) {
+                                    return renderHidden(info, type, row, "exitDate");
+                                }
+                            },
+                            {
+                                render: function (info, type, row) {
+                                    return renderHidden(info, type, row, "code");
+                                }
+                            },
+                            {
+                                render: function (info, type, row) {
+                                    return renderHidden(info, type, row, "title");
+                                }
+                            }
                         ],
                         scrollX : true,
                         scrollY : "400px",
@@ -271,16 +354,18 @@
                   <section>
                     <div class="dataTables_wrapper" style="min-height: 800px;">
                       <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
-                        <thead>
+                          <thead id="dataTableHead">
                           <tr>
-                            <th><input type="checkbox" name="select_all" value="1" id="example-select-all"></th>
+                              <th><input type="checkbox" name="select_all" value="1" id="example-select-all"/></th>
                             <th>#</th>
                             <th>Nombre</th>
-                            <th>Identificacion</th>
+                              <th>Apellido</th>
+                              <th>Tipo de Documento</th>
+                              <th>Documento</th>
                             <th>Fecha de Nacimiento</th>
                             <th>País de Origen</th>
-                            <th>Mail Primario</th>
-                            <th>Mail Secundario</th>
+                              <th>Mail Personal</th>
+                              <th>Mail Profesional</th>
                             <th>Institución</th>
                               <th>Ingreso</th>
                             <th>Egreso</th>

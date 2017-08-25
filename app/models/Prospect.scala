@@ -44,24 +44,34 @@ case class Prospect(  _id : String,
                                       "title"->title,
                                       "country"->country,
                                       "primaryEmail" -> primaryEmail,
-                                      "secondaryEmail" -> secondaryEmail)
+    "secondaryEmail" -> secondaryEmail,
+    "createdAt" -> createdAt,
+    "updatedAt" -> updatedAt,
+    "errorDate" -> errorDate)
 
   def getFullName: String = s"$firstName $lastName"
 
   def getIdentification: String = s"${documentType.toUpperCase()} $documentId"
 
   def toJson : JsValue = Json.toJson(Map("_id"->Json.toJson(_id),
+    "firstName" -> Json.toJson(firstName),
+    "lastName" -> Json.toJson(lastName),
                                          "fullname"->Json.toJson(getFullName),
                                          "identification"->Json.toJson(getIdentification),
+    "documentType" -> Json.toJson(documentType),
+    "documentId" -> Json.toJson(documentId),
                                          "birthDate"->Json.toJson(birthDate),
                                          "country"->Json.toJson(country),
                                          "primaryEmail"->Json.toJson(primaryEmail),
                                          "secondaryEmail"->Json.toJson(secondaryEmail),
-                                         "entry"->Json.toJson(entryDate),
-                                         "exit"->Json.toJson(exitDate),
+    "entryDate" -> Json.toJson(entryDate),
+    "exitDate" -> Json.toJson(exitDate),
                                          "code"->Json.toJson(institutionCode),
                                          "title"->Json.toJson(title),
-                                         "institution"->institution.toJson))
+    "institution" -> institution.toJson,
+    "createdAt" -> Json.toJson(createdAt),
+    "updatedAt" -> Json.toJson(updatedAt),
+    "errorDate" -> Json.toJson(errorDate)))
 }
 
 object Prospect {
