@@ -18,8 +18,7 @@ class Scheduler @Inject()(val system: ActorSystem,
 
   val now : DateTime = new DateTime(DateTimeZone.UTC).toDateTimeISO
 
-//  val next : DateTime = now.plusHours(1).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0).toDateTimeISO
-  val next : DateTime = now.plusMinutes(5).withSecondOfMinute(0).withMillisOfSecond(0).toDateTimeISO
+  val next : DateTime = now.plusHours(1).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0).toDateTimeISO
   val interval : Period = new Interval(now,next).toPeriod()
   val initialDelay : Int = interval.getMinutes * 60 + interval.getSeconds
 
