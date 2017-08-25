@@ -37,6 +37,8 @@ class ProspectController @Inject()(prospectService: ProspectService,
                                    cache : DefaultCacheApi,
                                    val messagesApi: MessagesApi, secureAction: SecureAction) extends Controller with I18nSupport{
 
+  final val format : SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+
   implicit val documentTypes: List[String] = List("dni","cuit","cuil")
   implicit val institutions : Seq[Institution] = Await.result(institutionService.all(),Duration.Inf)
 
@@ -125,7 +127,6 @@ class ProspectController @Inject()(prospectService: ProspectService,
 
       val filter : Map[String,String] = form.bindFromRequest().data
 
-      val format = new SimpleDateFormat("dd/MM/yyyy")
       val date = format.format(new DateTime(filter("exitDate")).toDate)
 
       val filtered : List[Prospect] = prospects.filter{x: Prospect =>
@@ -157,12 +158,10 @@ class ProspectController @Inject()(prospectService: ProspectService,
       "secondaryEmail"->"",
       "country"->"")
 
-
-
     Ok(com.prospects.views.html.create.render(prospect,message, documentTypes, institutions))
   }
 
-  def store =secureAction.async{
+  def store = secureAction.async{
     implicit request =>{
       val uuid : String = UUID.randomUUID().toString
 
@@ -171,8 +170,6 @@ class ProspectController @Inject()(prospectService: ProspectService,
       if(form.bindFromRequest.hasErrors)
         Future{ BadRequest(com.prospects.views.html.create(input)) }
       else{
-
-        val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
 
         val now : Date = Calendar.getInstance().getTime
 
@@ -261,8 +258,6 @@ class ProspectController @Inject()(prospectService: ProspectService,
         }
       else {
         val institution: Institution = Await.result(institutionService.find(input("institution")), Duration.Inf)
-
-        val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
 
         val now : Date = Calendar.getInstance().getTime
 
@@ -397,8 +392,6 @@ class ProspectController @Inject()(prospectService: ProspectService,
               val institute : Institution = institutions.head
               Option(institute)
           }
-
-          val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
 
           val now : Date = Calendar.getInstance().getTime
 

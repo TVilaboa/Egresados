@@ -52,7 +52,7 @@ class ElCronistaNewsController @Inject()(newsElCronistaService: ElCronistaNewsSe
       if(difference.nonEmpty) {
         difference.map(newsElCronistaService.save)
 
-        val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
+        val format : SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         val now : Date = Calendar.getInstance().getTime
 
         val all : List[News] = prospect.cronistaNews ::: difference

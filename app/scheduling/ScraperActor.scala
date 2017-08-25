@@ -39,6 +39,8 @@ class ScraperActor @Inject() (prospectService: ProspectService,
                               laNacionNewsService: LaNacionNewsService,
                               laNacionScraper: LaNacionScraper) (implicit ee : ExecutionException, executionContext: ExecutionContext)  extends Actor{
 
+  final val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+
   override def receive : Receive = {
     case ScrapAll =>
       scrapAll()
@@ -63,7 +65,6 @@ class ScraperActor @Inject() (prospectService: ProspectService,
         if(profiles.nonEmpty){
           val profile: LinkedinUserProfile = profiles.head
 
-          val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
           val now : Date = Calendar.getInstance().getTime
 
           if(profile.actualPosition.nonEmpty)
@@ -89,7 +90,6 @@ class ScraperActor @Inject() (prospectService: ProspectService,
           if(difference.nonEmpty) {
             difference.map(infobaeNewsService.save)
 
-            val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
             val now : Date = Calendar.getInstance().getTime
 
             val all : List[News] = p.infobaeNews ::: difference
@@ -114,7 +114,6 @@ class ScraperActor @Inject() (prospectService: ProspectService,
           if(difference.nonEmpty) {
             difference.map(laNacionNewsService.save)
 
-            val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
             val now : Date = Calendar.getInstance().getTime
 
             val all : List[News] = p.nacionNews ::: difference
@@ -139,7 +138,6 @@ class ScraperActor @Inject() (prospectService: ProspectService,
           if(difference.nonEmpty) {
             difference.map(elCronistaNewsService.save)
 
-            val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
             val now : Date = Calendar.getInstance().getTime
 
             val all : List[News] = p.cronistaNews ::: difference
@@ -164,7 +162,6 @@ class ScraperActor @Inject() (prospectService: ProspectService,
           if(difference.nonEmpty) {
             difference.map(clarinNewsService.save)
 
-            val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
             val now : Date = Calendar.getInstance().getTime
 
             val all : List[News] = p.clarinNews ::: difference

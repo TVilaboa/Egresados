@@ -47,7 +47,7 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
     if(profiles.nonEmpty){
       val profile: LinkedinUserProfile = profiles.head
 
-      val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
+      val format : SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
       val now : Date = Calendar.getInstance().getTime
 
       if(profile.actualPosition.nonEmpty)

@@ -50,7 +50,7 @@ class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,
       if(difference.nonEmpty) {
         difference.map(newsInfobaeService.save)
 
-        val format : SimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd")
+        val format : SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         val now : Date = Calendar.getInstance().getTime
 
         val all : List[News] = prospect.infobaeNews ::: difference
