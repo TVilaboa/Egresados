@@ -5,6 +5,7 @@ import java.net.SocketException
 import java.sql.Timestamp
 
 import org.jsoup.Jsoup
+
 import scala.collection.JavaConversions._
 
 class LinkedInUrlGenerator extends BasicUrlGenerator{
@@ -20,6 +21,7 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
       return filterByMethod
 
     //Filters result by Condition
+    //Nota :: No encuentra perfiles con acento!!
     val possible : List[String] = list.filter(x => x.substring(8).startsWith("www.linkedin.com") || x.substring(11).startsWith("linkedin.com"))
     val filterByCondition = possible.filter(x => x.split("/").length >= 5 && username.mkString("").equalsIgnoreCase(x.split("/")(4)))
     filterByCondition
@@ -115,9 +117,11 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
       }
     } catch {
       case e: SocketException => e.printStackTrace()
-      case e: IOException => if (e.getMessage == "HTTP error fetching URL") {
+      case e: IOException => e.printStackTrace()
+        if (e.getMessage == "HTTP error fetching URL") {
         //Thread.sleep(10000)
       }
+      case e: Exception => e.printStackTrace()
     }
     result
   }

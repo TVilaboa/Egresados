@@ -54,7 +54,7 @@ object EnumPlayUtils {
 
   implicit def enumWrites[E <: Enumeration]: Writes[E#Value] =
     new Writes[E#Value] {
-      def writes(v: E#Value): JsValue = JsString(v.toString)
+      def writes(v: E#Value): JsValue = JsString(if (v != null) v.toString else "")
     }
 
   implicit def enumFormat[E <: Enumeration](enum: E): Format[E#Value] = {

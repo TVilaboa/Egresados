@@ -3,12 +3,12 @@ package controllers
 import java.text.SimpleDateFormat
 import java.util.{Calendar, Date}
 
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import actions.SecureAction
 import com.google.inject.Inject
 import generators.LinkedInUrlGeneratorObject
 import models._
-import play.api.mvc.{Action, Controller}
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.mvc.Controller
 import scrapers.LinkedinUserProfileScraper
 import services.{LinkedinUserProfileService, ProspectService}
 
@@ -53,7 +53,7 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
       if(profile.actualPosition.nonEmpty)
         linkedinUserProfileService.save(profile).map(x=> prospectService.update(prospect.copy(linkedInProfile = profile, updatedAt = format.format(now))))
       else
-        linkedinUserProfileService.save(profile).map(x=> prospectService.update(prospect.copy(linkedInProfile = profile, errorDate = format.format(now))))
+        linkedinUserProfileService.save(profile).map(x => prospectService.update(prospect.copy(linkedInProfile = profile, errorDate = format.format(now))))
     }
   }
 
