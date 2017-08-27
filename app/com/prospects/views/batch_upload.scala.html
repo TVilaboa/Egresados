@@ -150,10 +150,10 @@
                         var originalData = $(e.target).text();
                         var originalInput = $(e.target).html().replace($(e.target).text(), "");
                         var columnType = editor.getColumnTypetext(row, e);
-                        if (columnType === 'date') {
+                        /*if (columnType === 'date') {
                             //Habria que armar un calendar porque html5 te pone el formato que quiere
                             columnType = 'text';
-                        }
+                        }*/
                         var input = $('<input/>', {
                             type: columnType,
                             value: $(e.target).text(),

@@ -37,7 +37,8 @@ class ProspectController @Inject()(prospectService: ProspectService,
                                    cache : DefaultCacheApi,
                                    val messagesApi: MessagesApi, secureAction: SecureAction) extends Controller with I18nSupport{
 
-  final val format : SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+  final val dateTimeFormat: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+  final val dateFormat: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd")
 
   implicit val documentTypes: List[String] = List("dni","cuit","cuil")
   implicit val institutions : Seq[Institution] = Await.result(institutionService.all(),Duration.Inf)
@@ -127,7 +128,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
 
       val filter : Map[String,String] = form.bindFromRequest().data
 
-      val date = format.format(new DateTime(filter("exitDate")).toDate)
+      val date = dateFormat.format(new DateTime(filter("exitDate")).toDate)
 
       val filtered : List[Prospect] = prospects.filter{x: Prospect =>
         x.firstName.toLowerCase.contains(filter("firstName").toLowerCase) &&
@@ -199,7 +200,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
                                           input("country"),
                                           input("primaryEmail"),
                                           input("secondaryEmail"),
-                                          format.format(now),
+          dateTimeFormat.format(now),
                                           "",
                                           ""
         )
@@ -281,7 +282,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
           input("primaryEmail"),
           input("secondaryEmail"),
           original.createdAt,
-          format.format(now),
+          dateTimeFormat.format(now),
           original.errorDate
         )
         val prospects: List[Prospect] = Await.result(prospectService.all(), Duration.Inf).toList
@@ -435,7 +436,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
                    z.getOrElse("Pais",""),
                    z.getOrElse("Email_1",""),
                    z.getOrElse("Email_2",""),
-                   format.format(now),
+            dateTimeFormat.format(now),
                    "",
                    ""
           )
