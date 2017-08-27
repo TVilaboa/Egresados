@@ -88,12 +88,12 @@ class ScraperActor @Inject() (prospectService: ProspectService,
           val difference : List[News] = news.filter(n=> !activeNews.contains(n.url)).toList
 
           if(difference.nonEmpty) {
-            difference.map(infobaeNewsService.save)
+            Future.sequence(difference.map(infobaeNewsService.save)).map{completion =>
+              val now : Date = Calendar.getInstance().getTime
 
-            val now : Date = Calendar.getInstance().getTime
-
-            val all : List[News] = p.infobaeNews ::: difference
-            prospectService.update(p.copy(infobaeNews = all, updatedAt = format.format(now)))
+              val all : List[News] = p.infobaeNews ::: difference
+              prospectService.update(p.copy(infobaeNews = all, updatedAt = format.format(now)))
+            }
           }
         }
       }
@@ -112,12 +112,12 @@ class ScraperActor @Inject() (prospectService: ProspectService,
           val difference : List[News] = news.filter(n=> !activeNews.contains(n.url)).toList
 
           if(difference.nonEmpty) {
-            difference.map(laNacionNewsService.save)
+            Future.sequence(difference.map(laNacionNewsService.save)).map{completion =>
+              val now : Date = Calendar.getInstance().getTime
 
-            val now : Date = Calendar.getInstance().getTime
-
-            val all : List[News] = p.nacionNews ::: difference
-            prospectService.update(p.copy(nacionNews = all, updatedAt = format.format(now)))
+              val all : List[News] = p.nacionNews ::: difference
+              prospectService.update(p.copy(nacionNews = all, updatedAt = format.format(now)))
+            }
           }
         }
       }
@@ -136,12 +136,12 @@ class ScraperActor @Inject() (prospectService: ProspectService,
           val difference : List[News] = news.filter(n=> !activeNews.contains(n.url)).toList
 
           if(difference.nonEmpty) {
-            difference.map(elCronistaNewsService.save)
+            Future.sequence(difference.map(elCronistaNewsService.save)).map{completion =>
+              val now : Date = Calendar.getInstance().getTime
 
-            val now : Date = Calendar.getInstance().getTime
-
-            val all : List[News] = p.cronistaNews ::: difference
-            prospectService.update(p.copy(cronistaNews = all, updatedAt = format.format(now)))
+              val all : List[News] = p.cronistaNews ::: difference
+              prospectService.update(p.copy(cronistaNews = all, updatedAt = format.format(now)))
+            }
           }
         }
       }
@@ -160,12 +160,12 @@ class ScraperActor @Inject() (prospectService: ProspectService,
           val difference : List[News] = news.filter(n=> !activeNews.contains(n.url)).toList
 
           if(difference.nonEmpty) {
-            difference.map(clarinNewsService.save)
+            Future.sequence(difference.map(clarinNewsService.save)).map{completion =>
+              val now : Date = Calendar.getInstance().getTime
 
-            val now : Date = Calendar.getInstance().getTime
-
-            val all : List[News] = p.clarinNews ::: difference
-            prospectService.update(p.copy(clarinNews = all, updatedAt = format.format(now)))
+              val all : List[News] = p.clarinNews ::: difference
+              prospectService.update(p.copy(clarinNews = all, updatedAt = format.format(now)))
+            }
           }
         }
       }

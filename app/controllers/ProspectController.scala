@@ -473,7 +473,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
     Ok(com.prospects.views.html.link_validation.render(Option(prospect)))
   }
 
-  def postValidation(id: String) =secureAction(parse.json){
+  def postValidation(id: String) = secureAction(parse.json){
     implicit request: Request[JsValue] => {
       val prospect: Prospect = Await.result(prospectService.find(id),Duration.Inf)
 
@@ -482,9 +482,11 @@ class ProspectController @Inject()(prospectService: ProspectService,
         case _ => Map[String, JsValue]()
       }
 
-      links("type").toString() match{
+      val newsType : String = links("type").toString().replace("\"","")
+
+      newsType match{
         case "lanacion" =>
-          val items : List[String] = links("links").asInstanceOf[JsArray].value.map(x=>x.toString()).toList
+          val items : List[String] = links("links").asInstanceOf[JsArray].value.map(x=>x.toString().replace("\"","")).toList
           val filtered: (List[News],List[News]) = prospect.nacionNews.partition(x=> items.contains(x._id))
           val updated : Prospect = prospect.copy(nacionNews = filtered._1)
           prospectService.update(updated)
