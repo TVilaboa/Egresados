@@ -54,7 +54,7 @@
   <div id="page-wrapper">
     <div class="row">
       <div class="col-lg-12">
-        <h1 class="page-header">Prospect Profile</h1>
+        <h1 class="page-header">Perfil del Prospecto</h1>
       </div>
     </div>
 
@@ -71,7 +71,7 @@
               <div class="col-md-6">
               @helper.form(action = routes.ProspectController.edit(prospect.get._id)) {
                 <div align="right">
-                  <button type="submit" class="btn btn-info"><span><i class="fa fa-pencil"></i> Edit</span></button>
+                  <button type="submit" class="btn btn-info"><span><i class="fa fa-pencil"></i> Editar</span></button>
                 </div>
               </div>
             </div>
@@ -79,7 +79,7 @@
           </div>
           <div class="panel-body">
             <fieldset>
-              <legend>Personal Information</legend>
+              <legend>Informacion Personal</legend>
               <div class="row form-group">
                 <div class="col-md-4">
                   <span><strong>Nombre: </strong>@prospect.get.firstName</span>
@@ -110,13 +110,13 @@
               </div>
             </fieldset>
             <fieldset>
-              <legend>Institutional Information</legend>
+              <legend>Informacion Institucional </legend>
               <div class="row form-group">
                 <div class="col-md-4">
                   <span><strong>Institución: </strong>@prospect.get.institution.name</span>
                 </div>
                 <div class="col-md-4">
-                  <span><strong>Código de prospecto: </strong>@prospect.get.institutionCode</span>
+                  <span><strong>Código Institucional: </strong>@prospect.get.institutionCode</span>
                 </div>
                 <div class="col-md-4">
                   <span><strong>Título: </strong>@prospect.get.title</span>

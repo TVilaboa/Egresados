@@ -63,7 +63,7 @@
   <div id="page-wrapper">
     <div class="row">
       <div class="col-lg-12">
-        <h1 class="page-header">Institution</h1>
+          <h1 class="page-header">Institucion</h1>
       </div>
     </div>
 
@@ -75,7 +75,7 @@
           <div class="alert alert-success">
           @helper.form(action = routes.InstitutionController.edit(institution.get._id)) {
             <div align="right">
-              <button type="submit" class="btn btn-info"><span><i class="fa fa-pencil"></i> Edit</span></button>
+                <button type="submit" class="btn btn-info"><span><i class="fa fa-pencil"></i> Editar</span></button>
             </div>
           }
           </div>
@@ -92,11 +92,11 @@
             </div>
               <div class="row form-group">
                   <div class="col-md-6 reference">
-                      <label for="name">Type:</label>
+                      <label for="name">Tipo:</label>
                       <h3 id="name">@institution.get.institutionType</h3>
                   </div>
                   <div class="col-md-6 reference">
-                      <label for="address">Sector:</label>
+                      <label for="address">Rubro:</label>
                       <h3 id="address">@institution.get.sector</h3>
                   </div>
               </div>

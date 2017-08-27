@@ -2,20 +2,20 @@
 
 @(prospect: Map[String, String], action: String)(implicit documentTypes : List[String], institutions: Seq[Institution])
 <fieldset>
-  <legend>Personal Information</legend>
+    <legend>Informacion Personal </legend>
   <div class="row form-group">
     <div class="col-md-6">
-      <label for="firstName">Firstname</label>
+        <label for="firstName">Nombre</label>
       <input type="text" required class="form-control" name="firstName" id="firstName" placeholder="FirstName" value="@prospect("firstName")">
     </div>
     <div class="col-md-6">
-      <label for="lastName">Lastname</label>
+        <label for="lastName">Apellido</label>
       <input type="text" required class="form-control" name="lastName" id="lastName" placeholder="LastName" value="@prospect("lastName")">
     </div>
   </div>
   <div class="row form-group">
     <div class="col-md-6">
-      <label for="documentType">Document Type</label>
+        <label for="documentType">Tipo de Documento</label>
       <select name="documentType" id="documentType" class="form-control">
         @for(documentType: String <- documentTypes){
           @if(prospect("documentType").equals(documentType)){
@@ -27,17 +27,17 @@
       </select>
     </div>
     <div class="col-md-6">
-      <label for="documentId">Document ID</label>
+        <label for="documentId">N° Documento</label>
       <input type="text"  class="form-control" name="documentId" id="documentId" placeholder="DNI" value="@prospect("documentId")">
     </div>
   </div>
   <div class="row form-group">
     <div class="col-md-6">
-      <label for="birthDate">Birth Date</label>
+        <label for="birthDate">Fecha de Nacimiento</label>
       <input type="date" name="birthDate" id="birthDate" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("birthDate")">
     </div>
     <div class="col-md-6">
-      <label for="country">País de Residencia: </label>
+        <label for="country">País de Residencia </label>
         <select name="country" id="country" class="form-control">
             <option value="">Seleccionar</option>
       @for(country: (String,String)<- Locale.getISOCountries.map(c => new Locale("",c).getDisplayCountry) zip Locale.getISOCountries.map(c => new Locale("",c).getDisplayCountry)){
@@ -62,7 +62,7 @@
   </div>
 </fieldset>
 <fieldset>
-  <legend>Institutional Information</legend>
+    <legend>Informacion Institucional</legend>
   <div class="row form-group">
     <div class="col-md-6">
       <label for="institution">Institution</label>
@@ -77,24 +77,24 @@
       </select>
     </div>
     <div class="col-md-6">
-        <label for="institutionCode">Employee Code</label>
-      <input type="text" class="form-control" name="institutionCode" id="institutionCode" placeholder="Docket Code" value="@prospect("institutionCode")">
+        <label for="institutionCode">Codigo Institucional</label>
+        <input type="text" class="form-control" name="institutionCode" id="institutionCode" placeholder="ABC123" value="@prospect("institutionCode")">
     </div>
   </div>
   <div class="row form-group">
     <div class="col-md-6">
-      <label for="career">Title</label>
-      <input type="text" name="title" class="form-control" id="title" placeholder="Title" value="@prospect("title")">
+        <label for="career">Titulo</label>
+        <input type="text" name="title" class="form-control" id="title" placeholder="CEO" value="@prospect("title")">
     </div>
   </div>
   <div class="row form-group">
     <div class="col-md-6">
-      <label for="entryDate">Entry Date</label>
+        <label for="entryDate">Fecha de Ingreso</label>
       <input type="date" name="entryDate" id="entryDate" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("entryDate")">
     </div>
 
     <div class="col-md-6">
-      <label for="exitDate">Exit Date</label>
+        <label for="exitDate">Fecha de Egreso</label>
       <input type="date" name="exitDate" id="exitDate" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("exitDate")">
     </div>
   </div>
