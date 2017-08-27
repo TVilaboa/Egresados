@@ -473,7 +473,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
     Ok(com.prospects.views.html.link_validation.render(Option(prospect)))
   }
 
-  def postValidation(id: String) =secureAction(parse.json){
+  def postValidation(id: String) = secureAction(parse.json){
     implicit request: Request[JsValue] => {
       val prospect: Prospect = Await.result(prospectService.find(id),Duration.Inf)
 
