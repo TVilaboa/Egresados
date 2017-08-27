@@ -482,9 +482,11 @@ class ProspectController @Inject()(prospectService: ProspectService,
         case _ => Map[String, JsValue]()
       }
 
-      links("type").toString() match{
+      val newsType : String = links("type").toString().replace("\"","")
+
+      newsType match{
         case "lanacion" =>
-          val items : List[String] = links("links").asInstanceOf[JsArray].value.map(x=>x.toString()).toList
+          val items : List[String] = links("links").asInstanceOf[JsArray].value.map(x=>x.toString().replace("\"","")).toList
           val filtered: (List[News],List[News]) = prospect.nacionNews.partition(x=> items.contains(x._id))
           val updated : Prospect = prospect.copy(nacionNews = filtered._1)
           prospectService.update(updated)
