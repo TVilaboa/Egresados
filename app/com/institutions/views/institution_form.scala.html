@@ -1,19 +1,19 @@
 @(institution: Map[String,String], action: String)
 <fieldset>
-  <legend>Institution Information</legend>
+  <legend>Informacion Institucional</legend>
   <div class="row form-group">
     <div class="col-md-6">
-      <label for="name">Name</label>
-      <input value="@institution("name")" type="text" class="form-control" name="name" id="name" placeholder="Name">
+      <label for="name">Nombre</label>
+      <input value="@institution("name")" type="text" class="form-control" name="name" id="name" placeholder="Universidad Austral">
     </div>
     <div class="col-md-6">
-      <label for="address">Address</label>
-      <input value="@institution("address")" type="text" class="form-control" name="address" id="address" placeholder="Address">
+      <label for="address">Direccion</label>
+      <input value="@institution("address")" type="text" class="form-control" name="address" id="address" placeholder="Mariano Acosta 123">
     </div>
   </div>
   <div class="row form-group">
     <div class="col-md-6">
-      <label for="institutionType">Institution Type</label>
+      <label for="institutionType">Tipo de Institucion</label>
       <select name="institutionType" title="institutionType" class="form-control">
         <option value="">Seleccionar</option>
         @for(iType <- enums.InstitutionType.values) {
@@ -28,7 +28,7 @@
       </select>
     </div>
     <div class="col-md-6">
-      <label for="sector">Institution Sector</label>
+      <label for="sector">Rubro</label>
       <select name="sector" title="sector" class="form-control">
 
         <option value="">Seleccionar</option>
