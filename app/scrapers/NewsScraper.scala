@@ -34,29 +34,29 @@ trait NewsScraper {
       val author : Option[String] = getAuthor(document.get)
 
       if(validateScrap(title,tuft,date,author) && validateNews(name,document.get)){
-        SUCCESS_LOGGER.info(s"${scraper} :-: '${name.get}'  Scrapped Successfully :-: ${url}")
-        Some(News(UUID.randomUUID().toString,url,title.get,date.get,tuft.get,author.get))
+        SUCCESS_LOGGER.info(s"$scraper :-: '${name.get}'  Scrapped Successfully :-: $url")
+        Some(News(UUID.randomUUID().toString,url,title.get,date.get,tuft.get,author.get, validated = false))
       }
       else{
-        ERROR_LOGGER.warn(s"${scraper} :-: '${name.get}' No Data Available or News is not valid :-: ${url}")
+        ERROR_LOGGER.warn(s"$scraper :-: '${name.get}' No Data Available or News is not valid :-: $url")
         None
       }
     }
     catch{
-      case  e: ReadTimeoutException =>{
+      case  e: ReadTimeoutException =>
         if (cycle == 0)
           getArticleData(url, name, cycle + 1)
         else {
-          ERROR_LOGGER.error(s"${scraper} :-: '${name.get}' ${e.toString} :-: ${url}")
+          ERROR_LOGGER.error(s"$scraper :-: '${name.get}' ${e.toString} :-: $url")
           None
         }
-      }
-      case e : IOException => {
-        ERROR_LOGGER.error(s"${scraper} :-: '${name.get}' ${e.toString} :-: ${url}")
+
+      case e : IOException =>
+        ERROR_LOGGER.error(s"$scraper :-: '${name.get}' ${e.toString} :-: $url")
         None
-      }
+
       case e: IOException =>
-        ERROR_LOGGER.error(s"${scraper} :-: '${name.get}' ${e.toString} :-: ${url}")
+        ERROR_LOGGER.error(s"$scraper :-: '${name.get}' ${e.toString} :-: $url")
         None
     }
   }

@@ -191,7 +191,7 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
     for(bsonV : BsonValue <- bson.getValues){
       val doc = bsonV.asDocument()
       news = news :+ News(doc.get("_id").asString().getValue,doc.get("url").asString().getValue,doc.get("title").asString().getValue,
-        doc.get("date").asString().getValue,doc.get("tuft").asString().getValue,doc.get("author").asString().getValue)
+        doc.get("date").asString().getValue,doc.get("tuft").asString().getValue,doc.get("author").asString().getValue,false)
     }
     news
   }
@@ -201,7 +201,7 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
     for(bsonV : BsonValue <- bson.getValues){
       val doc = bsonV.asDocument()
       news = news :+ News(doc.get("_id").asString().getValue,doc.get("url").asString().getValue,doc.get("title").asString().getValue,
-        doc.get("date").asString().getValue,doc.get("tuft").asString().getValue,doc.get("author").asString().getValue)
+        doc.get("date").asString().getValue,doc.get("tuft").asString().getValue,doc.get("author").asString().getValue,false)
     }
     news
   }
@@ -211,7 +211,7 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
     for(bsonV : BsonValue <- bson.getValues){
       val doc = bsonV.asDocument()
       news = news :+ News(doc.get("_id").asString().getValue,doc.get("url").asString().getValue,doc.get("title").asString().getValue,
-        doc.get("date").asString().getValue,doc.get("tuft").asString().getValue,doc.get("author").asString().getValue)
+        doc.get("date").asString().getValue,doc.get("tuft").asString().getValue,doc.get("author").asString().getValue,false)
     }
     news
   }
@@ -221,7 +221,7 @@ class MongoGraduateDao @Inject()(mongo: Mongo) extends GraduateDao {
     for(bsonV : BsonValue <- bson.getValues){
       val doc = bsonV.asDocument()
       news = news :+ News(doc.get("_id").asString().getValue,doc.get("url").asString().getValue,doc.get("title").asString().getValue,
-        doc.get("date").asString().getValue,doc.get("tuft").asString().getValue,doc.get("author").asString().getValue)
+        doc.get("date").asString().getValue,doc.get("tuft").asString().getValue,doc.get("author").asString().getValue,false)
     }
     news
   }

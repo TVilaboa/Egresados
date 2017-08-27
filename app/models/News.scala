@@ -9,8 +9,11 @@ case class News(
                  title: String,
                  date: String,
                  tuft:String,
-                 author: String
-               )
+                 author: String,
+                 validated : Boolean
+               ){
+  def selected : String = if(validated) "checked" else ""
+}
 
 object News {
 

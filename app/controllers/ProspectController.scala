@@ -66,25 +66,29 @@ class ProspectController @Inject()(prospectService: ProspectService,
                                  "title" -> text(),
                                  "date" -> text(),
                                  "tuft" -> text(),
-                                 "author" -> text())(News.apply)(News.unapply)),
+                                 "author" -> text(),
+                                 "validated" -> boolean)(News.apply)(News.unapply)),
     "infobaeNews" -> list(mapping("_id" -> text(),
                                   "url" -> text(),
                                   "title" -> text(),
                                   "date" -> text(),
                                   "tuft" -> text(),
-                                  "author" -> text())(News.apply)(News.unapply)),
+                                  "author" -> text(),
+                                  "validated" -> boolean)(News.apply)(News.unapply)),
     "clarinNews" -> list(mapping("_id" -> text(),
                                  "url" -> text(),
                                  "title" -> text(),
                                  "date" -> text(),
                                  "tuft" -> text(),
-                                 "author" -> text())(News.apply)(News.unapply)),
+                                 "author" -> text(),
+                                 "validated" -> boolean)(News.apply)(News.unapply)),
     "cronistaNews" -> list(mapping("_id" -> text(),
                                    "url" -> text(),
                                    "title" -> text(),
                                    "date" -> text(),
                                    "tuft" -> text(),
-                                   "author" -> text())(News.apply)(News.unapply)),
+                                   "author" -> text(),
+                                   "validated" -> boolean)(News.apply)(News.unapply)),
     "linkedInProfile" -> mapping("_id" -> text(),
                                  "actualPosition" -> text(),
                                  "jobList" -> list(mapping("_id" -> text(),
@@ -488,31 +492,43 @@ class ProspectController @Inject()(prospectService: ProspectService,
         case "lanacion" =>
           val items : List[String] = links("links").asInstanceOf[JsArray].value.map(x=>x.toString().replace("\"","")).toList
           val filtered: (List[News],List[News]) = prospect.nacionNews.partition(x=> items.contains(x._id))
-          val updated : Prospect = prospect.copy(nacionNews = filtered._1)
+
+          val validated : List[News] = filtered._1.map(_.copy(validated = true))
+          validated.map(news => lanacionService.update(news))
+          val updated : Prospect = prospect.copy(nacionNews = validated)
           prospectService.update(updated)
           filtered._2.map(x => lanacionService.drop(x))
           Ok(Json.toJson(Map("status"->"OK", "erased"->"lanacion")))
 
         case "infobae" =>
-          val items : List[String] = links("links").asInstanceOf[JsArray].value.map(x=>x.toString()).toList
+          val items : List[String] = links("links").asInstanceOf[JsArray].value.map(x=>x.toString().replace("\"","")).toList
           val filtered: (List[News],List[News]) = prospect.infobaeNews.partition(x=> items.contains(x._id))
-          val updated : Prospect = prospect.copy(infobaeNews = filtered._1)
+
+          val validated : List[News] = filtered._1.map(_.copy(validated = true))
+          validated.map(news => infobaeService.update(news))
+          val updated : Prospect = prospect.copy(infobaeNews = validated)
           prospectService.update(updated)
           filtered._2.map(x => infobaeService.drop(x))
           Ok(Json.toJson(Map("status"->"OK", "erased"->"infobae")))
 
         case "clarin" =>
-          val items : List[String] = links("links").asInstanceOf[JsArray].value.map(x=>x.toString()).toList
+          val items : List[String] = links("links").asInstanceOf[JsArray].value.map(x=>x.toString().replace("\"","")).toList
           val filtered: (List[News],List[News]) = prospect.clarinNews.partition(x=> items.contains(x._id))
-          val updated : Prospect = prospect.copy(clarinNews = filtered._1)
+
+          val validated : List[News] = filtered._1.map(_.copy(validated = true))
+          validated.map(news => clarinService.update(news))
+          val updated : Prospect = prospect.copy(clarinNews = validated)
           prospectService.update(updated)
           filtered._2.map(x => clarinService.drop(x))
           Ok(Json.toJson(Map("status"->"OK", "erased"->"clarin")))
 
         case "elcronista" =>
-          val items : List[String] = links("links").asInstanceOf[JsArray].value.map(x=>x.toString()).toList
+          val items : List[String] = links("links").asInstanceOf[JsArray].value.map(x=>x.toString().replace("\"","")).toList
           val filtered: (List[News],List[News]) = prospect.cronistaNews.partition(x=> items.contains(x._id))
-          val updated : Prospect = prospect.copy(cronistaNews = filtered._1)
+
+          val validated : List[News] = filtered._1.map(_.copy(validated = true))
+          validated.map(news => cronistaService.update(news))
+          val updated : Prospect = prospect.copy(cronistaNews = validated)
           prospectService.update(updated)
           filtered._2.map(x => cronistaService.drop(x))
           Ok(Json.toJson(Map("status"->"OK", "erased"->"elcronista")))

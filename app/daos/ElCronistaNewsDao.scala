@@ -99,14 +99,18 @@ class MongoElCronistaNewsDao @Inject()(mongo: Mongo) extends ElCronistaNewsDao {
   }
 
   private def documentToElCronistaNews(doc: Document): News = {
+    val validated : Boolean = try{doc.get("validated").get.asBoolean().getValue} catch {case e:Exception => false}
+
     News(
       doc.get("_id").get.asString().getValue,
       doc.get("url").get.asString().getValue,
       doc.get("title").get.asString().getValue,
       doc.get("date").get.asString().getValue,
       doc.get("tuft").get.asString().getValue,
-      doc.get("author").get.asString().getValue
+      doc.get("author").get.asString().getValue,
+      validated
     )
+
   }
 
 }

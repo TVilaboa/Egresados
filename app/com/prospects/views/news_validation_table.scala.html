@@ -14,6 +14,7 @@
           <thead>
             <tr>
               <th></th>
+              <th>Validada</th>
               <th>Titulo</th>
               <th>Copete</th>
               <th>Link</th>
@@ -23,8 +24,15 @@
             <ul>
             @for(item: News <- news){
               <tr id="@item._id">
-                <td>
-                  <input type="checkbox" name="@source" value="@item._id">
+                  <td>
+                      <input type="checkbox" class="pull-left" name="@source" value="@item._id" @item.selected>
+                  </td>
+                  <td>
+                  @if(item.validated){
+                    <span class="alert-success"><i class="fa fa-check-circle-o"></i> Validada</span>
+                  } else {
+                    <span class="alert-danger"><i class="fa fa-exclamation-circle"></i> No Validada</span>
+                  }
                 </td>
                 <td>@item.title</td>
                 <td>@item.tuft</td>

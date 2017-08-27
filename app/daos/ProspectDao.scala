@@ -153,12 +153,18 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
 
   private def transformNews(bson : BsonArray): List[News] = {
     bson.getValues.toList.map(_.asDocument()).map{x =>
-      News( x.get("_id").asString().getValue,
-            x.get("url").asString().getValue,
-            x.get("title").asString().getValue,
-            x.get("date").asString().getValue,
-            x.get("tuft").asString().getValue,
-            x.get("author").asString().getValue)
+      val validated : Boolean = try{x.get("validated").asBoolean().getValue} catch {case e:Exception => false}
+
+      News(
+        x.get("_id").asString().getValue,
+        x.get("url").asString().getValue,
+        x.get("title").asString().getValue,
+        x.get("date").asString().getValue,
+        x.get("tuft").asString().getValue,
+        x.get("author").asString().getValue,
+        validated
+      )
+
     }
   }
 
