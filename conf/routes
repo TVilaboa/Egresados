@@ -52,6 +52,7 @@ POST        /prospects-load               controllers.ProspectController.loadPot
 GET         /prospects-load               controllers.ProspectController.loadPotentialProspects
 GET         /prospects/:id/validate       controllers.ProspectController.showValidation(id: String)
 POST        /prospects/:id/validate       controllers.ProspectController.postValidation(id: String)
+POST        /prospects/:id/add-link       controllers.ProspectController.addLink(id: String)
 
 #LinkedInScraper
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

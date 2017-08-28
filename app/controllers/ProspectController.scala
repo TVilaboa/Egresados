@@ -19,6 +19,7 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 import play.api.mvc.{Controller, Request}
 import play.cache.DefaultCacheApi
+import scrapers._
 import services._
 
 import scala.concurrent.duration._
@@ -30,10 +31,15 @@ import scala.concurrent.{Await, Future}
 class ProspectController @Inject()(prospectService: ProspectService,
                                    institutionService: InstitutionService,
                                    linkedInService: LinkedinUserProfileService,
+                                   linkedinUserProfileScraper: LinkedinUserProfileScraper,
                                    lanacionService: LaNacionNewsService,
+                                   laNacionScraper: LaNacionScraper,
                                    infobaeService: InfobaeNewsService,
+                                   infobaeScraper: InfobaeScraper,
                                    clarinService: ClarinNewsService,
+                                   clarinScraper: ClarinScraper,
                                    cronistaService: ElCronistaNewsService,
+                                   cronistaScraper: ElCronistaScraper,
                                    cache : DefaultCacheApi,
                                    val messagesApi: MessagesApi, secureAction: SecureAction) extends Controller with I18nSupport{
 
@@ -484,6 +490,75 @@ class ProspectController @Inject()(prospectService: ProspectService,
         case _ =>
           Ok(Json.toJson(Map("status"->"nothing")))
       }
+    }
+  }
+
+  def addLink(id : String) = secureAction.async(parse.json){
+    implicit request : Request[JsValue]=>{
+
+      val data: Map[String, JsValue] = request.body match{
+        case JsObject(fields) => fields.toMap
+        case _ => Map[String, JsValue]()
+      }
+      val link : String = data("link").toString().replace("\"","")
+      val source : String = data("source").toString().replace("\"","")
+
+      val prospect : Future[Prospect] = prospectService.find(id)
+
+      prospect.map{p =>
+
+        source match {
+          case "lanacion" =>
+            val news : Option[News] = laNacionScraper.getArticleData(link, Option(p.getFullName),0)
+            news match{
+              case Some(x) =>
+                val newsList : List[News] = p.nacionNews
+                lanacionService.save(x)
+                prospectService.update(p.copy(nacionNews = newsList :+ x))
+                Ok(Json.toJson(Map("status" -> "OK")))
+              case None =>
+                Ok(Json.toJson(Map("status" -> "nothing")))
+            }
+          case "infobae" =>
+            val news : Option[News] = infobaeScraper.getArticleData(link, Option(p.getFullName),0)
+            news match{
+              case Some(x) =>
+                val newsList : List[News] = p.infobaeNews
+                infobaeService.save(x)
+                prospectService.update(p.copy(infobaeNews = newsList :+ x))
+                Ok(Json.toJson(Map("status" -> "OK")))
+              case None =>
+                Ok(Json.toJson(Map("status" -> "nothing")))
+            }
+          case "clarin" =>
+            val news : Option[News] = laNacionScraper.getArticleData(link, Option(p.getFullName),0)
+            news match{
+              case Some(x) =>
+                val newsList : List[News] = p.clarinNews
+                clarinService.save(x)
+                prospectService.update(p.copy(clarinNews = newsList :+ x))
+                Ok(Json.toJson(Map("status" -> "OK")))
+              case None =>
+                Ok(Json.toJson(Map("status" -> "nothing")))
+            }
+          case "elcronista" =>
+            val news : Option[News] = cronistaScraper.getArticleData(link, Option(p.getFullName),0)
+            news match{
+              case Some(x) =>
+                val newsList : List[News] = p.cronistaNews
+                cronistaService.save(x)
+                prospectService.update(p.copy(cronistaNews = newsList :+ x))
+                Ok(Json.toJson(Map("status" -> "OK")))
+              case None =>
+                Ok(Json.toJson(Map("status" -> "nothing")))
+            }
+          case "linkedin" =>
+            Ok(Json.toJson(Map("status" -> "OK")))
+          case _ => Ok(Json.toJson(Map("status"->"nothing")))
+
+        }
+      }
+
     }
   }
 }

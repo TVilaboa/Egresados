@@ -47,6 +47,29 @@
             });
           });
   </script>
+  <script>
+    function addLink(source) {
+      var link = $('#'+source+'-input').val();
+      var data = {'link' : link,
+                  'source' : source
+                 };
+
+      $.ajax({
+        url: '@routes.ProspectController.addLink(prospect.get._id)',
+        type: 'POST',
+        contentType: 'application/json',
+        data : JSON.stringify(data),
+        success: function(response){
+          if(response.status === 'OK'){
+            location.reload();
+          }
+        },
+        error : function(response){
+          console.log("ERROR " + response);
+        }
+      });
+    }
+  </script>
 }
 
 @layout(title = "Prospect Tracker | Prospect Profile", scripts, css) {
@@ -135,12 +158,16 @@
             <fieldset>
               <legend>News Tracking</legend>
               @com.prospects.views.html.prospect_news.render(prospect.get.nacionNews,"Noticias: La Nación", "lanacion", prospect.get._id)
+              @com.prospects.views.html.add_link("lanacion-modal", "Agregar Link La Nacion", "lanacion")
               <hr>
               @com.prospects.views.html.prospect_news.render(prospect.get.clarinNews,"Noticias: Clarín", "clarin", prospect.get._id)
+              @com.prospects.views.html.add_link("clarin-modal", "Agregar Link Clarin", "clarin")
               <hr>
               @com.prospects.views.html.prospect_news.render(prospect.get.cronistaNews,"Noticias: El Cronista", "elcronista", prospect.get._id)
+              @com.prospects.views.html.add_link("elcronista-modal", "Agregar Link El Cronista", "elcronista")
               <hr>
-              @com.prospects.views.html.prospect_news.render(prospect.get.infobaeNews,"Noticias: Infobae", "infobae", prospect.get._id)
+                @com.prospects.views.html.prospect_news.render(prospect.get.infobaeNews,"Noticias: Infobae", "infobae", prospect.get._id)
+                @com.prospects.views.html.add_link("infobae-modal", "Agregar Link Infobae", "infobae")
             </fieldset>
             <fieldset>
               <legend>LinkedIn Tracking</legend>
