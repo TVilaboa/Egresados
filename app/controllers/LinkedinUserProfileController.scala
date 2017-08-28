@@ -44,7 +44,7 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
 
     val profiles: List[LinkedinUserProfile] = links.map(x => scraper.getLinkedinProfile(x, 0)).filter(_.isDefined).map(_.get)
 
-    //TODO :: Aca tiene que matchear contra las ya existentes para no pisar las validadas y rechazadas
+    //TODO :: Logica duplicada en ScraperActor, para todos los scraps. Unificar!
     if(profiles.nonEmpty){
       var updatedProfiles: List[LinkedinUserProfile] = List[LinkedinUserProfile]()
       for (profile <- profiles) {

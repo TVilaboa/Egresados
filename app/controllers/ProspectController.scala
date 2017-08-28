@@ -554,7 +554,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
             }
           case "linkedin" =>
             val profile : Option[LinkedinUserProfile] = linkedinUserProfileScraper.getLinkedinProfile(link,0)
-            profile.match{
+            profile match {
               case Some(x) =>
                 val profiles : List[LinkedinUserProfile] = p.linkedInProfiles
                 linkedInService.save(x)

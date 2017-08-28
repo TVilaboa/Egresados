@@ -15,6 +15,7 @@
             <tr>
               <th></th>
               <th>Validada</th>
+                <th>Rechazada</th>
               <th>Titulo</th>
               <th>Copete</th>
               <th>Link</th>
@@ -28,12 +29,19 @@
                       <input type="checkbox" class="pull-left" name="@source" value="@item._id" @item.selected>
                   </td>
                   <td>
-                  @if(item.validated){
-                    <span class="alert-success"><i class="fa fa-check-circle-o"></i> Validada</span>
+                  @if(item.validated) {
+                      <span class="alert-success"><i class="fa fa-check-circle-o"></i> Validada</span>
                   } else {
-                    <span class="alert-danger"><i class="fa fa-exclamation-circle"></i> No Validada</span>
+                      <span class="alert-danger"><i class="fa fa-exclamation-circle"></i> No Validada</span>
                   }
-                </td>
+                  </td>
+                  <td>
+                  @if(!item.rejected) {
+                      <span class="alert-success"><i class="fa fa-check-circle-o"></i> No Rechazada</span>
+                  } else {
+                      <span class="alert-danger"><i class="fa fa-exclamation-circle"></i> Rechazada</span>
+                  }
+                  </td>
                 <td>@item.title</td>
                 <td>@item.tuft</td>
                 <td>
@@ -54,6 +62,7 @@
               Validate</span></button>
       </div>
     </div>
+
   </div>
 </div>
 <hr>

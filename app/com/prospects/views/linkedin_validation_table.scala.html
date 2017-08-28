@@ -15,6 +15,7 @@
                         <tr>
                             <th></th>
                             <th>Validado</th>
+                            <th>Rechazado</th>
                             <th>Link</th>
                         </tr>
                     </thead>
@@ -30,6 +31,13 @@
                                     <span class="alert-success"><i class="fa fa-check-circle-o"></i> Validado</span>
                                 } else {
                                     <span class="alert-danger"><i class="fa fa-exclamation-circle"></i> No Validado</span>
+                                }
+                                </td>
+                                <td>
+                                @if(!item.rejected) {
+                                    <span class="alert-success"><i class="fa fa-check-circle-o"></i> No Rechazado</span>
+                                } else {
+                                    <span class="alert-danger"><i class="fa fa-exclamation-circle"></i> Rechazado</span>
                                 }
                                 </td>
 
