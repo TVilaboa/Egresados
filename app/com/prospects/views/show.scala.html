@@ -166,8 +166,8 @@
               @com.prospects.views.html.prospect_news.render(prospect.get.cronistaNews,"Noticias: El Cronista", "elcronista", prospect.get._id)
               @com.prospects.views.html.add_link("elcronista-modal", "Agregar Link El Cronista", "elcronista")
               <hr>
-                @com.prospects.views.html.prospect_news.render(prospect.get.infobaeNews,"Noticias: Infobae", "infobae", prospect.get._id)
-                @com.prospects.views.html.add_link("infobae-modal", "Agregar Link Infobae", "infobae")
+              @com.prospects.views.html.prospect_news.render(prospect.get.infobaeNews,"Noticias: Infobae", "infobae", prospect.get._id)
+              @com.prospects.views.html.add_link("infobae-modal", "Agregar Link Infobae", "infobae")
             </fieldset>
             <fieldset>
               <legend>LinkedIn Tracking</legend>
@@ -176,14 +176,19 @@
                   <div class="col-md-2">
                     <span>No se encontró un perfil de LinkedIn</span>
                   </div>
-                  <div class="col-md-2">
+                  <div class="col-md-3">
                     @helper.form(action = routes.LinkedinUserProfileController.search(prospect.get._id)){
                       <button class="btn btn-info">
                         <span><i class="fa fa-linkedin"></i> Buscar Perfil LinkedIn</span>
                       </button>
                     }
                   </div>
-                  <div class="col-md-8"></div>
+                  <div class="col-md-3">
+                    <button class="btn btn-info" data-toggle="modal" data-target="#linkedin-modal"><span><i class="fa fa-link"></i> Agregar Link</span></button>
+                  </div>
+                  @com.prospects.views.html.add_link("linkedin-modal", "Agregar Url LinkedIn", "linkedin")
+
+                <div class="col-md-4"></div>
                 } else{
 
                   <div class="col-lg-12">

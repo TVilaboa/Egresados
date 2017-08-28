@@ -553,9 +553,16 @@ class ProspectController @Inject()(prospectService: ProspectService,
                 Ok(Json.toJson(Map("status" -> "nothing")))
             }
           case "linkedin" =>
-            Ok(Json.toJson(Map("status" -> "OK")))
+            val profile : Option[LinkedinUserProfile] = linkedinUserProfileScraper.getLinkedinProfile(link,0)
+            profile.match{
+              case Some(x) =>
+                val profiles : List[LinkedinUserProfile] = p.linkedInProfiles
+                linkedInService.save(x)
+                prospectService.update(p.copy(linkedInProfiles = profiles :+ x))
+                Ok(Json.toJson(Map("status" -> "OK")))
+              case None => Ok(Json.toJson(Map("status"->"nothing")))
+            }
           case _ => Ok(Json.toJson(Map("status"->"nothing")))
-
         }
       }
 
