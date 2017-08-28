@@ -1,22 +1,19 @@
 package controllers
 
-import actions.SecureAction
 import com.google.inject.Inject
 import models._
-import play.api.http.ContentTypes
 import play.api.i18n.MessagesApi
 import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
 import services._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
 /**
   * Created by sebi on 24/10/16.
   */
-class RestApiController @Inject()(graduateService: GraduateService,
+class RestApiController @Inject()(prospectService: ProspectService,
                                   sessionService: SessionService,
 
                                   newsInfobaeService: InfobaeNewsService,
@@ -26,8 +23,8 @@ class RestApiController @Inject()(graduateService: GraduateService,
 
   def getAllInfobaeData =Action { implicit request => {
     var info = List[News]()
-    var graduates = Seq[Graduate]()
-    val all: Future[Seq[Graduate]] = graduateService.all()
+    var graduates = Seq[Prospect]()
+    val all: Future[Seq[Prospect]] = prospectService.all()
     graduates = Await.result(all,Duration.Inf)
     for(grad <- graduates){
       info =  info ::: grad.infobaeNews
@@ -40,9 +37,9 @@ class RestApiController @Inject()(graduateService: GraduateService,
     }
   }
 
-  def getAllEgresadosData =Action { implicit request => {
-    var info = Seq[Graduate]()
-    val all: Future[Seq[Graduate]] = graduateService.all()
+  def getAllProspectsData = Action { implicit request => {
+    var info = Seq[Prospect]()
+    val all: Future[Seq[Prospect]] = prospectService.all()
     info = Await.result(all,Duration.Inf)
     if(info.isEmpty){
       Ok("{\"type\":\"success\",\"value\": \"There is no data\" }")
@@ -53,11 +50,11 @@ class RestApiController @Inject()(graduateService: GraduateService,
 
   def getAllLaNacionData =Action { implicit request => {
     var info = List[News]()
-    var graduates = Seq[Graduate]()
-    val all: Future[Seq[Graduate]] = graduateService.all()
+    var graduates = Seq[Prospect]()
+    val all: Future[Seq[Prospect]] = prospectService.all()
     graduates = Await.result(all,Duration.Inf)
-    for(grad <- graduates){
-      info =  info ::: grad.laNacionNews
+    for (prospect <- graduates) {
+      info = info ::: prospect.nacionNews
     }
     if(info.isEmpty){
       Ok("{\"type\":\"success\",\"value\": \"There is no data\" }")
@@ -68,11 +65,11 @@ class RestApiController @Inject()(graduateService: GraduateService,
 
   def getAllClarinData =Action { implicit request => {
     var info = List[News]()
-    var graduates = Seq[Graduate]()
-    val all: Future[Seq[Graduate]] = graduateService.all()
+    var graduates = Seq[Prospect]()
+    val all: Future[Seq[Prospect]] = prospectService.all()
     graduates = Await.result(all,Duration.Inf)
-    for(grad <- graduates){
-      info =  info ::: grad.clarinNews
+    for (prospect <- graduates) {
+      info = info ::: prospect.clarinNews
     }
     if(info.isEmpty){
       Ok("{\"type\":\"success\",\"value\": \"There is no data\" }")
@@ -83,11 +80,11 @@ class RestApiController @Inject()(graduateService: GraduateService,
 
   def getAllElCronistaData =Action { implicit request => {
     var info = List[News]()
-    var graduates = Seq[Graduate]()
-    val all: Future[Seq[Graduate]] = graduateService.all()
-    graduates = Await.result(all,Duration.Inf)
-    for(grad <- graduates){
-      info =  info ::: grad.elCronistaNews
+    var prospects = Seq[Prospect]()
+    val all: Future[Seq[Prospect]] = prospectService.all()
+    prospects = Await.result(all, Duration.Inf)
+    for (prospect <- prospects) {
+      info = info ::: prospect.cronistaNews
     }
     if(info.isEmpty){
       Ok("{\"type\":\"success\",\"value\": \"There is no data\" }")
@@ -98,11 +95,11 @@ class RestApiController @Inject()(graduateService: GraduateService,
 
   def getAllLinkedInData =Action { implicit request => {
     var info = List[LinkedinUserProfile]()
-    var graduates = Seq[Graduate]()
-    val all: Future[Seq[Graduate]] = graduateService.all()
-    graduates = Await.result(all,Duration.Inf)
-    for(grad <- graduates){
-      info =  grad.linkedinUserProfile :: info
+    var prospects = Seq[Prospect]()
+    val all: Future[Seq[Prospect]] = prospectService.all()
+    prospects = Await.result(all, Duration.Inf)
+    for (prospect <- prospects) {
+      info = prospect.linkedInProfiles ::: info
     }
     if(info.isEmpty){
       Ok("{\"type\":\"success\",\"value\": \"There is no data\" }")
@@ -113,7 +110,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
 
 
   def getOneInfobaeData(id:String) =Action {implicit request =>{
-    val find = graduateService.find(id)
+    val find = prospectService.find(id)
     try {
       val one = Await.result(find, Duration.Inf)
       if(one.infobaeNews.isEmpty){
@@ -127,13 +124,13 @@ class RestApiController @Inject()(graduateService: GraduateService,
   }}
 
   def getOneLaNacionData(id:String) =Action {implicit request =>{
-    val find= graduateService.find(id)
+    val find = prospectService.find(id)
     try {
       val one = Await.result(find, Duration.Inf)
-      if(one.laNacionNews.isEmpty){
+      if (one.nacionNews.isEmpty) {
         Ok("{\"type\":\"success\",\"value\": \"The graduate exists, but there is no data\" }")
       }else{
-        Ok("{\"type\":\"success\",\"value\": " + Json.prettyPrint(Json.toJson(find.value.get.get.laNacionNews)) + "}")
+        Ok("{\"type\":\"success\",\"value\": " + Json.prettyPrint(Json.toJson(find.value.get.get.nacionNews)) + "}")
       }
     }catch{
       case e: Exception => Ok("{\"type\":\"error\",\"value\": \"The graduate couldn't be found\" }")
@@ -141,7 +138,7 @@ class RestApiController @Inject()(graduateService: GraduateService,
   }}
 
   def getOneClarinData(id:String) =Action {implicit request =>{
-    val find= graduateService.find(id)
+    val find = prospectService.find(id)
     try {
       val one = Await.result(find, Duration.Inf)
       if(one.clarinNews.isEmpty){
@@ -155,13 +152,13 @@ class RestApiController @Inject()(graduateService: GraduateService,
   }}
 
   def getOneElCronistaData(id:String) =Action {implicit request =>{
-    val find= graduateService.find(id)
+    val find = prospectService.find(id)
     try {
       val one = Await.result(find, Duration.Inf)
-      if(one.elCronistaNews.isEmpty){
+      if (one.cronistaNews.isEmpty) {
         Ok("{\"type\":\"success\",\"value\": \"The graduate exists, but there is no data\" }")
       }else{
-        Ok("{\"type\":\"success\",\"value\": " + Json.prettyPrint(Json.toJson(find.value.get.get.elCronistaNews)) + "}")
+        Ok("{\"type\":\"success\",\"value\": " + Json.prettyPrint(Json.toJson(find.value.get.get.cronistaNews)) + "}")
       }
     }catch{
       case e: Exception => Ok("{\"type\":\"error\",\"value\": \"The graduate couldn't be found\" }")
@@ -170,13 +167,13 @@ class RestApiController @Inject()(graduateService: GraduateService,
 
 
   def getOneLinkedinData(id:String) =Action {implicit request =>{
-    val find= graduateService.find(id)
+    val find = prospectService.find(id)
     try {
       val one = Await.result(find, Duration.Inf)
-      if(one.linkedinUserProfile == null){
+      if (one.linkedInProfiles.isEmpty) {
         Ok("{\"type\":\"success\",\"value\": \"The graduate exists, but there is no data\" }")
       }else{
-        Ok("{\"type\":\"success\",\"value\": " + Json.prettyPrint(Json.toJson(find.value.get.get.linkedinUserProfile)) + "}")
+        Ok("{\"type\":\"success\",\"value\": " + Json.prettyPrint(Json.toJson(find.value.get.get.linkedInProfiles)) + "}")
       }
     }catch{
       case e: Exception => Ok("{\"type\":\"error\",\"value\": \"The graduate couldn't be found\" }")
@@ -184,11 +181,11 @@ class RestApiController @Inject()(graduateService: GraduateService,
   }}
 
 
-  def getAllEgresadosByCareer(career : String)=Action { implicit request => {
-    var info= Seq[Graduate]()
-    val all: Future[Seq[Graduate]] = graduateService.all()
+  def getAllProspectsByCareer(career: String) = Action { implicit request => {
+    var info = Seq[Prospect]()
+    val all: Future[Seq[Prospect]] = prospectService.all()
     info = Await.result(all,Duration.Inf)
-    val selectInfo = info.filter(_.career.toLowerCase.contains(career.toLowerCase))
+    val selectInfo = info.filter(_.title.toLowerCase.contains(career.toLowerCase))
     if(selectInfo.isEmpty) {
       Ok("{\"type\":\"success\",\"value\": \"There is no data\" }")
     } else {

@@ -89,10 +89,12 @@
             $( document ).ready(function() {
                 document.getElementById("prospectForm").noValidate = false;
                 var $inputs = $('input[name=secondaryEmail],input[name=primaryEmail]');
-                $inputs.on('input', function () {
+                var evalRequired = function () {
                     // Set the required property of the other input to false if this input is not empty.
                     $inputs.not(this).prop('required', !$(this).val().length);
-                });
+                };
+                $inputs.on('input', evalRequired);
+                $inputs.each(evalRequired);
             });
 
     </script>

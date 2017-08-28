@@ -110,7 +110,11 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
     }
 
     //Get LinkedInProfile
-    val linkedInProfile : LinkedinUserProfile = try{ transformProfile(document.get("linkedInProfile").get.asDocument())} catch {case  e : Exception => LinkedinUserProfile("","",Nil,Nil,"")}
+    val linkedInProfile: List[LinkedinUserProfile] = try {
+      transformProfiles(document.get("linkedInProfiles").get.asArray())
+    } catch {
+      case e: Exception => List[LinkedinUserProfile]()
+    }
 
     //Get Country
     val country : String = try{ document.get("country").get.asString().getValue} catch {case  e : Exception => "" }
@@ -125,35 +129,17 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
     val errorDate : String = try{ document.get("errorDate").get.asString().getValue} catch {case  e : Exception => "" }
 
     //Generate Prospect
-    Prospect(
-      document.get("_id").get.asString().getValue,
-      document.get("firstName").get.asString().getValue,
-      document.get("lastName").get.asString().getValue,
-      document.get("documentType").get.asString().getValue,
-      document.get("documentId").get.asString().getValue,
-      document.get("birthDate").get.asString().getValue,
-      document.get("entryDate").get.asString().getValue,
-      document.get("exitDate").get.asString().getValue,
-      institution,
-      document.get("institutionCode").get.asString().getValue,
-      document.get("title").get.asString().getValue,
-      nacionNews,
-      infobaeNews,
-      clarinNews,
-      cronistaNews,
-      linkedInProfile,
-      country,
-      primaryEmail,
-      secondaryEmail,
-      createdAt,
-      updatedAt,
-      errorDate
-    )
+    Prospect(document.get("_id").get.asString().getValue, document.get("firstName").get.asString().getValue, document.get("lastName").get.asString().getValue, document.get("documentType").get.asString().getValue, document.get("documentId").get.asString().getValue, document.get("birthDate").get.asString().getValue, document.get("entryDate").get.asString().getValue, document.get("exitDate").get.asString().getValue, institution, document.get("institutionCode").get.asString().getValue, document.get("title").get.asString().getValue, nacionNews, infobaeNews, clarinNews, cronistaNews, linkedInProfile, country, primaryEmail, secondaryEmail, createdAt, updatedAt, errorDate)
   }
 
   private def transformNews(bson : BsonArray): List[News] = {
     bson.getValues.toList.map(_.asDocument()).map{x =>
       val validated : Boolean = try{x.get("validated").asBoolean().getValue} catch {case e:Exception => false}
+      val rejected: Boolean = try {
+        x.get("rejected").asBoolean().getValue
+      } catch {
+        case e: Exception => false
+      }
 
       News(
         x.get("_id").asString().getValue,
@@ -162,7 +148,8 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
         x.get("date").asString().getValue,
         x.get("tuft").asString().getValue,
         x.get("author").asString().getValue,
-        validated
+        validated,
+        rejected
       )
 
     }
@@ -174,12 +161,30 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
       InstitutionSector.withName(bson.get("sector").asString().getValue))
   }
 
-  private def transformProfile(bson : BsonDocument): LinkedinUserProfile = {
-    LinkedinUserProfile(bson.get("_id").asString().getValue,
-                        bson.get("actualPosition").asString().getValue,
-                        transformJobs(bson.get("jobList").asArray()),
-                        transformEducation(bson.get("educationList").asArray()),
-                        bson.get("profileUrl").asString().getValue)
+  private def transformProfiles(bson: BsonArray): List[LinkedinUserProfile] = {
+    bson.getValues.toList.map(_.asDocument()).map { x =>
+      val validated: Boolean = try {
+        x.get("validated").asBoolean().getValue
+      } catch {
+        case e: Exception => false
+      }
+      val rejected: Boolean = try {
+        x.get("rejected").asBoolean().getValue
+      } catch {
+        case e: Exception => false
+      }
+
+      LinkedinUserProfile(x.get("_id").asString().getValue,
+        x.get("actualPosition").asString().getValue,
+        transformJobs(x.get("jobList").asArray()),
+        transformEducation(x.get("educationList").asArray()),
+        x.get("profileUrl").asString().getValue,
+        validated,
+        rejected
+      )
+
+    }.sortBy(p => !p.validated)
+
   }
 
   private def transformJobs(bson : BsonArray): List[LinkedinJob] = {

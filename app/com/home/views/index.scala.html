@@ -1,4 +1,4 @@
-@import org.joda.time.DateTime
+
 @(errors : Seq[Prospect], updates : Seq[Prospect], errorDate : String, updateDate : String )
 
 @css = {
@@ -186,7 +186,9 @@
                 <tr class="danger">
                   <td>@prospect.errorDate</td>
                   <td>@prospect.getFullName</td>
-                  <td>@prospect.linkedInProfile.profileUrl</td>
+                    <td>@{
+                        if(prospect.linkedInProfiles.isEmpty) "" else prospect.linkedInProfiles.head.profileUrl
+                    }</td>
                   <td>
                     <a title="Ver Prospecto" class="btn btn-danger" href="@routes.ProspectController.show(prospect._id)"><i class="fa fa-cog"></i></a>
                   </td>

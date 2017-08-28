@@ -61,16 +61,16 @@ class ScraperActor @Inject() (prospectService: ProspectService,
       x.foreach{p =>
         val links : List[String] = LinkedInUrlGeneratorObject.search(Option(p.getFullName),Option(p.institution.name))
         val profiles : List[LinkedinUserProfile] =  links.map(linkedinScraper.getLinkedinProfile(_,0)).filter(_.isDefined).map(_.get)
-
+        //TODO :: Aca tiene que matchear contra las ya existentes para no pisar las validadas y rechazadas
         if(profiles.nonEmpty){
           val profile: LinkedinUserProfile = profiles.head
 
           val now : Date = Calendar.getInstance().getTime
 
           if(profile.actualPosition.nonEmpty)
-            linkedinUserProfileService.save(profile).map(x=> prospectService.update(p.copy(linkedInProfile = profile, updatedAt = format.format(now))))
+            linkedinUserProfileService.save(profile).map(x => prospectService.update(p.copy(linkedInProfiles = profiles, updatedAt = format.format(now))))
           else
-            linkedinUserProfileService.save(profile).map(x=> prospectService.update(p.copy(linkedInProfile = profile, errorDate = format.format(now))))
+            linkedinUserProfileService.save(profile).map(x => prospectService.update(p.copy(linkedInProfiles = profiles, errorDate = format.format(now))))
         }
       }
     }

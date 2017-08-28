@@ -42,18 +42,33 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
   private def runSearch(prospect: Prospect) : Unit = {
     val links: List[String] = LinkedInUrlGeneratorObject.search(Option(prospect.getFullName), Option(prospect.institution.name))
 
-    val profiles : Seq[LinkedinUserProfile] = links.map(x=> scraper.getLinkedinProfile(x,0)).filter(_.isDefined).map(_.get)
+    val profiles: List[LinkedinUserProfile] = links.map(x => scraper.getLinkedinProfile(x, 0)).filter(_.isDefined).map(_.get)
 
+    //TODO :: Aca tiene que matchear contra las ya existentes para no pisar las validadas y rechazadas
     if(profiles.nonEmpty){
-      val profile: LinkedinUserProfile = profiles.head
+      var updatedProfiles: List[LinkedinUserProfile] = List[LinkedinUserProfile]()
+      for (profile <- profiles) {
+        var matchedProfile = prospect.linkedInProfiles.find(p => p.profileUrl == profile.profileUrl)
+        if (matchedProfile.isDefined) {
+          val updatedProfile = profile.copy(_id = matchedProfile.get._id, rejected = matchedProfile.get.rejected, validated = matchedProfile.get.validated)
+          linkedinUserProfileService.update(updatedProfile)
+          updatedProfiles = updatedProfile :: updatedProfiles
+        } else {
+          linkedinUserProfileService.save(profile)
+          updatedProfiles = profile :: updatedProfiles
+        }
+      }
+
+
+      val firstProfile: LinkedinUserProfile = profiles.head
 
       val format : SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
       val now : Date = Calendar.getInstance().getTime
 
-      if(profile.actualPosition.nonEmpty)
-        linkedinUserProfileService.save(profile).map(x=> prospectService.update(prospect.copy(linkedInProfile = profile, updatedAt = format.format(now))))
+      if (firstProfile.actualPosition.nonEmpty)
+        prospectService.update(prospect.copy(linkedInProfiles = updatedProfiles, updatedAt = format.format(now)))
       else
-        linkedinUserProfileService.save(profile).map(x => prospectService.update(prospect.copy(linkedInProfile = profile, errorDate = format.format(now))))
+        prospectService.update(prospect.copy(linkedInProfiles = updatedProfiles, errorDate = format.format(now)))
     }
   }
 

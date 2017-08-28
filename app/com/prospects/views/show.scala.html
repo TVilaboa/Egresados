@@ -145,7 +145,7 @@
             <fieldset>
               <legend>LinkedIn Tracking</legend>
               <div class="row form-group">
-                @if(prospect.get.linkedInProfile.profileUrl.isEmpty){
+              @if(prospect.get.linkedInProfiles.isEmpty) {
                   <div class="col-md-2">
                     <span>No se encontró un perfil de LinkedIn</span>
                   </div>
@@ -158,11 +158,12 @@
                   </div>
                   <div class="col-md-8"></div>
                 } else{
+
                   <div class="col-lg-12">
                     <div class="row form-group">
                       <div class="col-lg-12">
                         <label for="profile">Perfil del Prospecto:</label>
-                        <span id="profile"><a href="@prospect.get.linkedInProfile.profileUrl">@prospect.get.getFullName</a></span>
+                          <span id="profile"><a href="@prospect.get.linkedInProfiles.head.profileUrl">@prospect.get.getFullName</a></span>
                       </div>
                     </div>
                     <div class="row form-group">
@@ -177,7 +178,7 @@
                           </thead>
                           <tbody>
                             <ul>
-                            @for(job: LinkedinJob <- prospect.get.linkedInProfile.jobList) {
+                            @for(job: LinkedinJob <- prospect.get.linkedInProfiles.head.jobList) {
                               <tr class="graduate">
                                 <td>@job.workplace</td>
                                 <td>@job.position</td>
@@ -201,7 +202,7 @@
                           </thead>
                           <tbody>
                             <ul>
-                            @for(item: LinkedinEducation <- prospect.get.linkedInProfile.educationList) {
+                            @for(item: LinkedinEducation <- prospect.get.linkedInProfiles.head.educationList) {
                               <tr class="graduate">
                                 <td>@item.institute</td>
                                 <td>@item.title</td>

@@ -45,8 +45,8 @@ class ProspectController @Inject()(prospectService: ProspectService,
 
   val form = Form(mapping(
     "_id" -> text(),
-    "firstName" -> text(),
-    "lastName" -> text(),
+    "firstName" -> text.verifying(_.nonEmpty),
+    "lastName" -> text.verifying(_.nonEmpty),
     "documentType" -> text(),
     "documentId" -> text(),
     "birthDate" -> text(),
@@ -54,11 +54,11 @@ class ProspectController @Inject()(prospectService: ProspectService,
     "exitDate" -> text(),
     "institution" -> mapping(
       "_id" -> text(),
-      "name" -> text.verifying(_.nonEmpty),
-      "address" -> text.verifying(_.nonEmpty),
+      "name" -> text(),
+      "address" -> text(),
       "active" -> boolean,
-      "institutionType" -> enum(InstitutionType),
-      "sector" -> enum(InstitutionSector))(Institution.apply)(Institution.unapply),
+      "institutionType" -> default(enum(InstitutionType), InstitutionType.Unspecified),
+      "sector" -> default(enum(InstitutionSector), InstitutionSector.Unspecified))(Institution.apply)(Institution.unapply),
     "title" -> text(),
     "institutionCode" -> text(),
     "nacionNews" -> list(mapping("_id" -> text(),
@@ -67,49 +67,55 @@ class ProspectController @Inject()(prospectService: ProspectService,
                                  "date" -> text(),
                                  "tuft" -> text(),
                                  "author" -> text(),
-                                 "validated" -> boolean)(News.apply)(News.unapply)),
+      "validated" -> boolean,
+      "rejected" -> boolean)(News.apply)(News.unapply)),
     "infobaeNews" -> list(mapping("_id" -> text(),
                                   "url" -> text(),
                                   "title" -> text(),
                                   "date" -> text(),
                                   "tuft" -> text(),
                                   "author" -> text(),
-                                  "validated" -> boolean)(News.apply)(News.unapply)),
+      "validated" -> boolean,
+      "rejected" -> boolean)(News.apply)(News.unapply)),
     "clarinNews" -> list(mapping("_id" -> text(),
                                  "url" -> text(),
                                  "title" -> text(),
                                  "date" -> text(),
                                  "tuft" -> text(),
                                  "author" -> text(),
-                                 "validated" -> boolean)(News.apply)(News.unapply)),
+      "validated" -> boolean,
+      "rejected" -> boolean)(News.apply)(News.unapply)),
     "cronistaNews" -> list(mapping("_id" -> text(),
                                    "url" -> text(),
                                    "title" -> text(),
                                    "date" -> text(),
                                    "tuft" -> text(),
                                    "author" -> text(),
-                                   "validated" -> boolean)(News.apply)(News.unapply)),
-    "linkedInProfile" -> mapping("_id" -> text(),
-                                 "actualPosition" -> text(),
-                                 "jobList" -> list(mapping("_id" -> text(),
-                                                           "position" -> text(),
-                                                           "workPlace" -> text(),
-                                                           "workUrl" -> text(),
-                                                           "activityPeriod" -> text(),
-                                                           "jobDescription" -> text()) (LinkedinJob.apply) (LinkedinJob.unapply)),
-                                 "educationList" -> list(mapping("_id" -> text(),
-                                                                 "institute" -> text(),
-                                                                 "instituteUrl" -> text(),
-                                                                 "title" -> text(),
-                                                                 "educationPeriod" -> text(),
-                                                                 "educationDescription" -> text()) (LinkedinEducation.apply) (LinkedinEducation.unapply)),
-                                 "profileUrl" -> text()) (LinkedinUserProfile.apply) (LinkedinUserProfile.unapply),
+      "validated" -> boolean,
+      "rejected" -> boolean)(News.apply)(News.unapply)),
+    "linkedInProfiles" -> list(mapping("_id" -> text(),
+      "actualPosition" -> text(),
+      "jobList" -> list(mapping("_id" -> text(),
+        "position" -> text(),
+        "workPlace" -> text(),
+        "workUrl" -> text(),
+        "activityPeriod" -> text(),
+        "jobDescription" -> text())(LinkedinJob.apply)(LinkedinJob.unapply)),
+      "educationList" -> list(mapping("_id" -> text(),
+        "institute" -> text(),
+        "instituteUrl" -> text(),
+        "title" -> text(),
+        "educationPeriod" -> text(),
+        "educationDescription" -> text())(LinkedinEducation.apply)(LinkedinEducation.unapply)),
+      "profileUrl" -> text(),
+      "validated" -> boolean,
+      "rejected" -> boolean)(LinkedinUserProfile.apply)(LinkedinUserProfile.unapply)),
     "country" -> default(text,""),
     "primaryEmail" -> default(text,""),
     "secondaryEmail" -> default(text,""),
-    "createdAt" -> text(),
-    "updatedAt" -> text(),
-    "errorDate" -> text()
+    "createdAt" -> default(text, ""),
+    "updatedAt" -> default(text, ""),
+    "errorDate" -> default(text, "")
   )(Prospect.apply)(Prospect.unapply))
 
   def index(message: String = "") =secureAction{
@@ -170,44 +176,20 @@ class ProspectController @Inject()(prospectService: ProspectService,
     implicit request =>{
       val uuid : String = UUID.randomUUID().toString
 
-      val input : Map[String,String] = form.bindFromRequest().data
+      val bindedForm = form.bindFromRequest()
+      val input: Map[String, String] = bindedForm.data
 
-      if(form.bindFromRequest.hasErrors)
-        Future{ BadRequest(com.prospects.views.html.create(input)) }
+      if (bindedForm.hasErrors)
+        Future {
+          BadRequest(com.prospects.views.html.create(input, message = bindedForm.errors.mkString))
+        }
       else{
 
         val now : Date = Calendar.getInstance().getTime
 
         val institution: Institution = Await.result(institutionService.find(input("institution")), Duration.Inf)
 
-        val prospect: Prospect = Prospect(uuid,
-                                          input("firstName"),
-                                          input("lastName"),
-                                          input("documentType"),
-                                          input("documentId"),
-                                          input("birthDate"),
-                                          input("entryDate"),
-                                          input("exitDate"),
-                                          institution,
-                                          input("institutionCode"),
-                                          input("title"),
-                                          List[News](),
-                                          List[News](),
-                                          List[News](),
-                                          List[News](),
-                                          LinkedinUserProfile(UUID.randomUUID().toString,
-                                                              "",
-                                                              List[LinkedinJob](),
-                                                              List[LinkedinEducation](),
-                                                              ""),
-
-                                          input("country"),
-                                          input("primaryEmail"),
-                                          input("secondaryEmail"),
-          dateTimeFormat.format(now),
-                                          "",
-                                          ""
-        )
+        val prospect: Prospect = Prospect(uuid, input("firstName"), input("lastName"), input("documentType"), input("documentId"), input("birthDate"), input("entryDate"), input("exitDate"), institution, input("institutionCode"), input("title"), List[News](), List[News](), List[News](), List[News](), List[LinkedinUserProfile](), input("country"), input("primaryEmail"), input("secondaryEmail"), dateTimeFormat.format(now), "", "")
 
         val prospects: List[Prospect] = Await.result(prospectService.all(), Duration.Inf).toList
 
@@ -253,42 +235,21 @@ class ProspectController @Inject()(prospectService: ProspectService,
 
   def update(id : String) =secureAction.async {
     implicit request => {
-      val input: Map[String, String] = form.bindFromRequest().data
+      val bindedForm = form.bindFromRequest()
+      val input: Map[String, String] = bindedForm.data
 
       val original: Prospect = Await.result(prospectService.find(id), Duration.Inf)
 
-      if (form.bindFromRequest.hasErrors)
+      if (bindedForm.hasErrors)
         Future {
-          BadRequest(com.prospects.views.html.create(input))
+          BadRequest(com.prospects.views.html.edit(input, message = bindedForm.errors.mkString))
         }
       else {
         val institution: Institution = Await.result(institutionService.find(input("institution")), Duration.Inf)
 
         val now : Date = Calendar.getInstance().getTime
 
-        val updated: Prospect = Prospect(id,
-          input("firstName"),
-          input("lastName"),
-          input("documentType"),
-          input("documentId"),
-          input("birthDate"),
-          input("entryDate"),
-          input("exitDate"),
-          institution,
-          input("institutionCode"),
-          input("title"),
-          original.nacionNews,
-          original.infobaeNews,
-          original.clarinNews,
-          original.cronistaNews,
-          original.linkedInProfile,
-          input("country"),
-          input("primaryEmail"),
-          input("secondaryEmail"),
-          original.createdAt,
-          dateTimeFormat.format(now),
-          original.errorDate
-        )
+        val updated: Prospect = Prospect(id, input("firstName"), input("lastName"), input("documentType"), input("documentId"), input("birthDate"), input("entryDate"), input("exitDate"), institution, input("institutionCode"), input("title"), original.nacionNews, original.infobaeNews, original.clarinNews, original.cronistaNews, original.linkedInProfiles, input("country"), input("primaryEmail"), input("secondaryEmail"), original.createdAt, dateTimeFormat.format(now), original.errorDate)
         val prospects: List[Prospect] = Await.result(prospectService.all(), Duration.Inf).toList
 
         if (!prospects.exists(g => (g._id != updated._id) && prospectService.matchGraduates(updated, g))) {
@@ -320,8 +281,8 @@ class ProspectController @Inject()(prospectService: ProspectService,
       val prospect: Prospect = Await.result(prospectService.find(id),Duration.Inf)
 
       //Delete LinkedIn information
-      val profile: LinkedinUserProfile = prospect.linkedInProfile
-      linkedInService.drop(profile)
+      val profiles = prospect.linkedInProfiles
+      profiles.foreach(p => linkedInService.drop(p))
 
       //Delete News Information
       prospect.nacionNews.map(lanacionService.drop)
@@ -354,19 +315,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
         val formIndex = selectedIds.indexOf(prospect._id)
         if (formIndex >= 0) {
           val institutionName = encodedForm("prospect[].institution.name")(formIndex)
-          val updatedProspect = prospect.copy(firstName = encodedForm("prospect[].firstName")(formIndex),
-            lastName = encodedForm("prospect[].lastName")(formIndex),
-            documentType = encodedForm("prospect[].documentType")(formIndex),
-            documentId = encodedForm("prospect[].documentId")(formIndex),
-            birthDate = encodedForm("prospect[].birthDate")(formIndex),
-            entryDate = encodedForm("prospect[].entryDate")(formIndex),
-            exitDate = encodedForm("prospect[].exitDate")(formIndex),
-            institution = institutions.find(i => i.name == institutionName).getOrElse(new Institution(UUID.randomUUID().toString, institutionName, "", active = true, InstitutionType.Unspecified, InstitutionSector.Unspecified)),
-            title = encodedForm("prospect[].title")(formIndex),
-            country = encodedForm("prospect[].country")(formIndex),
-            primaryEmail = encodedForm("prospect[].primaryEmail")(formIndex),
-            secondaryEmail = encodedForm("prospect[].secondaryEmail")(formIndex)
-          )
+          val updatedProspect = prospect.copy(firstName = encodedForm("prospect[].firstName")(formIndex), lastName = encodedForm("prospect[].lastName")(formIndex), documentType = encodedForm("prospect[].documentType")(formIndex), documentId = encodedForm("prospect[].documentId")(formIndex), birthDate = encodedForm("prospect[].birthDate")(formIndex), entryDate = encodedForm("prospect[].entryDate")(formIndex), exitDate = encodedForm("prospect[].exitDate")(formIndex), institution = institutions.find(i => i.name == institutionName).getOrElse(new Institution(UUID.randomUUID().toString, institutionName, "", active = true, InstitutionType.Unspecified, InstitutionSector.Unspecified)), title = encodedForm("prospect[].title")(formIndex), country = encodedForm("prospect[].country")(formIndex), primaryEmail = encodedForm("prospect[].primaryEmail")(formIndex), secondaryEmail = encodedForm("prospect[].secondaryEmail")(formIndex))
           selectedProspects = updatedProspect :: selectedProspects
         }
       }
@@ -421,29 +370,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
 
           val now : Date = Calendar.getInstance().getTime
 
-          var csvProspect = Prospect(UUID.randomUUID().toString,
-                   z.getOrElse("Nombre",""),
-                   z.getOrElse("Apellido",""),
-                   z.getOrElse("Tipo",""),
-                   z.getOrElse("Documento",""),
-                   z.getOrElse("Nacimiento",""),
-                   z.getOrElse("Ingreso",""),
-                   z.getOrElse("Egreso",""),
-                   institution.get,
-                   z.getOrElse("Legajo",""),
-                   z.getOrElse("Titulo",""),
-                   List[News](),
-                   List[News](),
-                   List[News](),
-                   List[News](),
-                   LinkedinUserProfile(UUID.randomUUID().toString,"",List[LinkedinJob](),List[LinkedinEducation](),""),
-                   z.getOrElse("Pais",""),
-                   z.getOrElse("Email_1",""),
-                   z.getOrElse("Email_2",""),
-            dateTimeFormat.format(now),
-                   "",
-                   ""
-          )
+          var csvProspect = Prospect(UUID.randomUUID().toString, z.getOrElse("Nombre", ""), z.getOrElse("Apellido", ""), z.getOrElse("Tipo", ""), z.getOrElse("Documento", ""), z.getOrElse("Nacimiento", ""), z.getOrElse("Ingreso", ""), z.getOrElse("Egreso", ""), institution.get, z.getOrElse("Legajo", ""), z.getOrElse("Titulo", ""), List[News](), List[News](), List[News](), List[News](), List[LinkedinUserProfile](), z.getOrElse("Pais", ""), z.getOrElse("Email_1", ""), z.getOrElse("Email_2", ""), dateTimeFormat.format(now), "", "")
 
           val headOption = existentProspects.find(p => prospectService.matchGraduates(csvProspect, p))
           if (headOption.isDefined) {
@@ -493,45 +420,66 @@ class ProspectController @Inject()(prospectService: ProspectService,
           val items : List[String] = links("links").asInstanceOf[JsArray].value.map(x=>x.toString().replace("\"","")).toList
           val filtered: (List[News],List[News]) = prospect.nacionNews.partition(x=> items.contains(x._id))
 
-          val validated : List[News] = filtered._1.map(_.copy(validated = true))
-          validated.map(news => lanacionService.update(news))
-          val updated : Prospect = prospect.copy(nacionNews = validated)
+          val validated: List[News] = filtered._1.map(_.copy(validated = true, rejected = false))
+          val rejected: List[News] = filtered._2.map(_.copy(rejected = true, validated = false))
+          val all: List[News] = rejected ++ validated
+          all.map(news => lanacionService.update(news))
+          val updated: Prospect = prospect.copy(nacionNews = all)
           prospectService.update(updated)
-          filtered._2.map(x => lanacionService.drop(x))
+
           Ok(Json.toJson(Map("status"->"OK", "erased"->"lanacion")))
 
         case "infobae" =>
           val items : List[String] = links("links").asInstanceOf[JsArray].value.map(x=>x.toString().replace("\"","")).toList
           val filtered: (List[News],List[News]) = prospect.infobaeNews.partition(x=> items.contains(x._id))
 
-          val validated : List[News] = filtered._1.map(_.copy(validated = true))
-          validated.map(news => infobaeService.update(news))
-          val updated : Prospect = prospect.copy(infobaeNews = validated)
+          val validated: List[News] = filtered._1.map(_.copy(validated = true, rejected = false))
+          val rejected: List[News] = filtered._2.map(_.copy(rejected = true, validated = false))
+          val all: List[News] = rejected ++ validated
+          all.map(news => infobaeService.update(news))
+          val updated: Prospect = prospect.copy(infobaeNews = all)
           prospectService.update(updated)
-          filtered._2.map(x => infobaeService.drop(x))
+
           Ok(Json.toJson(Map("status"->"OK", "erased"->"infobae")))
 
         case "clarin" =>
           val items : List[String] = links("links").asInstanceOf[JsArray].value.map(x=>x.toString().replace("\"","")).toList
           val filtered: (List[News],List[News]) = prospect.clarinNews.partition(x=> items.contains(x._id))
 
-          val validated : List[News] = filtered._1.map(_.copy(validated = true))
-          validated.map(news => clarinService.update(news))
-          val updated : Prospect = prospect.copy(clarinNews = validated)
+          val validated: List[News] = filtered._1.map(_.copy(validated = true, rejected = false))
+          val rejected: List[News] = filtered._2.map(_.copy(rejected = true, validated = false))
+          val all: List[News] = rejected ++ validated
+          all.map(news => clarinService.update(news))
+          val updated: Prospect = prospect.copy(clarinNews = all)
           prospectService.update(updated)
-          filtered._2.map(x => clarinService.drop(x))
+
           Ok(Json.toJson(Map("status"->"OK", "erased"->"clarin")))
 
         case "elcronista" =>
           val items : List[String] = links("links").asInstanceOf[JsArray].value.map(x=>x.toString().replace("\"","")).toList
           val filtered: (List[News],List[News]) = prospect.cronistaNews.partition(x=> items.contains(x._id))
 
-          val validated : List[News] = filtered._1.map(_.copy(validated = true))
-          validated.map(news => cronistaService.update(news))
-          val updated : Prospect = prospect.copy(cronistaNews = validated)
+          val validated: List[News] = filtered._1.map(_.copy(validated = true, rejected = false))
+          val rejected: List[News] = filtered._2.map(_.copy(rejected = true, validated = false))
+          val all: List[News] = rejected ++ validated
+          all.map(news => cronistaService.update(news))
+          val updated: Prospect = prospect.copy(cronistaNews = all)
           prospectService.update(updated)
-          filtered._2.map(x => cronistaService.drop(x))
+
           Ok(Json.toJson(Map("status"->"OK", "erased"->"elcronista")))
+
+        case "linkedin" =>
+          val items: List[String] = links("links").asInstanceOf[JsArray].value.map(x => x.toString().replace("\"", "")).toList
+          val filtered: (List[LinkedinUserProfile], List[LinkedinUserProfile]) = prospect.linkedInProfiles.partition(x => items.contains(x._id))
+
+          val validated: List[LinkedinUserProfile] = filtered._1.map(_.copy(validated = true, rejected = false))
+          val rejected: List[LinkedinUserProfile] = filtered._2.map(_.copy(rejected = true, validated = false))
+          val all: List[LinkedinUserProfile] = rejected ++ validated
+          all.map(profile => linkedInService.update(profile))
+          val updated: Prospect = prospect.copy(linkedInProfiles = all)
+          prospectService.update(updated)
+
+          Ok(Json.toJson(Map("status" -> "OK", "erased" -> "linkedin")))
 
         case _ =>
           Ok(Json.toJson(Map("status"->"nothing")))

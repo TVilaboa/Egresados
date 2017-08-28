@@ -10,7 +10,8 @@ case class News(
                  date: String,
                  tuft:String,
                  author: String,
-                 validated : Boolean
+                 validated: Boolean,
+                 rejected: Boolean = false
                ){
   def selected : String = if(validated) "checked" else ""
 }

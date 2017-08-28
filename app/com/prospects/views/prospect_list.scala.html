@@ -30,7 +30,7 @@
             @if(prospects.nonEmpty){
               @for(prospect : Prospect <- prospects){
                   <tr class="graduate" >
-                      <td>@prospect.getFullName @if(prospect.linkedInProfile.profileUrl.isEmpty) {
+                      <td>@prospect.getFullName @if(!prospect.linkedInProfiles.exists(p => !p.rejected)) {
                           <img title="No Linkedin Profile" width="30px" height="30px" src="@routes.Assets.at("images/ic_error_red_48dp (1).png")"/>
                       }</td>
                   <td>@prospect.getIdentification</td>

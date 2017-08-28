@@ -19,7 +19,7 @@
 
   <script>
 
-    function validateNewsLinks(source){
+          function validateLinks(source) {
       var links = $('input[name=' + source + ']:checked');
       var inputData = $.map(links, function(val, i){
         return $(val).val();
@@ -73,6 +73,12 @@
         select: true,
         buttons:[]
       });
+        $('#dataTables-linkedin').DataTable({
+            dom: 'Bfrtip',
+            responsive: true,
+            select: true,
+            buttons: []
+        });
     });
   </script>
 }
@@ -106,7 +112,7 @@
               <legend>LinkedIn Validation</legend>
               <div class="row">
                 <div class="col-lg-12">
-
+                @com.prospects.views.html.linkedin_validation_table.render(prospect.get.linkedInProfiles, "LinkedIn", "linkedin")
                 </div>
               </div>
             </fieldset>
