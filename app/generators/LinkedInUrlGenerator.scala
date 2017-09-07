@@ -3,6 +3,7 @@ package generators
 import java.io.IOException
 import java.net.SocketException
 import java.sql.Timestamp
+import java.text.Normalizer
 
 import org.jsoup.Jsoup
 
@@ -152,5 +153,5 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
 object LinkedInUrlGeneratorObject{
   val generator : BasicUrlGenerator = new LinkedInUrlGenerator()
 
-  def search(name : Option[String], query : Option[String]) : List[String] = generator.getSearchedUrl(name,query).distinct
+  def search(name: Option[String], query: Option[String]): List[String] = generator.getSearchedUrl(Option(Normalizer.normalize(name.getOrElse(""), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}̃']", "")), query).distinct
 }

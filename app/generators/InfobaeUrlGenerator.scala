@@ -2,6 +2,7 @@ package generators
 
 import java.io.IOException
 import java.net.SocketException
+import java.text.Normalizer
 
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements
@@ -92,5 +93,5 @@ class InfobaeUrlGenerator extends BasicUrlGenerator{
 object InfobaeUrlGeneratorObject{
   val generator : BasicUrlGenerator = new InfobaeUrlGenerator()
 
-  def search(name : Option[String], query : Option[String]) : List[String] = generator.getSearchedUrl(name,query)
+  def search(name: Option[String], query: Option[String]): List[String] = generator.getSearchedUrl(Option(Normalizer.normalize(name.getOrElse(""), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}̃']", "")), query)
 }

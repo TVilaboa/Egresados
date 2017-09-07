@@ -2,13 +2,14 @@ package generators
 
 import java.io.IOException
 import java.net.SocketException
-import java.util.Date
 import java.sql.Timestamp
+import java.text.Normalizer
+import java.util.Date
 
-import scala.collection.JavaConversions._
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements
 
+import scala.collection.JavaConversions._
 import scala.util.matching.Regex
 
 class LaNacionUrlGenerator extends BasicUrlGenerator{
@@ -103,5 +104,5 @@ class LaNacionUrlGenerator extends BasicUrlGenerator{
 object LaNacionUrlGeneratorObject{
   val generator : BasicUrlGenerator = new LaNacionUrlGenerator()
 
-  def search(name : Option[String], query : Option[String]) : List[String] = generator.getSearchedUrl(name,query)
+  def search(name: Option[String], query: Option[String]): List[String] = generator.getSearchedUrl(Option(Normalizer.normalize(name.getOrElse(""), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}̃']", "")), query)
 }

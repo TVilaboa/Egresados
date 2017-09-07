@@ -354,7 +354,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
         val contentType = x.contentType
         val csvFile = x.ref.file
 
-        val reader = CSVReader.open(csvFile)
+        val reader = CSVReader.open(csvFile, "Cp1252") //ANSI
         val existentProspects: List[Prospect] = Await.result(eventualProspects, Duration.Inf).toList
         reader.allWithHeaders().map{z =>
 
@@ -365,7 +365,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
                 case Some(institute) =>
                   Option(institute)
                 case None =>
-                  val aux: Institution = Institution(UUID.randomUUID().toString, string, "", active = true, null, null)
+                  val aux: Institution = Institution(name = string)
                   uploadInstitutes = uploadInstitutes :+ aux
                   Option(aux)
               }

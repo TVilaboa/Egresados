@@ -2,13 +2,12 @@ package generators
 
 import java.io.IOException
 import java.net.SocketException
-import java.util.Date
-import java.sql.Timestamp
+import java.text.Normalizer
 
-import scala.collection.JavaConversions._
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements
 
+import scala.collection.JavaConversions._
 import scala.util.matching.Regex
 
 class ElCronistaUrlGenerator extends BasicUrlGenerator{
@@ -86,5 +85,5 @@ class ElCronistaUrlGenerator extends BasicUrlGenerator{
 object ElCronistaUrlGeneratorObject{
   val generator : BasicUrlGenerator = new ElCronistaUrlGenerator()
 
-  def search(name : Option[String], query : Option[String]) : List[String] = generator.getSearchedUrl(name,query)
+  def search(name: Option[String], query: Option[String]): List[String] = generator.getSearchedUrl(Option(Normalizer.normalize(name.getOrElse(""), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}̃']", "")), query)
 }

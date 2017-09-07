@@ -278,6 +278,29 @@
                         "scrollCollapse": true
                     });
 
+
+                    // Handle form submission event
+                    $('#batch-steps').on('submit', function (e) {
+                        var form = this;
+
+                        // Iterate over all checkboxes in the table
+                        prospectsTable.$('input[type="checkbox"],[type="hidden"]').each(function () {
+                            // If checkbox doesn't exist in DOM
+                            if (!$.contains(document, this)) {
+                                // If checkbox is checked
+                                if (this.type === 'checkbox' ? this.checked : true) {
+                                    // Create a hidden element
+                                    $(form).append(
+                                            $('<input>')
+                                                    .attr('type', 'hidden')
+                                                    .attr('name', this.name)
+                                                    .val(this.value)
+                                    );
+                                }
+                            }
+                        });
+                    });
+
                     // Handle click on "Select all" control
                     $('#example-select-all').on('click', function(){
                         // Get all rows with search applied
