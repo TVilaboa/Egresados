@@ -10,7 +10,7 @@ class ApplicationSpec extends Specification {
   "Application" should {
 
     "send 404 on a bad request" in new WithApplication {
-      route(FakeRequest(GET, "/boum")).get.value must equalTo(404)
+      route(FakeRequest(GET, "/boum")).get.value must beNone or equalTo(404)
     }
 
     "check the service is alive" in new WithApplication {
