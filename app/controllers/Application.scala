@@ -4,14 +4,14 @@ package controllers
 import java.text.SimpleDateFormat
 import java.util.Date
 
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import com.google.inject.Inject
-import play.api.mvc._
 import actions.SecureAction
+import com.google.inject.Inject
 import models.Prospect
 import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import play.api.Configuration
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.mvc._
 import services.ProspectService
 
 import scala.concurrent.Future
@@ -64,24 +64,25 @@ class Application @Inject()(secureAction: SecureAction, prospectService: Prospec
       val format : SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd")
       val partition : (Seq[Prospect],Seq[Prospect]) = x.partition(p => p.errorDate.nonEmpty)
 
+      val minDate = new Date(0)
       val errorDate : Date = partition._1 match{
         case seq : Seq[Prospect] =>
-          val dates : Seq[Date]= seq.filter(_.errorDate.nonEmpty).map(x=> format.parse(x.errorDate)).sortBy(_.getTime)
-          if(dates.nonEmpty) dates.head
-          else new Date()
-        case Nil => new Date()
+          val dates: Seq[Date] = seq.filter(_.errorDate.nonEmpty).map(x => format.parse(x.errorDate))
+          if (dates.nonEmpty) dates.maxBy(_.getTime)
+          else minDate
+        case Nil => minDate
       }
 
       val updateDate : Date = x match{
         case seq : Seq[Prospect] =>
-          val dates : Seq[Date]= seq.filter(_.updatedAt.nonEmpty).map(x=> format.parse(x.updatedAt)).sortBy(_.getTime)
-          if(dates.nonEmpty) dates.head
-          else new Date()
-        case Nil => new Date()
+          val dates: Seq[Date] = seq.filter(_.updatedAt.nonEmpty).map(x => format.parse(x.updatedAt))
+          if (dates.nonEmpty) dates.maxBy(_.getTime)
+          else minDate
+        case Nil => minDate
       }
 
       val errors : Seq[Prospect] = partition._1
-      val updates : Seq[Prospect] = x.filter(e => e.updatedAt.equals(format.format(updateDate)))
+      val updates: Seq[Prospect] = x.filter(e => e.updatedAt.nonEmpty && format.format(format.parse(e.updatedAt)).equals(format.format(updateDate)))
 
       Ok(com.home.views.html.index.render(errors,updates,format.format(errorDate),format.format(updateDate)))
 

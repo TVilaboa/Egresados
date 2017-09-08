@@ -61,32 +61,42 @@ class ScraperActor @Inject() (prospectService: ProspectService,
       x.foreach{p =>
         val links : List[String] = LinkedInUrlGeneratorObject.search(Option(p.getFullName),Option(p.institution.name))
         val profiles : List[LinkedinUserProfile] =  links.map(linkedinScraper.getLinkedinProfile(_,0)).filter(_.isDefined).map(_.get)
+        val format: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val now: Date = Calendar.getInstance().getTime
 
         if(profiles.nonEmpty){
           var updatedProfiles: List[LinkedinUserProfile] = List[LinkedinUserProfile]()
+          var matchedValidOrAddNew = false
           for (profile <- profiles) {
             var matchedProfile = p.linkedInProfiles.find(prof => prof.profileUrl == profile.profileUrl)
             if (matchedProfile.isDefined) {
               val updatedProfile = profile.copy(_id = matchedProfile.get._id, rejected = matchedProfile.get.rejected, validated = matchedProfile.get.validated)
               linkedinUserProfileService.update(updatedProfile)
               updatedProfiles = updatedProfile :: updatedProfiles
+              if (!matchedValidOrAddNew) {
+                matchedValidOrAddNew = !matchedProfile.get.rejected
+              }
             } else {
               linkedinUserProfileService.save(profile)
               updatedProfiles = profile :: updatedProfiles
+              matchedValidOrAddNew = true
             }
           }
 
 
           val firstProfile: LinkedinUserProfile = profiles.head
 
-          val format: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-          val now : Date = Calendar.getInstance().getTime
 
-          if (firstProfile.actualPosition.nonEmpty)
-            prospectService.update(p.copy(linkedInProfiles = updatedProfiles, updatedAt = format.format(now)))
-          else
-            prospectService.update(p.copy(linkedInProfiles = updatedProfiles, errorDate = format.format(now)))
+          if (matchedValidOrAddNew) {
+            prospectService.update(p.copy(linkedInProfiles = updatedProfiles, updatedAt = format.format(now), errorDate = null))
+          }
+          else {
+            prospectService.update(p.copy(errorDate = format.format(now)))
+          }
+        } else {
+          prospectService.update(p.copy(errorDate = format.format(now)))
         }
+
       }
     }
   }
