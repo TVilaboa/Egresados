@@ -40,46 +40,50 @@ class LinkedinUserProfileController @Inject() (linkedinUserProfileService: Linke
   }
 
   private def runSearch(prospect: Prospect) : Unit = {
-    val links: List[String] = LinkedInUrlGeneratorObject.search(Option(prospect.getFullName), Option(prospect.institution.name))
+    try {
+      val links: List[String] = LinkedInUrlGeneratorObject.search(Option(prospect.getFullName), Option(prospect.institution.name))
 
-    val profiles: List[LinkedinUserProfile] = links.map(x => scraper.getLinkedinProfile(x, 0)).filter(_.isDefined).map(_.get)
-    val format: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-    val now: Date = Calendar.getInstance().getTime
-    //TODO :: Logica duplicada en ScraperActor, para todos los scraps. Unificar!
-    if(profiles.nonEmpty){
-      var updatedProfiles: List[LinkedinUserProfile] = List[LinkedinUserProfile]()
-      var matchedValidOrAddNew = false
-      for (profile <- profiles) {
-        var matchedProfile = prospect.linkedInProfiles.find(p => p.profileUrl == profile.profileUrl)
-        if (matchedProfile.isDefined) {
-          val updatedProfile = profile.copy(_id = matchedProfile.get._id, rejected = matchedProfile.get.rejected, validated = matchedProfile.get.validated)
-          linkedinUserProfileService.update(updatedProfile)
-          updatedProfiles = updatedProfile :: updatedProfiles
-          if (!matchedValidOrAddNew) {
-            matchedValidOrAddNew = !matchedProfile.get.rejected
+      val profiles: List[LinkedinUserProfile] = links.map(x => scraper.getLinkedinProfile(x, 0)).filter(_.isDefined).map(_.get)
+      val format: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+      val now: Date = Calendar.getInstance().getTime
+      //TODO :: Logica duplicada en ScraperActor, para todos los scraps. Unificar!
+      if (profiles.nonEmpty) {
+        var updatedProfiles: List[LinkedinUserProfile] = List[LinkedinUserProfile]()
+        var matchedValidOrAddNew = false
+        for (profile <- profiles) {
+          var matchedProfile = prospect.linkedInProfiles.find(p => p.profileUrl == profile.profileUrl)
+          if (matchedProfile.isDefined) {
+            val updatedProfile = profile.copy(_id = matchedProfile.get._id, rejected = matchedProfile.get.rejected, validated = matchedProfile.get.validated)
+            linkedinUserProfileService.update(updatedProfile)
+            updatedProfiles = updatedProfile :: updatedProfiles
+            if (!matchedValidOrAddNew) {
+              matchedValidOrAddNew = !matchedProfile.get.rejected
+            }
+
+          } else {
+            linkedinUserProfileService.save(profile)
+            updatedProfiles = profile :: updatedProfiles
+            matchedValidOrAddNew = true
           }
-
-        } else {
-          linkedinUserProfileService.save(profile)
-          updatedProfiles = profile :: updatedProfiles
-          matchedValidOrAddNew = true
         }
-      }
 
 
-      val firstProfile: LinkedinUserProfile = profiles.head
+        if (matchedValidOrAddNew) {
+          prospectService.update(prospect.copy(linkedInProfiles = updatedProfiles, updatedAt = format.format(now), errorDate = null))
+        }
+        else {
+          prospectService.update(prospect.copy(errorDate = format.format(now)))
+        }
 
 
-      if (matchedValidOrAddNew) {
-        prospectService.update(prospect.copy(linkedInProfiles = updatedProfiles, updatedAt = format.format(now), errorDate = null))
-      }
-      else {
+      } else {
         prospectService.update(prospect.copy(errorDate = format.format(now)))
       }
+    } catch {
 
+      case e: Exception =>
 
-    } else {
-      prospectService.update(prospect.copy(errorDate = format.format(now)))
+        None
     }
   }
 
