@@ -1,16 +1,12 @@
 package controllers
 
-import java.text.SimpleDateFormat
-import java.util.{Calendar, Date}
-
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import actions.SecureAction
 import com.google.inject.Inject
-import generators.ElCronistaUrlGeneratorObject
 import models.{News, Prospect}
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc.Controller
 import scrapers.ElCronistaScraper
-import services.{ElCronistaNewsService, ProspectService}
+import services.{ElCronistaNewsService, ProspectService, ScrapingService}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
@@ -21,7 +17,8 @@ import scala.concurrent.{Await, Future}
 class ElCronistaNewsController @Inject()(newsElCronistaService: ElCronistaNewsService,
                                          prospectService: ProspectService,
                                          scraper: ElCronistaScraper,
-                                         secureAction: SecureAction) extends Controller{
+                                         secureAction: SecureAction,
+                                         scrapingService: ScrapingService) extends Controller {
 
   def search(id: String) =secureAction{
     val prospect : Future[Prospect] = prospectService.find(id)
@@ -39,26 +36,8 @@ class ElCronistaNewsController @Inject()(newsElCronistaService: ElCronistaNewsSe
     Redirect(routes.ProspectController.index(""))
   }
 
-  def runSearch(prospect: Prospect) : Unit = {
-    val name : Option[String] = Option(prospect.getFullName)
-    val links : Seq[String] = ElCronistaUrlGeneratorObject.search(name, Option(prospect.institution.name))
-
-    val news : Seq[News] = links.map{x=> scraper.getArticleData(x,name,0)}.filter(_.isDefined).map(_.get)
-
-    if(news.nonEmpty){
-      val activeNews: List[String] = prospect.cronistaNews.map(_.url)
-      val difference : List[News] = news.filter(n=> !activeNews.contains(n.url)).toList
-
-      if(difference.nonEmpty) {
-        difference.map(newsElCronistaService.save)
-
-        val format : SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val now : Date = Calendar.getInstance().getTime
-
-        val all : List[News] = prospect.cronistaNews ::: difference
-        prospectService.update(prospect.copy(cronistaNews = all, updatedAt = format.format(now)))
-      }
-    }
+  private def runSearch(prospect: Prospect): Unit = {
+    scrapingService.runElCronistaSearch(scraper, newsElCronistaService, prospectService, prospect)
   }
 
   def deleteNews(id:String) =secureAction {
