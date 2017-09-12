@@ -170,22 +170,26 @@ object SearchEngineService {
     val userAgent = userAgentList(start + rnd.nextInt((end - start) + 1))
     val querySize = 5
     start = 1
-    end = 7
+    end = 5
     val engineNumber = start + rnd.nextInt((end - start) + 1)
     var fullQuery = ""
     engineNumber match {
       case 1 => fullQuery = "https://www.google.com.ar/search?q=" + query + "&num=" + querySize
       case 2 => fullQuery = "https://www.bing.com/search?q=" + query + "&count=" + querySize
       case 3 => fullQuery = "https://espanol.search.yahoo.com/search?p=" + query + "&n=" + querySize
-      case 4 => fullQuery = "https://duckduckgo.com/?q=" + query
-      case 5 => fullQuery = "http://www.dogpile.com/info.dogpl/search/web?q=" + query
+      case 4 => fullQuery = "https://duckduckgo.com/html?q=" + query
+
       //Probar bien estos dos
-      case 6 => fullQuery = "https://www.ixquick.com/do/asearch?q=" + query
-      case 7 => fullQuery = "https://www.yandex.com/search/?text=" + query
+      case 5 => fullQuery = "https://www.ixquick.com/do/asearch?q=" + query
+      //No lo encuentra a emilio por ejemplo
+      //case 6 => fullQuery = "https://www.yandex.com/search/?text=" + query
+
+      //No busca muy bien y no pone las urls claras
+      //case 5 => fullQuery = "http://www.dogpile.com/info.dogpl/search/web?q=" + query
     }
     println("Sleep: " + sleep / 1000 + " sec .Query: " + fullQuery + " . UserAgent: " + userAgent)
     Jsoup.connect(fullQuery).userAgent(userAgent)
-      .timeout(50000)
+      .timeout(100000)
       .get
 
 

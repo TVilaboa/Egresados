@@ -111,16 +111,17 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
 
     try {
       val doc = SearchEngineService.getQuery(query)
-      val links = doc.select("a[href*=linkedin]")
+      val links = doc.select("a[href*='linkedin.com/in']") //Puede ser un span tambien <span class="url">https://ar.linkedin.com/in/emiliolopezgabeiras</span>
       for (link <- links) {
-        var temp = link.attr("href")
-        if (temp.startsWith("/url?q=")) {
-          temp = cleanUrlDomain(temp)
-          if(!"".equals(temp))
-            result = temp :: result
-        }
+        result = cleanAndAdd(link.attr("href"), result)
       }
-      println("Exited LinkedinUrlGenerator without exception")
+      val textLinks = doc.select(".fz-ms.fw-m.fc-12th.wr-bw") ++ //Yahoo
+        doc.select("span.url") ++ //IxQuick creo
+        doc.select("a.result__url") //Duck Duck Go
+      for (link <- textLinks) {
+        result = cleanAndAdd(link.text(), result)
+      }
+      println("Exited LinkedinUrlGenerator without exception. Found " + result.size + " links.")
     } catch {
       case e: SocketException => e.printStackTrace()
       case e: IOException => e.printStackTrace()
@@ -131,6 +132,18 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
     }
 
     result
+  }
+
+  private def cleanAndAdd(url: String, existentLinks: List[String]): List[String] = {
+    var temp = url
+    var result = existentLinks
+    if (temp.contains("linkedin.com/in") && !temp.startsWith("/search") && !temp.contains("translate")) {
+      temp = if (temp.indexOf("http") > -1) "http" + temp.split("http")(1) else temp
+      //temp = cleanUrlDomain(temp)
+      if (!"".equals(temp))
+        result = temp :: result
+    }
+    return result
   }
 
 
@@ -160,5 +173,9 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
 object LinkedInUrlGeneratorObject{
   val generator : BasicUrlGenerator = new LinkedInUrlGenerator()
 
-  def search(name: Option[String], query: Option[String]): List[String] = generator.getSearchedUrl(Option(Normalizer.normalize(name.getOrElse(""), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}̃']", "")), query).distinct
+  def search(name: Option[String], query: Option[String]): List[String] = {
+    var links = generator.getSearchedUrl(Option(Normalizer.normalize(name.getOrElse(""), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}̃']", "")), query).distinct
+    if (links.isEmpty) links = generator.getSearchedUrl(Option(Normalizer.normalize(name.getOrElse(""), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}̃']", "")), null).distinct
+    return links
+  }
 }
