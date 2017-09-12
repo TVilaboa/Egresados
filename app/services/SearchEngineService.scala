@@ -162,7 +162,8 @@ object SearchEngineService {
     var end = 120000
     val rnd = new scala.util.Random
 
-    Thread.sleep(start + rnd.nextInt((end - start) + 1))
+    val sleep = start + rnd.nextInt((end - start) + 1)
+    Thread.sleep(sleep)
 
     start = 0
     end = userAgentList.size - 1
@@ -182,6 +183,7 @@ object SearchEngineService {
       case 6 => fullQuery = "https://www.ixquick.com/do/asearch?q=" + query
       case 7 => fullQuery = "https://www.yandex.com/search/?text=" + query
     }
+    println("Sleep: " + sleep / 1000 + " sec .Query: " + fullQuery + " . UserAgent: " + userAgent)
     Jsoup.connect(fullQuery).userAgent(userAgent)
       .timeout(50000)
       .get
