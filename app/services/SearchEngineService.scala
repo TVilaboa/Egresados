@@ -158,19 +158,34 @@ object SearchEngineService {
   )
 
   def getQuery(query: String): Document = {
-    var start = 15000
-    var end = 60000
+    var start = 30000
+    var end = 120000
     val rnd = new scala.util.Random
 
     Thread.sleep(start + rnd.nextInt((end - start) + 1))
 
     start = 0
-    end = userAgentList.size
+    end = userAgentList.size - 1
     val userAgent = userAgentList(start + rnd.nextInt((end - start) + 1))
     val querySize = 5
-    Jsoup.connect("https://www.google.com.ar/search?q=" + query + "&num=" + querySize).userAgent(userAgent)
+    start = 1
+    end = 7
+    val engineNumber = start + rnd.nextInt((end - start) + 1)
+    var fullQuery = ""
+    engineNumber match {
+      case 1 => fullQuery = "https://www.google.com.ar/search?q=" + query + "&num=" + querySize
+      case 2 => fullQuery = "https://www.bing.com/search?q=" + query + "&count=" + querySize
+      case 3 => fullQuery = "https://espanol.search.yahoo.com/search?p=" + query + "&n=" + querySize
+      case 4 => fullQuery = "https://duckduckgo.com/?q=" + query
+      case 5 => fullQuery = "http://www.dogpile.com/info.dogpl/search/web?q=" + query
+      //Probar bien estos dos
+      case 6 => fullQuery = "https://www.ixquick.com/do/asearch?q=" + query
+      case 7 => fullQuery = "https://www.yandex.com/search/?text=" + query
+    }
+    Jsoup.connect(fullQuery).userAgent(userAgent)
       .timeout(50000)
       .get
+
 
   }
 

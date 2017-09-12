@@ -54,11 +54,13 @@ class InfobaeUrlGenerator extends BasicUrlGenerator{
         if(!"".equals(url))
           result = url :: result
       }
+      println("Exited InfobaeUrlGenerator without exception")
     } catch {
       case e: SocketException => e.printStackTrace()
       case e: IOException => if (e.getMessage == "HTTP error fetching URL") {
         Thread.sleep(10000)
       }
+      case e: Exception => e.printStackTrace()
     }
     result
   }

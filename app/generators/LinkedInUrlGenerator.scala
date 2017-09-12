@@ -120,6 +120,7 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
             result = temp :: result
         }
       }
+      println("Exited LinkedinUrlGenerator without exception")
     } catch {
       case e: SocketException => e.printStackTrace()
       case e: IOException => e.printStackTrace()
@@ -128,7 +129,7 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
       }
       case e: Exception => e.printStackTrace()
     }
-    println("Exited getGoogleSearchRegisters without exception")
+
     result
   }
 
