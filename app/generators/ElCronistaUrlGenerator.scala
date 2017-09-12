@@ -4,8 +4,8 @@ import java.io.IOException
 import java.net.SocketException
 import java.text.Normalizer
 
-import org.jsoup.Jsoup
 import org.jsoup.select.Elements
+import services.SearchEngineService
 
 import scala.collection.JavaConversions._
 import scala.util.matching.Regex
@@ -42,11 +42,9 @@ class ElCronistaUrlGenerator extends BasicUrlGenerator{
     **/
   override def getGoogleSearchRegisters(query: String): List[String] = {
     var result : List[String] = List()
-    val request = "https://www.google.com.ar/search?q=" + query + "&num=10"
+
     try {
-      val doc = Jsoup.connect(request).userAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)")
-        .timeout(50000)
-        .get
+      val doc = SearchEngineService.getQuery(query)
       val links: Elements = doc.select("a[href*=Cronista]")
       for (link <- links) {
         val url = cleanUrlDomain(link.attr("href"))

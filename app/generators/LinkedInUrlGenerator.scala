@@ -5,7 +5,7 @@ import java.net.SocketException
 import java.sql.Timestamp
 import java.text.Normalizer
 
-import org.jsoup.Jsoup
+import services.SearchEngineService
 
 import scala.collection.JavaConversions._
 
@@ -101,12 +101,16 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
     * de busqueda (query : String), nos retorna una Lista con posibles resultados
     **/
   override def getGoogleSearchRegisters(query: String): List[String] = {
+
+    // Setup proxy
+    /* Proxy proxy = new Proxy(                                      //
+       Proxy.Type.HTTP,                                      //
+       InetSocketAddress.createUnresolved("127.0.0.1", 8080) //
+     );*/
     var result : List[String] = List()
-    val request = "https://www.google.com.ar/search?q=" + query + "&num=10"
+
     try {
-      val doc = Jsoup.connect(request).userAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)")
-        .timeout(50000)
-        .get
+      val doc = SearchEngineService.getQuery(query)
       val links = doc.select("a[href*=linkedin]")
       for (link <- links) {
         var temp = link.attr("href")
@@ -124,8 +128,10 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
       }
       case e: Exception => e.printStackTrace()
     }
+    println("Exited getGoogleSearchRegisters without exception")
     result
   }
+
 
   /**
     * Metodo que se encarga de limpiar un dominio (url:String) para eliminar cualquier exceso de caracteres
