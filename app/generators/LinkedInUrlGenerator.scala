@@ -1,19 +1,40 @@
 package generators
 
-import java.io.IOException
-import java.net.SocketException
 import java.sql.Timestamp
 import java.text.Normalizer
-
-import services.SearchEngineService
 
 import scala.collection.JavaConversions._
 
 class LinkedInUrlGenerator extends BasicUrlGenerator{
 
+
   def printTime() {
     val date = new java.util.Date()
     println("#####" + new Timestamp(date.getTime))
+  }
+
+  /**
+    * En función de un nombre:String y un String a buscar, devuelve una Lista con los resultados obtenidos
+    **/
+  override def getSearchedUrl(name: Option[String], query: Option[String]): List[String] = {
+    var result: List[String] = List()
+    if (name.isDefined) {
+      //Split both name and query : Option[String]
+      val splittedName = name.get.split(" ")
+      val splittedQuery = query.get.split(" ")
+
+      var searcher = "linkedIn"
+
+      for (splitVal: String <- splittedName)
+        searcher = searcher + "%20" + splitVal
+
+      for (splitVal: String <- splittedQuery)
+        searcher = searcher + "%20" + splitVal
+
+      val urls = getGoogleSearchRegisters(searcher, "linkedin.com/in")
+      result = selectProfileUrl(splittedName, urls)
+    }
+    result
   }
 
   private def selectProfileUrl(username : Array[String], list : List[String]) : List[String] = {
@@ -23,8 +44,23 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
 
     //Filters result by Condition
     //Nota :: No encuentra perfiles con acento!!
-    val possible : List[String] = list.filter(x => x.substring(8).startsWith("www.linkedin.com") || x.substring(11).startsWith("linkedin.com"))
-    val filterByCondition = possible.filter(x => x.split("/").length >= 5 && username.mkString("").equalsIgnoreCase(x.split("/")(4)))
+
+
+    var filterByCondition = List[String]()
+    var maxMatches = 0
+    for (link <- list) {
+      var matches = 0
+      for (name <- username) {
+        if (link.toLowerCase.contains(name.toLowerCase)) matches += 1
+      }
+      if (maxMatches < matches) {
+        maxMatches = matches
+        filterByCondition = List[String](link)
+      } else if (maxMatches == matches && maxMatches > 0) {
+        filterByCondition.add(link)
+      }
+    }
+    println("Matched " + username.mkString(" ") + " to " + filterByCondition.mkString(" - "))
     filterByCondition
   }
 
@@ -33,10 +69,10 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
     * */
   private def isCorrect(userName: Array[String], domain: String): Boolean = {
     var isCorrect = false
-    if (domain.substring(8).startsWith("www.linkedin.com") || domain.substring(11).startsWith("linkedin.com")) {
+
       val splitURL = domain.split("/")
-      if (splitURL.length >= 5) {
-        val nameOnURL = splitURL(4).split("-")
+
+    val nameOnURL = splitURL(splitURL.length - 1).split("-")
         var nameUrl = ""
         for (name <- nameOnURL if !name.matches(".*\\d+.*")) {
           nameUrl += name + "-"
@@ -67,84 +103,12 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
             i += 1
           }
         }
-      }
-    }
+
+
     isCorrect
   }
 
-  /**
-    * En función de un nombre:String y un String a buscar, devuelve una Lista con los resultados obtenidos
-    **/
-  override def getSearchedUrl(name: Option[String], query: Option[String]): List[String] = {
-    var result : List[String] = List()
-    if(name.isDefined){
-      //Split both name and query : Option[String]
-      val splittedName = name.get.split(" ")
-      val splittedQuery = query.get.split(" ")
 
-      var searcher = "linkedIn"
-
-      for(splitVal : String <- splittedName)
-        searcher = searcher + "%20" + splitVal
-
-      for(splitVal : String <- splittedQuery)
-        searcher = searcher + "%20" + splitVal
-
-      val urls = getGoogleSearchRegisters(searcher)
-      result = selectProfileUrl(splittedName, urls)
-    }
-    result
-  }
-
-  /**
-    * En función del nombre de la persona que se encuentra dentro de un Array[String] y de un parametro
-    * de busqueda (query : String), nos retorna una Lista con posibles resultados
-    **/
-  override def getGoogleSearchRegisters(query: String): List[String] = {
-
-    // Setup proxy
-    /* Proxy proxy = new Proxy(                                      //
-       Proxy.Type.HTTP,                                      //
-       InetSocketAddress.createUnresolved("127.0.0.1", 8080) //
-     );*/
-    var result : List[String] = List()
-
-    try {
-      val doc = SearchEngineService.getQuery(query)
-      val links = doc.select("a[href*='linkedin.com/in']") //Puede ser un span tambien <span class="url">https://ar.linkedin.com/in/emiliolopezgabeiras</span>
-      for (link <- links) {
-        result = cleanAndAdd(link.attr("href"), result)
-      }
-      val textLinks = doc.select(".fz-ms.fw-m.fc-12th.wr-bw") ++ //Yahoo
-        doc.select("span.url") ++ //IxQuick creo
-        doc.select("a.result__url") //Duck Duck Go
-      for (link <- textLinks) {
-        result = cleanAndAdd(link.text(), result)
-      }
-      println("Exited LinkedinUrlGenerator without exception. Found " + result.size + " links.")
-    } catch {
-      case e: SocketException => e.printStackTrace()
-      case e: IOException => e.printStackTrace()
-        if (e.getMessage == "HTTP error fetching URL") {
-        //Thread.sleep(10000)
-      }
-      case e: Exception => e.printStackTrace()
-    }
-
-    result
-  }
-
-  private def cleanAndAdd(url: String, existentLinks: List[String]): List[String] = {
-    var temp = url
-    var result = existentLinks
-    if (temp.contains("linkedin.com/in") && !temp.startsWith("/search") && !temp.contains("translate")) {
-      temp = if (temp.indexOf("http") > -1) "http" + temp.split("http")(1) else temp
-      //temp = cleanUrlDomain(temp)
-      if (!"".equals(temp))
-        result = temp :: result
-    }
-    return result
-  }
 
 
   /**
@@ -173,9 +137,16 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
 object LinkedInUrlGeneratorObject{
   val generator : BasicUrlGenerator = new LinkedInUrlGenerator()
 
+
   def search(name: Option[String], query: Option[String]): List[String] = {
     var links = generator.getSearchedUrl(Option(Normalizer.normalize(name.getOrElse(""), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}̃']", "")), query).distinct
-    if (links.isEmpty) links = generator.getSearchedUrl(Option(Normalizer.normalize(name.getOrElse(""), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}̃']", "")), null).distinct
+    if (links.isEmpty) {
+      println("No links found, trying without institution... " + name.getOrElse("Nombre vacio") + " - " + query.getOrElse("Query vacia"))
+      links = generator.getSearchedUrl(Option(Normalizer.normalize(name.getOrElse(""), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}̃']", "")), null).distinct
+    }
+
+
+
     return links
   }
 }

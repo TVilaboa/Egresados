@@ -1,15 +1,9 @@
 package generators
 
-import java.io.IOException
-import java.net.SocketException
 import java.sql.Timestamp
 import java.text.Normalizer
 import java.util.Date
 
-import org.jsoup.select.Elements
-import services.SearchEngineService
-
-import scala.collection.JavaConversions._
 import scala.util.matching.Regex
 
 class LaNacionUrlGenerator extends BasicUrlGenerator{
@@ -32,37 +26,13 @@ class LaNacionUrlGenerator extends BasicUrlGenerator{
           for(splitVal : String <- splitQuery)
             searcher = searcher + "+" + splitVal
 
-          getGoogleSearchRegisters(searcher)
+          getGoogleSearchRegisters(searcher, "lanacion.com")
 
         case None => List()
       }
     }
 
-  /**
-    * En función del nombre de la persona que se encuentra dentro de un Array[String] y de un parametro
-    * de busqueda (query : String), nos retorna una Lista con posibles resultados
-    **/
-  override def getGoogleSearchRegisters(query: String): List[String] = {
-    var result : List[String] = List()
 
-    try {
-      val doc = SearchEngineService.getQuery(query)
-      val links: Elements = doc.select("a[href*=lanacion]")
-      for (link <- links) {
-        val url = cleanUrlDomain(link.attr("href"))
-        if(!"".equals(url))
-          result = url :: result
-      }
-      println("Exited LaNacionUrlGenerator without exception")
-    } catch {
-      case e: SocketException => e.printStackTrace()
-      case e: IOException => if (e.getMessage == "HTTP error fetching URL") {
-        Thread.sleep(10000)
-      }
-      case e: Exception => e.printStackTrace()
-    }
-    result.distinct
-  }
 
     /**
       * Metodo que se encarga de limpiar un dominio (url:String) para eliminar cualquier exceso de caracteres
@@ -89,7 +59,7 @@ class LaNacionUrlGenerator extends BasicUrlGenerator{
     }
 
     private def isCorrect(searchName: Array[String], domain: String): Boolean = {
-      domain.contains("www.lanacion.com.ar/")
+      domain.contains("lanacion.com")
     }
 }
 

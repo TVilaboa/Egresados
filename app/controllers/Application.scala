@@ -82,7 +82,7 @@ class Application @Inject()(secureAction: SecureAction, prospectService: Prospec
       }
 
       val errors : Seq[Prospect] = partition._1
-      val updates: Seq[Prospect] = x.filter(e => e.updatedAt.nonEmpty && format.format(format.parse(e.updatedAt)).equals(format.format(updateDate)))
+      val updates: Seq[Prospect] = x.filter(e => e.updatedAt.nonEmpty && e.errorDate.isEmpty)
 
       Ok(com.home.views.html.index.render(errors,updates,format.format(errorDate),format.format(updateDate)))
 

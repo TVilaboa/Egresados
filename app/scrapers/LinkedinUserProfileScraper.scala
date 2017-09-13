@@ -5,12 +5,12 @@ import java.io.IOException
 import java.util.UUID
 
 import io.netty.handler.timeout.ReadTimeoutException
-import org.jsoup.{HttpStatusException, Jsoup}
+import models.{LinkedinEducation, LinkedinJob, LinkedinUserProfile}
 import org.jsoup.nodes.{Document, Element}
+import org.jsoup.{HttpStatusException, Jsoup}
 import play.api.Logger
 
 import scala.collection.JavaConversions._
-import models.{LinkedinEducation, LinkedinJob, LinkedinUserProfile}
 
 
 class LinkedinUserProfileScraper {
@@ -42,26 +42,24 @@ class LinkedinUserProfileScraper {
 
       case e : HttpStatusException =>
         ERROR_LOGGER.error(e.toString)
-        e.getStatusCode match{
-          case 999 => Some(LinkedinUserProfile(UUID.randomUUID().toString,"", List[LinkedinJob](),List[LinkedinEducation]() , url))
-          case _ => None
-        }
+        Some(LinkedinUserProfile(UUID.randomUUID().toString, "", List[LinkedinJob](), List[LinkedinEducation](), url))
+
 
       case  e: ReadTimeoutException =>
         if (cycle == 0)
           getLinkedinProfile(url, cycle + 1)
         else {
           ERROR_LOGGER.error(s"$scraper :-: ${e.toString} :-: $url")
-          None
+          Some(LinkedinUserProfile(UUID.randomUUID().toString, "", List[LinkedinJob](), List[LinkedinEducation](), url))
         }
 
       case e : IOException =>
         ERROR_LOGGER.error(s"$scraper :-: ${e.toString} :-: $url")
-        None
+        Some(LinkedinUserProfile(UUID.randomUUID().toString, "", List[LinkedinJob](), List[LinkedinEducation](), url))
 
       case  e: Exception =>
         ERROR_LOGGER.error(s"$scraper :-: ${e.toString} :-: $url")
-        None
+        Some(LinkedinUserProfile(UUID.randomUUID().toString, "", List[LinkedinJob](), List[LinkedinEducation](), url))
     }
   }
 

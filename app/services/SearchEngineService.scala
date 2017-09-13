@@ -157,7 +157,7 @@ object SearchEngineService {
     "Mozilla/5.0 (Windows NT 6.1; rv:23.0) Gecko/20100101 Firefox/23.0"
   )
 
-  def getQuery(query: String): Document = {
+  def getQuery(query: String): (Document, String) = {
     var start = 30000
     var end = 120000
     val rnd = new scala.util.Random
@@ -188,9 +188,9 @@ object SearchEngineService {
       //case 5 => fullQuery = "http://www.dogpile.com/info.dogpl/search/web?q=" + query
     }
     println("Sleep: " + sleep / 1000 + " sec .Query: " + fullQuery + " . UserAgent: " + userAgent)
-    Jsoup.connect(fullQuery).userAgent(userAgent)
+    (Jsoup.connect(fullQuery).userAgent(userAgent)
       .timeout(100000)
-      .get
+      .get, fullQuery)
 
 
   }

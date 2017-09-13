@@ -170,7 +170,7 @@
               @com.prospects.views.html.add_link("infobae-modal", "Agregar Link Infobae", "infobae")
             </fieldset>
             <fieldset>
-              <legend>LinkedIn Tracking</legend>
+                <legend>LinkedIn Tracking - Last Successful Update: @prospect.get.updatedAt</legend>
               <div class="row form-group">
               @if(prospect.get.linkedInProfiles.filter(p => !p.rejected).isEmpty) {
                   <div class="col-md-2">
