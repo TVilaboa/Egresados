@@ -1,21 +1,21 @@
 @(prospect: Option[Prospect])
 
-@styles = {
-  <!-- Application Style CSS -->
-  <link href="@routes.Assets.at("stylesheets/application.css")" rel="stylesheet">
+@css = {
+  <!-- DataTables CSS -->
   <link href="@routes.Assets.at("bower_components/datatables/media/css/jquery.dataTables.min.css")" rel="stylesheet">
-  <link href="https://cdn.datatables.net/buttons/1.3.1/css/buttons.dataTables.min.css" rel="stylesheet">
-
+  <link href="@routes.Assets.at("stylesheets/application.css")" rel="stylesheet">
+  <link href="@routes.Assets.at("bower_components/datatables/media/css/buttons.dataTables.min.css")" rel="stylesheet">
 }
 
 @scripts = {
-  <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.flash.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.print.min.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.colVis.min.js"></script>
+    <!-- DataTables JavaScript -->
+  <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/jquery.dataTables.min.js")"></script>
+  <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/dataTables.buttons.min.js")"></script>
+  <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/buttons.flash.min.js")"></script>
+  <script type="text/javascript" src="@routes.Assets.at("bower_components/jszip.min.js")"></script>
+  <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/buttons.html5.min.js")"></script>
+  <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/buttons.print.min.js")"></script>
+  <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/buttons.colVis.min.js")"></script>
 
   <script>
 
