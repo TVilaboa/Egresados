@@ -1,5 +1,5 @@
-
-
+@
+import services.ScrapingService
 @(title: String, scripts: Html = Html(""), styles: Html = Html(""))(content: Html)
 
 @navbar()={
@@ -38,16 +38,22 @@
                     </ul>
                 </li>
                 <li class="dropdown" role="presentation">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <a class='dropdown-toggle @if(ScrapingService.isAutoScrappingRunning) { disabled-link}' data-toggle="dropdown" href="#"
+                        @if(ScrapingService.isAutoScrappingRunning) {
+                            title="Scheduled scraping running"}>
                         <span><i class="fa fa-spinner"></i> Scraps</span>
                     </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="@routes.LinkedinUserProfileController.searchAll()"><i class="fa fa-linkedin"></i> Linkedin</a></li>
-                        <li><a href="@routes.InfobaeNewsController.searchAll()"><i></i> Infobae</a></li>
-                        <li><a href="@routes.LaNacionNewsController.searchAll()"><i></i> La Nacion</a></li>
-                        <li><a href="@routes.ElCronistaNewsController.searchAll()"><i></i> El Cronista</a></li>
-                        <li><a href="@routes.ClarinNewsController.searchAll()"><i></i> Clarin</a></li>
-                    </ul>
+                    @if(!ScrapingService.isAutoScrappingRunning) {
+                        <ul class="dropdown-menu">
+                            <li><a href="@routes.LinkedinUserProfileController.searchAll()"><i class="fa fa-linkedin"></i>
+                                Linkedin</a></li>
+                            <li><a href="@routes.InfobaeNewsController.searchAll()"><i></i> Infobae</a></li>
+                            <li><a href="@routes.LaNacionNewsController.searchAll()"><i></i> La Nacion</a></li>
+                            <li><a href="@routes.ElCronistaNewsController.searchAll()"><i></i> El Cronista</a></li>
+                            <li><a href="@routes.ClarinNewsController.searchAll()"><i></i> Clarin</a></li>
+                        </ul>
+                    }
+
                 </li>
             </ul>
         </div>
@@ -153,5 +159,6 @@
     <script src="@routes.Assets.at("bower_components/startbootstrap-sb-admin-2/dist/js/sb-admin-2.js")"></script>
 
     @scripts
+
 
 </html>

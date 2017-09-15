@@ -6,20 +6,21 @@ import java.util.{Calendar, Date}
 import com.google.inject.Inject
 import generators._
 import models.{LinkedinUserProfile, News, Prospect}
+import play.api.Logger
 import scrapers._
 
-import scala.concurrent.{ExecutionContext, ExecutionException, Future}
+import scala.concurrent.{ExecutionContext, Future}
 
-
-class ScrapingService @Inject()(implicit ee: ExecutionException, executionContext: ExecutionContext) {
+class ScrapingService @Inject()(implicit ec: ExecutionContext = ExecutionContext.global) {
   //Clase para unificar logicas de scrapeado ya sea se llame desde controler o desde actor
   final val format: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+  final val ERROR_LOGGER: Logger = Logger("errorLogger")
 
-
-  def runLinkedinSearch(prospectService: ProspectService, scraper: LinkedinUserProfileScraper, linkedinUserProfileService: LinkedinUserProfileService, prospect: Prospect): Unit = {
+  def runLinkedinSearch(prospectService: ProspectService, scraper: LinkedinUserProfileScraper, linkedinUserProfileService: LinkedinUserProfileService, prospect: Prospect): Int = {
+    var linksSize = 0
     try {
       val links: List[String] = LinkedInUrlGeneratorObject.search(Option(prospect.getFullName), Option(prospect.institution.name))
-
+      linksSize = links.size
       val profiles: List[LinkedinUserProfile] = links.map(x => scraper.getLinkedinProfile(x, 0)).filter(_.isDefined).map(_.get)
 
       val now: Date = Calendar.getInstance().getTime
@@ -58,13 +59,18 @@ class ScrapingService @Inject()(implicit ee: ExecutionException, executionContex
       }
     } catch {
 
-      case e: Exception =>
+      case e: Exception => {
+        println(e)
+        ERROR_LOGGER.error(s"${scraper.getClass.getName} :-: ${e.toString}")
 
-        None
+      }
+
+
     }
+    return linksSize
   }
 
-  def runClarinSearch(clarinScraper: ClarinScraper, clarinNewsService: ClarinNewsService, prospectService: ProspectService, prospect: Prospect): Unit = {
+  def runClarinSearch(clarinScraper: ClarinScraper, clarinNewsService: ClarinNewsService, prospectService: ProspectService, prospect: Prospect): Int = {
     val links: List[String] = ClarinUrlGeneratorObject.search(Option(prospect.getFullName), Option(prospect.institution.name))
 
     val news: Seq[News] = links.map { x => clarinScraper.getArticleData(x, Option(prospect.getFullName), 0) }.filter(_.isDefined).map(_.get)
@@ -82,9 +88,10 @@ class ScrapingService @Inject()(implicit ee: ExecutionException, executionContex
         }
       }
     }
+    return links.size
   }
 
-  def runElCronistaSearch(elCronistaScraper: ElCronistaScraper, elCronistaNewsService: ElCronistaNewsService, prospectService: ProspectService, prospect: Prospect): Unit = {
+  def runElCronistaSearch(elCronistaScraper: ElCronistaScraper, elCronistaNewsService: ElCronistaNewsService, prospectService: ProspectService, prospect: Prospect): Int = {
     val links: List[String] = ElCronistaUrlGeneratorObject.search(Option(prospect.getFullName), Option(prospect.institution.name))
 
     val news: Seq[News] = links.map { x => elCronistaScraper.getArticleData(x, Option(prospect.getFullName), 0) }.filter(_.isDefined).map(_.get)
@@ -102,9 +109,10 @@ class ScrapingService @Inject()(implicit ee: ExecutionException, executionContex
         }
       }
     }
+    return links.size
   }
 
-  def runLaNacionSearch(laNacionScraper: LaNacionScraper, laNacionNewsService: LaNacionNewsService, prospectService: ProspectService, prospect: Prospect): Unit = {
+  def runLaNacionSearch(laNacionScraper: LaNacionScraper, laNacionNewsService: LaNacionNewsService, prospectService: ProspectService, prospect: Prospect): Int = {
     val links: List[String] = LaNacionUrlGeneratorObject.search(Option(prospect.getFullName), Option(prospect.institution.name))
 
     val news: Seq[News] = links.map { x => laNacionScraper.getArticleData(x, Option(prospect.getFullName), 0) }.filter(_.isDefined).map(_.get)
@@ -122,9 +130,10 @@ class ScrapingService @Inject()(implicit ee: ExecutionException, executionContex
         }
       }
     }
+    return links.size
   }
 
-  def runInfobaeSearch(infobaeScraper: InfobaeScraper, infobaeNewsService: InfobaeNewsService, prospectService: ProspectService, prospect: Prospect): Unit = {
+  def runInfobaeSearch(infobaeScraper: InfobaeScraper, infobaeNewsService: InfobaeNewsService, prospectService: ProspectService, prospect: Prospect): Int = {
     val links: List[String] = InfobaeUrlGeneratorObject.search(Option(prospect.getFullName), Option(prospect.institution.name))
 
     val news: Seq[News] = links.map { x => infobaeScraper.getArticleData(x, Option(prospect.getFullName), 0) }.filter(_.isDefined).map(_.get)
@@ -142,5 +151,74 @@ class ScrapingService @Inject()(implicit ee: ExecutionException, executionContex
         }
       }
     }
+    return links.size
   }
 }
+
+object ScrapingService {
+  val scrapingService = new ScrapingService()
+  var isAutoScrappingRunning: Boolean = false
+  var lastStartDate: Date = _
+  var lastFinishDate: Date = _
+  var linksGenerated: Int = 0
+  private var counter: Int = 0
+  private var total: Int = 0
+
+  def addTotal(value: Int): Unit = {
+    this.synchronized({
+      total += value
+    })
+  }
+
+  def addCounter(): Unit = {
+    this.synchronized({
+      counter += 1
+    })
+  }
+
+  def getTotal: Int = {
+    this.synchronized({
+      total
+    })
+  }
+
+  def setTotal(value: Int): Unit = {
+    this.synchronized({
+      total = value
+    })
+  }
+
+  def getCounter: Int = {
+    this.synchronized({
+      counter
+    })
+  }
+
+  def setCounter(value: Int): Unit = {
+    this.synchronized({
+      counter = value
+    })
+  }
+
+  def runLinkedinSearch(prospectService: ProspectService, scraper: LinkedinUserProfileScraper, linkedinUserProfileService: LinkedinUserProfileService, prospect: Prospect): Int = {
+    scrapingService.runLinkedinSearch(prospectService, scraper, linkedinUserProfileService, prospect)
+  }
+
+  def runClarinSearch(clarinScraper: ClarinScraper, clarinNewsService: ClarinNewsService, prospectService: ProspectService, prospect: Prospect): Int = {
+    scrapingService.runClarinSearch(clarinScraper, clarinNewsService, prospectService, prospect)
+  }
+
+  def runElCronistaSearch(elCronistaScraper: ElCronistaScraper, elCronistaNewsService: ElCronistaNewsService, prospectService: ProspectService, prospect: Prospect): Int = {
+    scrapingService.runElCronistaSearch(elCronistaScraper, elCronistaNewsService, prospectService, prospect)
+  }
+
+  def runLaNacionSearch(laNacionScraper: LaNacionScraper, laNacionNewsService: LaNacionNewsService, prospectService: ProspectService, prospect: Prospect): Int = {
+    scrapingService.runLaNacionSearch(laNacionScraper, laNacionNewsService, prospectService, prospect)
+  }
+
+  def runInfobaeSearch(infobaeScraper: InfobaeScraper, infobaeNewsService: InfobaeNewsService, prospectService: ProspectService, prospect: Prospect): Int = {
+    scrapingService.runInfobaeSearch(infobaeScraper, infobaeNewsService, prospectService, prospect)
+  }
+
+}
+

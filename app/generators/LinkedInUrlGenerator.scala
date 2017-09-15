@@ -3,8 +3,6 @@ package generators
 import java.sql.Timestamp
 import java.text.Normalizer
 
-import scala.collection.JavaConversions._
-
 class LinkedInUrlGenerator extends BasicUrlGenerator{
 
 
@@ -20,19 +18,27 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
     var result: List[String] = List()
     if (name.isDefined) {
       //Split both name and query : Option[String]
-      val splittedName = name.get.split(" ")
-      val splittedQuery = query.get.split(" ")
+      val obtainedName = name.getOrElse("")
+      val obtainedQuery = query.getOrElse("")
 
       var searcher = "linkedIn"
 
-      for (splitVal: String <- splittedName)
-        searcher = searcher + "%20" + splitVal
+      if (obtainedName.nonEmpty) {
+        val splittedName = obtainedName.split(" ")
+        for (splitVal: String <- splittedName)
+          searcher = searcher + "%20" + splitVal
 
-      for (splitVal: String <- splittedQuery)
-        searcher = searcher + "%20" + splitVal
+        if (obtainedQuery.nonEmpty) {
+          for (splitVal: String <- obtainedQuery.split(" "))
+            searcher = searcher + "%20" + splitVal
+        }
 
-      val urls = getGoogleSearchRegisters(searcher, "linkedin.com/in")
-      result = selectProfileUrl(splittedName, urls)
+
+        val urls = getGoogleSearchRegisters(searcher, "linkedin.com/in")
+        result = selectProfileUrl(splittedName, urls)
+      }
+
+
     }
     result
   }
@@ -47,7 +53,7 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
 
 
     var filterByCondition = List[String]()
-    var maxMatches = 0
+    var maxMatches = 2 //Para que intente matchear al menos 2 partes del nombre
     for (link <- list) {
       var matches = 0
       for (name <- username) {
@@ -57,7 +63,7 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
         maxMatches = matches
         filterByCondition = List[String](link)
       } else if (maxMatches == matches && maxMatches > 0) {
-        filterByCondition.add(link)
+        filterByCondition = link :: filterByCondition
       }
     }
     println("Matched " + username.mkString(" ") + " to " + filterByCondition.mkString(" - "))
@@ -89,12 +95,12 @@ class LinkedInUrlGenerator extends BasicUrlGenerator{
           while (i != userName.length) {
             if (nameUrl.contains(userName(i).toLowerCase())) {
               if (userName.length >= 2 && userName(1).length != 0) {
-                if (i != (userName.length - 1) &&
+                if (i != (userName.length - 1) && userName(i + 1).nonEmpty &&
                   nameUrl.contains("" + userName(i + 1).toLowerCase().charAt(0))) {
                   if (nameUrl.contains(userName(i + 1).toLowerCase())) {
                     if (nameUrl.length < (userName(i).length + userName(i + 1).length + 3)) isCorrect = true
                   } else if (nameUrl.length < (userName(i).length + 5)) isCorrect = true
-                } else if (i != 0 &&
+                } else if (i != 0 && userName(i - 1).nonEmpty &&
                   nameUrl.contains("" + userName(i - 1).toLowerCase().charAt(0))) {
                   if (nameUrl.length < (userName(i).length + 5)) isCorrect = true
                 }
@@ -142,7 +148,7 @@ object LinkedInUrlGeneratorObject{
     var links = generator.getSearchedUrl(Option(Normalizer.normalize(name.getOrElse(""), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}̃']", "")), query).distinct
     if (links.isEmpty) {
       println("No links found, trying without institution... " + name.getOrElse("Nombre vacio") + " - " + query.getOrElse("Query vacia"))
-      links = generator.getSearchedUrl(Option(Normalizer.normalize(name.getOrElse(""), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}̃']", "")), null).distinct
+      links = generator.getSearchedUrl(Option(Normalizer.normalize(name.getOrElse(""), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}̃']", "")), Option[String](null)).distinct
     }
 
 

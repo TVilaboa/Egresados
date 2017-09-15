@@ -159,7 +159,7 @@ object SearchEngineService {
 
   def getQuery(query: String): (Document, String) = {
     var start = 30000
-    var end = 120000
+    var end = 60000
     val rnd = new scala.util.Random
 
     val sleep = start + rnd.nextInt((end - start) + 1)
@@ -181,7 +181,7 @@ object SearchEngineService {
 
       //Probar bien estos dos
       case 5 => fullQuery = "https://www.ixquick.com/do/asearch?q=" + query
-      //No lo encuentra a emilio por ejemplo
+      //No lo encuentra a emilio por ejemplo. Viendolo bien, pocos buscadores lo encuentran, asi que se podria volver a incluir
       //case 6 => fullQuery = "https://www.yandex.com/search/?text=" + query
 
       //No busca muy bien y no pone las urls claras
