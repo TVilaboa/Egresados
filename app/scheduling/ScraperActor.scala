@@ -3,9 +3,10 @@ package scheduling
 import java.util.Date
 import javax.inject._
 
-import akka.actor.Actor
+import akka.actor.{Actor, ActorRef, ActorSystem}
 import com.google.inject.Inject
 import models.Prospect
+import play.api.{Configuration, Logger}
 import scrapers._
 import services._
 
@@ -40,7 +41,7 @@ class ScraperActor @Inject()(prospectService: ProspectService,
                              laNacionScraper: LaNacionScraper)(implicit ee: ExecutionException, executionContext: ExecutionContext) extends Actor {
 
 
-
+  final val ERROR_LOGGER: Logger = Logger("errorLogger")
 
 
   override def receive : Receive = {
@@ -110,21 +111,21 @@ class ScraperActor @Inject()(prospectService: ProspectService,
         println(ScrapingService.getCounter + "/" + ScrapingService.getTotal + " generated urls...")
       }
     }
-    Await.result(result, Duration.Inf)
+   Await.result(result, Duration.Inf)
     return linksSize
   }
 
   private def scrapClarin(prospects: Future[Seq[Prospect]]): Int = {
     var linksSize = 0
     val result = prospects.map { x =>
-      ScrapingService.addTotal(x.size)
+      
       x.foreach{p =>
         linksSize += ScrapingService.runClarinSearch(clarinScraper, clarinNewsService, prospectService, p)
         ScrapingService.addCounter()
         println(ScrapingService.getCounter + "/" + ScrapingService.getTotal + " generated urls...")
       }
     }
-
+    Await.result(result, Duration.Inf)
     return linksSize
   }
 
@@ -132,12 +133,14 @@ class ScraperActor @Inject()(prospectService: ProspectService,
 
     //Ver como se cargan los totales para entender si se esta haciendo serializado, en paralelo o que onda.
     //Se podria instanciar un actor nuvo para cada scrap y hacerlo realmente en paralelo
+
+    val prospects : Future[Seq[Prospect]]= prospectService.all()
     ScrapingService.setCounter(0)
-    ScrapingService.setTotal(0)
     ScrapingService.isAutoScrappingRunning = true
     ScrapingService.lastStartDate = new Date()
     ScrapingService.linksGenerated = 0
-    val prospects : Future[Seq[Prospect]]= prospectService.all()
+    val existentProspects: List[Prospect] = Await.result(prospects, Duration.Inf).toList
+    ScrapingService.setTotal(existentProspects.size)
 
     val linkedinFuture = Future[Int] {
       scrapLinkedIn(prospects)
@@ -164,7 +167,7 @@ class ScraperActor @Inject()(prospectService: ProspectService,
     } yield linkedin + infobae + laNacion + elCronista + clarin
 
     aggregatedFuture.recoverWith {
-      case e => Future { println("Called recover: " + e.toString); None }
+      case e => Future {  ERROR_LOGGER.error(s"${this.getClass.getName} :-: ${e.toString}");println("Called recover: " + e.toString); None }
     }
 
     aggregatedFuture.onComplete((linksObtained: Try[Int]) => {

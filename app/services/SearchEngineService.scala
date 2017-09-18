@@ -159,7 +159,7 @@ object SearchEngineService {
 
   def getQuery(query: String): (Document, String) = {
     var start = 30000
-    var end = 60000
+    var end = 120000
     val rnd = new scala.util.Random
 
     val sleep = start + rnd.nextInt((end - start) + 1)
