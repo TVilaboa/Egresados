@@ -129,6 +129,9 @@ class ScraperActor @Inject()(prospectService: ProspectService,
   }
 
   private def scrapAll() : Unit = {
+
+    //Ver como se cargan los totales para entender si se esta haciendo serializado, en paralelo o que onda.
+    //Se podria instanciar un actor nuvo para cada scrap y hacerlo realmente en paralelo
     ScrapingService.setCounter(0)
     ScrapingService.setTotal(0)
     ScrapingService.isAutoScrappingRunning = true
@@ -159,6 +162,10 @@ class ScraperActor @Inject()(prospectService: ProspectService,
       elCronista <- elCronistaFuture
       clarin <- clarinFuture
     } yield linkedin + infobae + laNacion + elCronista + clarin
+
+    aggregatedFuture.recoverWith {
+      case e => Future { println("Called recover: " + e.toString); None }
+    }
 
     aggregatedFuture.onComplete((linksObtained: Try[Int]) => {
       ScrapingService.isAutoScrappingRunning = false

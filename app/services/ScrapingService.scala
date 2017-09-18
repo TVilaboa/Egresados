@@ -71,6 +71,8 @@ class ScrapingService @Inject()(implicit ec: ExecutionContext = ExecutionContext
   }
 
   def runClarinSearch(clarinScraper: ClarinScraper, clarinNewsService: ClarinNewsService, prospectService: ProspectService, prospect: Prospect): Int = {
+    var linksSize = 0
+    try {
     val links: List[String] = ClarinUrlGeneratorObject.search(Option(prospect.getFullName), Option(prospect.institution.name))
 
     val news: Seq[News] = links.map { x => clarinScraper.getArticleData(x, Option(prospect.getFullName), 0) }.filter(_.isDefined).map(_.get)
@@ -87,11 +89,24 @@ class ScrapingService @Inject()(implicit ec: ExecutionContext = ExecutionContext
           prospectService.update(prospect.copy(clarinNews = all, updatedAt = format.format(now)))
         }
       }
+    } } catch {
+
+      case e: Exception => {
+        println(e)
+        ERROR_LOGGER.error(s"${clarinScraper.getClass.getName} :-: ${e.toString}")
+
+      }
+
+
     }
-    return links.size
+    return linksSize
+
   }
 
   def runElCronistaSearch(elCronistaScraper: ElCronistaScraper, elCronistaNewsService: ElCronistaNewsService, prospectService: ProspectService, prospect: Prospect): Int = {
+    var linksSize = 0
+    try {
+
     val links: List[String] = ElCronistaUrlGeneratorObject.search(Option(prospect.getFullName), Option(prospect.institution.name))
 
     val news: Seq[News] = links.map { x => elCronistaScraper.getArticleData(x, Option(prospect.getFullName), 0) }.filter(_.isDefined).map(_.get)
@@ -109,10 +124,23 @@ class ScrapingService @Inject()(implicit ec: ExecutionContext = ExecutionContext
         }
       }
     }
-    return links.size
+    } catch {
+
+      case e: Exception => {
+        println(e)
+        ERROR_LOGGER.error(s"${elCronistaScraper.getClass.getName} :-: ${e.toString}")
+
+      }
+
+
+    }
+    return linksSize
   }
 
   def runLaNacionSearch(laNacionScraper: LaNacionScraper, laNacionNewsService: LaNacionNewsService, prospectService: ProspectService, prospect: Prospect): Int = {
+    var linksSize = 0
+    try {
+
     val links: List[String] = LaNacionUrlGeneratorObject.search(Option(prospect.getFullName), Option(prospect.institution.name))
 
     val news: Seq[News] = links.map { x => laNacionScraper.getArticleData(x, Option(prospect.getFullName), 0) }.filter(_.isDefined).map(_.get)
@@ -130,10 +158,23 @@ class ScrapingService @Inject()(implicit ec: ExecutionContext = ExecutionContext
         }
       }
     }
-    return links.size
+    } catch {
+
+      case e: Exception => {
+        println(e)
+        ERROR_LOGGER.error(s"${laNacionScraper.getClass.getName} :-: ${e.toString}")
+
+      }
+
+
+    }
+    return linksSize
   }
 
   def runInfobaeSearch(infobaeScraper: InfobaeScraper, infobaeNewsService: InfobaeNewsService, prospectService: ProspectService, prospect: Prospect): Int = {
+    var linksSize = 0
+    try {
+
     val links: List[String] = InfobaeUrlGeneratorObject.search(Option(prospect.getFullName), Option(prospect.institution.name))
 
     val news: Seq[News] = links.map { x => infobaeScraper.getArticleData(x, Option(prospect.getFullName), 0) }.filter(_.isDefined).map(_.get)
@@ -151,7 +192,17 @@ class ScrapingService @Inject()(implicit ec: ExecutionContext = ExecutionContext
         }
       }
     }
-    return links.size
+    } catch {
+
+      case e: Exception => {
+        println(e)
+        ERROR_LOGGER.error(s"${infobaeScraper.getClass.getName} :-: ${e.toString}")
+
+      }
+
+
+    }
+    return linksSize
   }
 }
 
