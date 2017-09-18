@@ -4,6 +4,7 @@ import java.util.Date
 import javax.inject._
 
 import akka.actor.{Actor, ActorRef, ActorSystem}
+import akka.dispatch.MessageDispatcher
 import com.google.inject.Inject
 import models.Prospect
 import play.api.{Configuration, Logger}
@@ -38,9 +39,10 @@ class ScraperActor @Inject()(prospectService: ProspectService,
                              elCronistaNewsService: ElCronistaNewsService,
                              elCronistaScraper: ElCronistaScraper,
                              laNacionNewsService: LaNacionNewsService,
-                             laNacionScraper: LaNacionScraper)(implicit ee: ExecutionException, executionContext: ExecutionContext) extends Actor {
+                             laNacionScraper: LaNacionScraper,
+                             system : ActorSystem)(implicit ee: ExecutionException) extends Actor {
 
-
+  implicit val executionContext: MessageDispatcher = system.dispatchers.lookup("scraping-dispatcher")
   final val ERROR_LOGGER: Logger = Logger("errorLogger")
 
 
@@ -62,7 +64,7 @@ class ScraperActor @Inject()(prospectService: ProspectService,
   private def scrapLinkedIn(prospects: Future[Seq[Prospect]]): Int = {
     var linksSize = 0
     val result = prospects.map { x =>
-      ScrapingService.addTotal(x.size)
+
       x.foreach { p =>
         linksSize += ScrapingService.runLinkedinSearch(prospectService, linkedinScraper, linkedinUserProfileService, p)
         ScrapingService.addCounter()
@@ -76,7 +78,7 @@ class ScraperActor @Inject()(prospectService: ProspectService,
   private def scrapInfobae(prospects: Future[Seq[Prospect]]): Int = {
     var linksSize = 0
     val result = prospects.map { x =>
-      ScrapingService.addTotal(x.size)
+
       x.foreach{p =>
         linksSize += ScrapingService.runInfobaeSearch(infobaeScraper, infobaeNewsService, prospectService, p)
         ScrapingService.addCounter()
@@ -90,7 +92,7 @@ class ScraperActor @Inject()(prospectService: ProspectService,
   private def scrapLaNacion(prospects: Future[Seq[Prospect]]): Int = {
     var linksSize = 0
     val result = prospects.map { x =>
-      ScrapingService.addTotal(x.size)
+
       x.foreach{p =>
         linksSize += ScrapingService.runLaNacionSearch(laNacionScraper, laNacionNewsService, prospectService, p)
         ScrapingService.addCounter()
@@ -104,7 +106,7 @@ class ScraperActor @Inject()(prospectService: ProspectService,
   private def scrapElCronista(prospects: Future[Seq[Prospect]]): Int = {
     var linksSize = 0
     val result = prospects.map { x =>
-      ScrapingService.addTotal(x.size)
+
       x.foreach{p =>
         linksSize += ScrapingService.runElCronistaSearch(elCronistaScraper, elCronistaNewsService, prospectService, p)
         ScrapingService.addCounter()
@@ -140,7 +142,7 @@ class ScraperActor @Inject()(prospectService: ProspectService,
     ScrapingService.lastStartDate = new Date()
     ScrapingService.linksGenerated = 0
     val existentProspects: List[Prospect] = Await.result(prospects, Duration.Inf).toList
-    ScrapingService.setTotal(existentProspects.size)
+    ScrapingService.setTotal(existentProspects.size*5)
 
     val linkedinFuture = Future[Int] {
       scrapLinkedIn(prospects)
