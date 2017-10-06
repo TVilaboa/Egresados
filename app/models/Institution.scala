@@ -13,6 +13,7 @@ case class Institution(_id: String = UUID.randomUUID().toString, name: String = 
   def toMap: Map[String, String] = Map("_id" -> _id, "name" -> name, "address" -> address, "active" -> active.toString, "institutionType" -> institutionType.toString, "sector" -> sector.toString)
 
   def toJson: JsValue = Json.toJson(Map("_id" -> _id, "name" -> name, "address" -> address, "active" -> active.toString, "institutionType" -> institutionType.toString, "sector" -> sector.toString))
+
 }
 
 object Institution {
@@ -20,5 +21,7 @@ object Institution {
   import play.api.libs.json.Json
 
   implicit val institutionFormat = Json.format[Institution]
+
+  def DEFAULT_EMPTY: Institution = Institution("", "", "", active = false, InstitutionType.Unspecified, InstitutionSector.Unspecified)
 
 }

@@ -1,7 +1,6 @@
 package services
 
-import java.text.{Normalizer, SimpleDateFormat}
-import java.util.{Calendar, Date}
+import java.text.Normalizer
 
 import com.google.inject.Inject
 import daos.ProspectDao
@@ -27,8 +26,6 @@ class ProspectService @Inject()(dao: ProspectDao) {
   def findByFirstName(firstName: String): Future[Prospect] = dao.findByFirstName(firstName)
 
   def findByLastName(lastName: String): Future[Prospect] = dao.findByLastName(lastName)
-
-  def findByInstitutionCode(institutionCode : String): Future[Prospect] = dao.findByInstitutionCode(institutionCode)
 
   def save(prospect: Prospect): Future[Completed] = dao.save(prospect)
 

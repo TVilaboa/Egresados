@@ -185,7 +185,7 @@ class RestApiController @Inject()(prospectService: ProspectService,
     var info = Seq[Prospect]()
     val all: Future[Seq[Prospect]] = prospectService.all()
     info = Await.result(all,Duration.Inf)
-    val selectInfo = info.filter(_.title.toLowerCase.contains(career.toLowerCase))
+    val selectInfo = info.filter(x=> x.workingData.title.toLowerCase.contains(career.toLowerCase) || x.academicData.title.toLowerCase.contains(career.toLowerCase))
     if(selectInfo.isEmpty) {
       Ok("{\"type\":\"success\",\"value\": \"There is no data\" }")
     } else {

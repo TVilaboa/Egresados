@@ -19,7 +19,7 @@ class ScrapingService @Inject()(implicit ec: ExecutionContext = ExecutionContext
   def runLinkedinSearch(prospectService: ProspectService, scraper: LinkedinUserProfileScraper, linkedinUserProfileService: LinkedinUserProfileService, prospect: Prospect): Int = {
     var linksSize = 0
     try {
-      val links: List[String] = LinkedInUrlGeneratorObject.search(Option(prospect.getFullName), Option(prospect.institution.name))
+      val links: List[String] = LinkedInUrlGeneratorObject.search(Option(prospect.getFullName), Option(s"${prospect.workingData.institution.name} ${prospect.academicData.institution.name}"))
       linksSize = links.size
       val profiles: List[LinkedinUserProfile] = links.map(x => scraper.getLinkedinProfile(x, 0)).filter(_.isDefined).map(_.get)
 
@@ -73,7 +73,7 @@ class ScrapingService @Inject()(implicit ec: ExecutionContext = ExecutionContext
   def runClarinSearch(clarinScraper: ClarinScraper, clarinNewsService: ClarinNewsService, prospectService: ProspectService, prospect: Prospect): Int = {
     var linksSize = 0
     try {
-    val links: List[String] = ClarinUrlGeneratorObject.search(Option(prospect.getFullName), Option(prospect.institution.name))
+    val links: List[String] = ClarinUrlGeneratorObject.search(Option(prospect.getFullName), Option(s"${prospect.workingData.institution.name} ${prospect.academicData.institution.name}"))
 
     val news: Seq[News] = links.map { x => clarinScraper.getArticleData(x, Option(prospect.getFullName), 0) }.filter(_.isDefined).map(_.get)
 
@@ -107,7 +107,7 @@ class ScrapingService @Inject()(implicit ec: ExecutionContext = ExecutionContext
     var linksSize = 0
     try {
 
-    val links: List[String] = ElCronistaUrlGeneratorObject.search(Option(prospect.getFullName), Option(prospect.institution.name))
+    val links: List[String] = ElCronistaUrlGeneratorObject.search(Option(prospect.getFullName), Option(s"${prospect.workingData.institution.name} ${prospect.academicData.institution.name}"))
 
     val news: Seq[News] = links.map { x => elCronistaScraper.getArticleData(x, Option(prospect.getFullName), 0) }.filter(_.isDefined).map(_.get)
 
@@ -141,7 +141,7 @@ class ScrapingService @Inject()(implicit ec: ExecutionContext = ExecutionContext
     var linksSize = 0
     try {
 
-    val links: List[String] = LaNacionUrlGeneratorObject.search(Option(prospect.getFullName), Option(prospect.institution.name))
+    val links: List[String] = LaNacionUrlGeneratorObject.search(Option(prospect.getFullName), Option(s"${prospect.workingData.institution.name} ${prospect.academicData.institution.name}"))
 
     val news: Seq[News] = links.map { x => laNacionScraper.getArticleData(x, Option(prospect.getFullName), 0) }.filter(_.isDefined).map(_.get)
 
@@ -175,7 +175,7 @@ class ScrapingService @Inject()(implicit ec: ExecutionContext = ExecutionContext
     var linksSize = 0
     try {
 
-    val links: List[String] = InfobaeUrlGeneratorObject.search(Option(prospect.getFullName), Option(prospect.institution.name))
+    val links: List[String] = InfobaeUrlGeneratorObject.search(Option(prospect.getFullName), Option(s"${prospect.workingData.institution.name} ${prospect.academicData.institution.name}"))
 
     val news: Seq[News] = links.map { x => infobaeScraper.getArticleData(x, Option(prospect.getFullName), 0) }.filter(_.isDefined).map(_.get)
 

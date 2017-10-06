@@ -30,15 +30,15 @@
             @if(prospects.nonEmpty){
               @for(prospect : Prospect <- prospects){
                   <tr class="graduate" >
-                      <td>@prospect.getFullName @if(!prospect.linkedInProfiles.exists(p => !p.rejected)) {
+                      <td>@prospect.getFullName @if(prospect.linkedInProfiles.forall(p => p.rejected)) {
                           <img title="No Linkedin Profile" width="30px" height="30px" src="@routes.Assets.at("images/ic_error_red_48dp (1).png")"/>
                       }</td>
                   <td>@prospect.getIdentification</td>
-                  <td>@prospect.institution.name</td>
-                  <td>@prospect.institutionCode</td>
-                  <td>@prospect.title</td>
-                  <td>@prospect.entryDate</td>
-                  <td>@prospect.exitDate</td>
+                  <td>@prospect.workingData.institution.name</td>
+                  <td>@prospect.workingData.institutionCode</td>
+                  <td>@prospect.workingData.title</td>
+                  <td>@prospect.workingData.entryDate</td>
+                  <td>@prospect.workingData.exitDate</td>
                   <td>
                     <div class="btns-ctn">
                       <a title="Details" class="btn btn-primary" href="@routes.ProspectController.show(prospect._id)"><i class="fa fa-cog"></i></a>

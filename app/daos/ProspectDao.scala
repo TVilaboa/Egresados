@@ -3,6 +3,7 @@ package daos
 import com.google.inject.{ImplementedBy, Inject, Singleton}
 import enums.{InstitutionSector, InstitutionType}
 import models._
+import org.bson.BsonValue
 import org.mongodb.scala._
 import org.mongodb.scala.bson.{BsonArray, BsonDocument}
 import org.mongodb.scala.model.Filters._
@@ -13,6 +14,7 @@ import services.Mongo
 
 import scala.collection.JavaConversions._
 import scala.concurrent.Future
+import scala.util.{Failure, Success, Try}
 
 /**
   * Created by franco on 27/07/17.
@@ -28,8 +30,6 @@ trait ProspectDao {
   def findByFirstName(firstName: String): Future[Prospect]
 
   def findByLastName(lastName: String): Future[Prospect]
-
-  def findByInstitutionCode(institutionCode: String): Future[Prospect]
 
   def findByInstitution(_institutionId: String): Future[Seq[Prospect]]
 
@@ -71,14 +71,11 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
     })
   }
 
-  override def findByInstitutionCode(institutionCode: String): Future[Prospect] = {
-    data.find(equal("institutionCode", institutionCode)).head().map[Prospect]((doc: Document) => {
-      transformDocument(doc)
-    })
-  }
-
   override def findByInstitution(_institutionId: String): Future[Seq[Prospect]] = {
-    data.find(equal("institution._id", _institutionId)).toFuture().map(doc => doc.map(transformDocument))
+    for{
+      workingData <- data.find(equal("workingData.institution._id", _institutionId)).toFuture().map(doc => doc.map(transformDocument))
+      academicData <- data.find(equal("academicData.institution._id", _institutionId)).toFuture().map(doc => doc.map(transformDocument))
+    } yield (workingData ++ academicData).distinct
   }
 
   override def save(prospect: Prospect): Future[Completed] = {
@@ -97,39 +94,99 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
 
   private def transformDocument(document: Document) : Prospect = {
     //Get all News for prospect
-    val nacionNews: List[News] = try{ transformNews(document.get("nacionNews").get.asArray())} catch {case  e : Exception => List[News]()}
-    val infobaeNews: List[News] = try{ transformNews(document.get("infobaeNews").get.asArray())} catch {case  e : Exception => List[News]()}
-    val cronistaNews: List[News] = try{ transformNews(document.get("cronistaNews").get.asArray())} catch {case  e : Exception => List[News]()}
-    val clarinNews: List[News] = try{ transformNews(document.get("clarinNews").get.asArray())} catch {case  e : Exception => List[News]()}
+    val nacionNews: List[News] = Try(transformNews(document.get("nacionNews").get.asArray())) match{
+      case Success(item) => item
+      case Failure(exception) => List[News]()
+    }
 
-    //Get institution
-    val institution: Institution = try {
-      transformInstitution(document.get("institution").get.asDocument())
-    } catch {
-      case e: Exception => Institution("", "", "", active = false, null, null)
+    val infobaeNews: List[News] = Try(transformNews(document.get("infobaeNews").get.asArray())) match{
+      case Success(item) => item
+      case Failure(exception) => List[News]()
+    }
+
+    val cronistaNews: List[News] = Try(transformNews(document.get("cronistaNews").get.asArray())) match{
+      case Success(item) => item
+      case Failure(exception) => List[News]()
+    }
+
+    val clarinNews: List[News] = Try(transformNews(document.get("clarinNews").get.asArray())) match{
+      case Success(item) => item
+      case Failure(exception) => List[News]()
+    }
+
+    //Working Data
+    val workingDoc : BsonDocument = document.get("workingData") match {
+      case Some(doc) => doc.asDocument()
+      case None => null
+    }
+    val workingData: InstitutionalData = transformInstitutionalData(workingDoc) match{
+      case Success(item) => item
+      case Failure(exception) => InstitutionalData.DEFAULT_EMPTY
+    }
+
+    //Academic Data
+    val academicDoc = document.get("workingData") match {
+      case Some(doc) => doc.asDocument()
+      case None => null
+    }
+    val academicData: InstitutionalData = transformInstitutionalData(academicDoc) match{
+      case Success(item) => item
+      case Failure(exception) => InstitutionalData.DEFAULT_EMPTY
     }
 
     //Get LinkedInProfile
-    val linkedInProfile: List[LinkedinUserProfile] = try {
-      transformProfiles(document.get("linkedInProfiles").get.asArray())
-    } catch {
-      case e: Exception => List[LinkedinUserProfile]()
+    val linkedInProfile: List[LinkedinUserProfile] = Try(transformProfiles(document.get("linkedInProfiles").get.asArray())) match {
+      case Success(item) => item
+      case Failure(exception) => List[LinkedinUserProfile]()
     }
 
     //Get Country
-    val country : String = try{ document.get("country").get.asString().getValue} catch {case  e : Exception => "" }
+    val country : String = Try(document.get("country").get.asString().getValue) match{
+      case Success(item) => item
+      case Failure(exception) => ""
+    }
 
     //Get Emails
-    val primaryEmail : String = try{ document.get("primaryEmail").get.asString().getValue} catch {case  e : Exception => "" }
-    val secondaryEmail : String = try{ document.get("secondaryEmail").get.asString().getValue} catch {case  e : Exception => "" }
+    val primaryEmail : String = Try(document.get("primaryEmail").get.asString().getValue) match{
+      case Success(item) => item
+      case Failure(exception) => ""
+    }
+
+    val secondaryEmail : String = Try(document.get("secondaryEmail").get.asString().getValue) match{
+      case Success(item) => item
+      case Failure(exception) => ""
+    }
 
     //Get Dates
-    val createdAt : String = try{ document.get("createdAt").get.asString().getValue} catch {case  e : Exception => "" }
-    val updatedAt : String = try{ document.get("updatedAt").get.asString().getValue} catch {case  e : Exception => "" }
-    val errorDate : String = try{ document.get("errorDate").get.asString().getValue} catch {case  e : Exception => "" }
+    val createdAt : String = Try(document.get("createdAt").get.asString().getValue) match{
+      case Success(item) => item
+      case Failure(exception) => ""
+    }
+
+    val updatedAt : String = Try(document.get("updatedAt").get.asString().getValue) match{
+      case Success(item) => item
+      case Failure(exception) => ""
+    }
+
+    val errorDate : String = Try(document.get("errorDate").get.asString().getValue) match{
+      case Success(item) => item
+      case Failure(exception) => ""
+    }
 
     //Generate Prospect
-    Prospect(document.get("_id").get.asString().getValue, document.get("firstName").get.asString().getValue, document.get("lastName").get.asString().getValue, document.get("documentType").get.asString().getValue, document.get("documentId").get.asString().getValue, document.get("birthDate").get.asString().getValue, document.get("entryDate").get.asString().getValue, document.get("exitDate").get.asString().getValue, institution, document.get("institutionCode").get.asString().getValue, document.get("title").get.asString().getValue, nacionNews, infobaeNews, clarinNews, cronistaNews, linkedInProfile, country, primaryEmail, secondaryEmail, createdAt, updatedAt, errorDate)
+    Prospect(document.get("_id").get.asString().getValue,
+             document.get("firstName").get.asString().getValue,
+             document.get("lastName").get.asString().getValue,
+             document.get("documentType").get.asString().getValue,
+             document.get("documentId").get.asString().getValue,
+             document.get("birthDate").get.asString().getValue,
+             workingData,
+             academicData,
+             nacionNews, infobaeNews, clarinNews, cronistaNews,
+             linkedInProfile,
+             country,
+             primaryEmail, secondaryEmail,
+             createdAt, updatedAt, errorDate)
   }
 
   private def transformNews(bson : BsonArray): List[News] = {
@@ -155,33 +212,50 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
     }
   }
 
-  private def transformInstitution(bson : BsonDocument): Institution = {
-    Institution(bson.get("_id").asString().getValue, bson.get("name").asString().getValue, bson.get("address").asString().getValue, bson.get("active").asBoolean().getValue,
-      InstitutionType.withName(bson.get("institutionType").asString().getValue),
-      InstitutionSector.withName(bson.get("sector").asString().getValue))
+  private def transformInstitutionalData(bson : BsonDocument): Try[InstitutionalData] = Try{
+
+    val institution: Institution = transformInstitution(bson.get("institution").asDocument()) match {
+      case Success(item) => item
+      case Failure(exception) => Institution.DEFAULT_EMPTY
+    }
+
+    InstitutionalData(bson.get("id").asString().getValue,
+                      bson.get("id").asString().getValue,
+                      bson.get("id").asString().getValue,
+                      bson.get("id").asString().getValue,
+                      bson.get("id").asString().getValue,
+                      institution)
+  }
+
+  private def transformInstitution(bson : BsonDocument): Try[Institution] = Try{
+    Institution(bson.get("_id").asString().getValue,
+                bson.get("name").asString().getValue,
+                bson.get("address").asString().getValue,
+                bson.get("active").asBoolean().getValue,
+                InstitutionType.withName(bson.get("institutionType").asString().getValue),
+                InstitutionSector.withName(bson.get("sector").asString().getValue))
   }
 
   private def transformProfiles(bson: BsonArray): List[LinkedinUserProfile] = {
     bson.getValues.toList.map(_.asDocument()).map { x =>
-      val validated: Boolean = try {
-        x.get("validated").asBoolean().getValue
-      } catch {
-        case e: Exception => false
+
+      val validated: Boolean = Try(x.get("validated").asBoolean().getValue) match {
+        case Success(element)=> element
+        case Failure(exception) => false
       }
-      val rejected: Boolean = try {
-        x.get("rejected").asBoolean().getValue
-      } catch {
-        case e: Exception => false
+
+      val rejected: Boolean = Try(x.get("rejected").asBoolean().getValue) match {
+        case Success(element)=> element
+        case Failure(exception) => false
       }
 
       LinkedinUserProfile(x.get("_id").asString().getValue,
-        x.get("actualPosition").asString().getValue,
-        transformJobs(x.get("jobList").asArray()),
-        transformEducation(x.get("educationList").asArray()),
-        x.get("profileUrl").asString().getValue,
-        validated,
-        rejected
-      )
+                          x.get("actualPosition").asString().getValue,
+                          transformJobs(x.get("jobList").asArray()),
+                          transformEducation(x.get("educationList").asArray()),
+                          x.get("profileUrl").asString().getValue,
+                          validated,
+                          rejected)
 
     }.sortBy(p => !p.validated)
 

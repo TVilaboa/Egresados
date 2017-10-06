@@ -24,12 +24,13 @@ import services._
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
-
+//TODO review all classes & views to check they are working accordingly and include new features for academicData and institutions create 
 /**
   * Created by franco on 27/07/17.
   */
 class ProspectController @Inject()(prospectService: ProspectService,
                                    institutionService: InstitutionService,
+                                   institutionalDataService: InstitutionalDataService,
                                    linkedInService: LinkedinUserProfileService,
                                    linkedinUserProfileScraper: LinkedinUserProfileScraper,
                                    lanacionService: LaNacionNewsService,
@@ -56,66 +57,86 @@ class ProspectController @Inject()(prospectService: ProspectService,
     "documentType" -> text(),
     "documentId" -> text(),
     "birthDate" -> text(),
-    "entryDate" -> text(),
-    "exitDate" -> text(),
-    "institution" -> mapping(
+    "workingData" -> mapping(
       "_id" -> text(),
-      "name" -> text(),
-      "address" -> text(),
-      "active" -> boolean,
-      "institutionType" -> default(enum(InstitutionType), InstitutionType.Unspecified),
-      "sector" -> default(enum(InstitutionSector), InstitutionSector.Unspecified))(Institution.apply)(Institution.unapply),
-    "title" -> text(),
-    "institutionCode" -> text(),
+      "entryDate" -> text(),
+      "exitDate" -> text(),
+      "title" -> text(),
+      "institutionCode" -> text(),
+      "institution" -> mapping("_id" -> text(),
+                               "name" -> text(),
+                               "address" -> text(),
+                               "active" -> boolean,
+                               "institutionType" -> default(enum(InstitutionType), InstitutionType.Unspecified),
+                               "sector" -> default(enum(InstitutionSector), InstitutionSector.Unspecified)
+                              )(Institution.apply)(Institution.unapply)
+    )(InstitutionalData.apply)(InstitutionalData.unapply),
+    "academicData" -> mapping(
+      "_id" -> text(),
+      "entryDate" -> text(),
+      "exitDate" -> text(),
+      "title" -> text(),
+      "institutionCode" -> text(),
+      "institution" -> mapping("_id" -> text(),
+                               "name" -> text(),
+                               "address" -> text(),
+                               "active" -> boolean,
+                               "institutionType" -> default(enum(InstitutionType), InstitutionType.Unspecified),
+                               "sector" -> default(enum(InstitutionSector), InstitutionSector.Unspecified)
+                              )(Institution.apply)(Institution.unapply)
+    )(InstitutionalData.apply)(InstitutionalData.unapply),
     "nacionNews" -> list(mapping("_id" -> text(),
                                  "url" -> text(),
                                  "title" -> text(),
                                  "date" -> text(),
                                  "tuft" -> text(),
                                  "author" -> text(),
-      "validated" -> boolean,
-      "rejected" -> boolean)(News.apply)(News.unapply)),
+                                 "validated" -> boolean,
+                                 "rejected" -> boolean)(News.apply)(News.unapply)),
     "infobaeNews" -> list(mapping("_id" -> text(),
                                   "url" -> text(),
                                   "title" -> text(),
                                   "date" -> text(),
                                   "tuft" -> text(),
                                   "author" -> text(),
-      "validated" -> boolean,
-      "rejected" -> boolean)(News.apply)(News.unapply)),
+                                  "validated" -> boolean,
+                                  "rejected" -> boolean)(News.apply)(News.unapply)),
     "clarinNews" -> list(mapping("_id" -> text(),
                                  "url" -> text(),
                                  "title" -> text(),
                                  "date" -> text(),
                                  "tuft" -> text(),
                                  "author" -> text(),
-      "validated" -> boolean,
-      "rejected" -> boolean)(News.apply)(News.unapply)),
+                                 "validated" -> boolean,
+                                 "rejected" -> boolean)(News.apply)(News.unapply)),
     "cronistaNews" -> list(mapping("_id" -> text(),
                                    "url" -> text(),
                                    "title" -> text(),
                                    "date" -> text(),
                                    "tuft" -> text(),
                                    "author" -> text(),
-      "validated" -> boolean,
-      "rejected" -> boolean)(News.apply)(News.unapply)),
+                                   "validated" -> boolean,
+                                   "rejected" -> boolean)(News.apply)(News.unapply)),
     "linkedInProfiles" -> list(mapping("_id" -> text(),
-      "actualPosition" -> text(),
-      "jobList" -> list(mapping("_id" -> text(),
-        "position" -> text(),
-        "workPlace" -> text(),
-        "workUrl" -> text(),
-        "activityPeriod" -> text(),
-        "jobDescription" -> text())(LinkedinJob.apply)(LinkedinJob.unapply)),
-      "educationList" -> list(mapping("_id" -> text(),
-        "institute" -> text(),
-        "instituteUrl" -> text(),
-        "title" -> text(),
-        "educationPeriod" -> text(),
-        "educationDescription" -> text())(LinkedinEducation.apply)(LinkedinEducation.unapply)),
-      "profileUrl" -> text(),
-      "validated" -> boolean,
-      "rejected" -> boolean)(LinkedinUserProfile.apply)(LinkedinUserProfile.unapply)),
+                                       "actualPosition" -> text(),
+                                       "jobList" -> list(mapping("_id" -> text(),
+                                                                 "position" -> text(),
+                                                                 "workPlace" -> text(),
+                                                                 "workUrl" -> text(),
+                                                                 "activityPeriod" -> text(),
+                                                                 "jobDescription" -> text()
+                                       )(LinkedinJob.apply)(LinkedinJob.unapply)),
+                                       "educationList" -> list(mapping("_id" -> text(),
+                                                                       "institute" -> text(),
+                                                                       "instituteUrl" -> text(),
+                                                                       "title" -> text(),
+                                                                       "educationPeriod" -> text(),
+                                                                       "educationDescription" -> text()
+                                       )(LinkedinEducation.apply)(LinkedinEducation.unapply)),
+                                       "profileUrl" -> text(),
+                                       "validated" -> boolean,
+                                       "rejected" -> boolean
+    )(LinkedinUserProfile.apply)(LinkedinUserProfile.unapply)),
     "country" -> default(text,""),
     "primaryEmail" -> default(text,""),
     "secondaryEmail" -> default(text,""),
@@ -133,33 +154,42 @@ class ProspectController @Inject()(prospectService: ProspectService,
   def lookup =secureAction{
     val prospects : List[Prospect] = Await.result(prospectService.all(), Duration.Inf).toList
 
-    val default: Map[String,String] = Map("firstName"->"","lastName"->"","documentId"->"","title"->"","exitDate"->"","institutionCode"->"")
+    val default: Map[String,String] = Map("firstName" -> "",
+                                          "lastName" -> "",
+                                          "documentId" -> "",
+                                          "title" -> "",
+                                          "exitDate" -> "",
+                                          "institutionCode" -> "")
 
     Ok(com.prospects.views.html.search.render(prospects, form, default))
   }
 
+  // TODO: refactor search
   def search =secureAction{
     implicit request =>{
       val prospects : List[Prospect] = Await.result(prospectService.all(), Duration.Inf).toList
 
       val filter : Map[String,String] = form.bindFromRequest().data
+      val titleFilter: String = filter("title").toLowerCase
+      val codeFilter: String = filter("title").toLowerCase
 
       val date = dateFormat.format(new DateTime(filter("exitDate")).toDate)
+      val dateFilter: String = date.toLowerCase
 
       val filtered : List[Prospect] = prospects.filter{x: Prospect =>
         x.firstName.toLowerCase.contains(filter("firstName").toLowerCase) &&
         x.lastName.toLowerCase.contains(filter("lastName").toLowerCase) &&
-        x.title.toLowerCase.contains(filter("title").toLowerCase) &&
-        x.institutionCode.toLowerCase.contains(filter("institutionCode").toLowerCase) &&
-        x.documentId.toLowerCase.contains(filter("documentId").toLowerCase) &&
-        x.exitDate.toLowerCase.contains(date.toLowerCase)
+        (x.workingData.title.toLowerCase.contains(titleFilter) || x.academicData.title.toLowerCase.contains(titleFilter)) &&
+        (x.workingData.institutionCode.toLowerCase.contains(codeFilter) || x.academicData.institutionCode.toLowerCase.contains(codeFilter)) &&
+        (x.workingData.exitDate.toLowerCase.contains(dateFilter) || x.academicData.exitDate.toLowerCase.contains(dateFilter)) &&
+        x.documentId.toLowerCase.contains(filter("documentId").toLowerCase)
       }
 
       Ok(com.prospects.views.html.search.render(filtered, form, filter))
     }
   }
 
-  def create(message: String = "",default: Map[String, String] = null) =secureAction{
+  def create(message: String = "", default: Map[String, String] = null) =secureAction{
     val prospect: Map[String, String]= if(default != null) default else Map("_id"->"",
       "firstName"->"",
       "lastName"->"",
@@ -193,14 +223,45 @@ class ProspectController @Inject()(prospectService: ProspectService,
 
         val now : Date = Calendar.getInstance().getTime
 
-        val institution: Institution = Await.result(institutionService.find(input("institution")), Duration.Inf)
+        //TODO: apply changes in views
+        //Working Data
+        val workingInstitution: Institution = Await.result(institutionService.find(input("workingInstitution")), Duration.Inf)
 
-        val prospect: Prospect = Prospect(uuid, input("firstName"), input("lastName"), input("documentType"), input("documentId"), input("birthDate"), input("entryDate"), input("exitDate"), institution, input("institutionCode"), input("title"), List[News](), List[News](), List[News](), List[News](), List[LinkedinUserProfile](), input("country"), input("primaryEmail"), input("secondaryEmail"), dateTimeFormat.format(now), "", "")
+        val workingData: InstitutionalData = InstitutionalData(UUID.randomUUID().toString,
+                                                               input("workingEntry"),
+                                                               input("workingExit"),
+                                                               input("workingTitle"),
+                                                               input("workingCode"),
+                                                               workingInstitution)
+
+        //Academic Data
+        val academicInstitution: Institution = Await.result(institutionService.find(input("academicInstitution")), Duration.Inf)
+
+        val academicData: InstitutionalData = InstitutionalData(UUID.randomUUID().toString,
+                                                                input("academicEntry"),
+                                                                input("academicExit"),
+                                                                input("academicTitle"),
+                                                                input("academicCode"),
+                                                                academicInstitution)
+
+        val prospect: Prospect = Prospect(uuid,
+                                          input("firstName"),
+                                          input("lastName"),
+                                          input("documentType"),
+                                          input("documentId"),
+                                          input("birthDate"),
+                                          workingData,
+                                          academicData,
+                                          List[News](), List[News](), List[News](), List[News](),
+                                          List[LinkedinUserProfile](),
+                                          input("country"),
+                                          input("primaryEmail"),
+                                          input("secondaryEmail"),
+                                          dateTimeFormat.format(now), "", "")
 
         val prospects: List[Prospect] = Await.result(prospectService.all(), Duration.Inf).toList
 
         if (!prospects.exists(g => (g._id != prospect._id) && prospectService.matchGraduates(prospect, g))) {
-
 
           try{
             prospectService.save(prospect).map((_) => {
@@ -217,14 +278,8 @@ class ProspectController @Inject()(prospectService: ProspectService,
         else
         {
           val message = "Primary or secondary emails are already taken by another prospect"
-
-
            create(message,prospect.toMap).apply(request)
-
-
         }
-
-
       }
     }
   }
@@ -251,11 +306,46 @@ class ProspectController @Inject()(prospectService: ProspectService,
           BadRequest(com.prospects.views.html.edit(input, message = bindedForm.errors.mkString))
         }
       else {
-        val institution: Institution = Await.result(institutionService.find(input("institution")), Duration.Inf)
+        //Working Data
+        val workingInstitution: Institution = Await.result(institutionService.find(input("workingInstitution")), Duration.Inf)
+
+        val workingData: InstitutionalData = InstitutionalData(UUID.randomUUID().toString,
+          input("workingEntry"),
+          input("workingExit"),
+          input("workingTitle"),
+          input("workingCode"),
+          workingInstitution)
+
+        //Academic Data
+        val academicInstitution: Institution = Await.result(institutionService.find(input("academicInstitution")), Duration.Inf)
+
+        val academicData: InstitutionalData = InstitutionalData(UUID.randomUUID().toString,
+          input("academicEntry"),
+          input("academicExit"),
+          input("academicTitle"),
+          input("academicCode"),
+          academicInstitution)
 
         val now : Date = Calendar.getInstance().getTime
 
-        val updated: Prospect = Prospect(id, input("firstName"), input("lastName"), input("documentType"), input("documentId"), input("birthDate"), input("entryDate"), input("exitDate"), institution, input("institutionCode"), input("title"), original.nacionNews, original.infobaeNews, original.clarinNews, original.cronistaNews, original.linkedInProfiles, input("country"), input("primaryEmail"), input("secondaryEmail"), original.createdAt, dateTimeFormat.format(now), original.errorDate)
+        val updated: Prospect = Prospect(id,
+                                         input("firstName"),
+                                         input("lastName"),
+                                         input("documentType"),
+                                         input("documentId"),
+                                         input("birthDate"),
+                                         workingData,
+                                         academicData,
+                                         original.nacionNews,
+                                         original.infobaeNews,
+                                         original.clarinNews,
+                                         original.cronistaNews,
+                                         original.linkedInProfiles,
+                                         input("country"),
+                                         input("primaryEmail"),
+                                         input("secondaryEmail"),
+                                         original.createdAt, dateTimeFormat.format(now), original.errorDate)
+
         val prospects: List[Prospect] = Await.result(prospectService.all(), Duration.Inf).toList
 
         if (!prospects.exists(g => (g._id != updated._id) && prospectService.matchGraduates(updated, g))) {
@@ -278,9 +368,6 @@ class ProspectController @Inject()(prospectService: ProspectService,
         }
       }
     }
-
-
-
 
   def delete(id : String) =secureAction{
     implicit request => {
@@ -321,7 +408,24 @@ class ProspectController @Inject()(prospectService: ProspectService,
         val formIndex = selectedIds.indexOf(prospect._id)
         if (formIndex >= 0) {
           val institutionName = encodedForm("prospect[].institution.name")(formIndex)
-          val updatedProspect = prospect.copy(firstName = encodedForm("prospect[].firstName")(formIndex), lastName = encodedForm("prospect[].lastName")(formIndex), documentType = encodedForm("prospect[].documentType")(formIndex), documentId = encodedForm("prospect[].documentId")(formIndex), birthDate = encodedForm("prospect[].birthDate")(formIndex), entryDate = encodedForm("prospect[].entryDate")(formIndex), exitDate = encodedForm("prospect[].exitDate")(formIndex), institution = institutions.find(i => i.name == institutionName).getOrElse(new Institution(UUID.randomUUID().toString, institutionName, "", active = true, InstitutionType.Unspecified, InstitutionSector.Unspecified)), title = encodedForm("prospect[].title")(formIndex), country = encodedForm("prospect[].country")(formIndex), primaryEmail = encodedForm("prospect[].primaryEmail")(formIndex), secondaryEmail = encodedForm("prospect[].secondaryEmail")(formIndex))
+
+          val workingInstitution: Institution = institutions.find(i => i.name == institutionName).getOrElse(Institution.DEFAULT_EMPTY)
+          val workingData: InstitutionalData = InstitutionalData(UUID.randomUUID().toString,
+                                                                 encodedForm("prospect[].entryDate")(formIndex),
+                                                                 encodedForm("prospect[].exitDate")(formIndex),
+                                                                 encodedForm("prospect[].title")(formIndex),
+                                                                 "",
+                                                                 workingInstitution)
+
+          val updatedProspect = prospect.copy(firstName = encodedForm("prospect[].firstName")(formIndex),
+            lastName = encodedForm("prospect[].lastName")(formIndex),
+            documentType = encodedForm("prospect[].documentType")(formIndex),
+            documentId = encodedForm("prospect[].documentId")(formIndex),
+            birthDate = encodedForm("prospect[].birthDate")(formIndex),
+            workingData = workingData,
+            country = encodedForm("prospect[].country")(formIndex),
+            primaryEmail = encodedForm("prospect[].primaryEmail")(formIndex),
+            secondaryEmail = encodedForm("prospect[].secondaryEmail")(formIndex))
           selectedProspects = updatedProspect :: selectedProspects
         }
       }
@@ -331,7 +435,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
       val added: Seq[Prospect] = selectedProspects.filter(x => !existentProspects.exists(p => p._id == x._id))
       val updated: Seq[Prospect] = selectedProspects.filter(x => existentProspects.exists(p => p._id == x._id))
 
-      val addedInstitutes: Seq[Institution] = (added ++ updated).map(_.institution).filter(i => !institutions.contains(i))
+      val addedInstitutes: Seq[Institution] = (added ++ updated).map(_.workingData.institution).filter(i => !institutions.contains(i))
 
       addedInstitutes.map(institutionService.save)
 
@@ -374,9 +478,30 @@ class ProspectController @Inject()(prospectService: ProspectService,
               Option(institute)
           }
 
+          val workingData: InstitutionalData = InstitutionalData(UUID.randomUUID().toString,
+                                                                 z.getOrElse("Ingreso", ""),
+                                                                 z.getOrElse("Egreso", ""),
+                                                                 z.getOrElse("Ingreso", ""),
+                                                                 z.getOrElse("Ingreso", ""),
+                                                                 institution.get)
+
+          val academicData: InstitutionalData = InstitutionalData.DEFAULT_EMPTY
+
           val now : Date = Calendar.getInstance().getTime
 
-          var csvProspect = Prospect(UUID.randomUUID().toString, z.getOrElse("Nombre", ""), z.getOrElse("Apellido", ""), z.getOrElse("Tipo", ""), z.getOrElse("Documento", ""), z.getOrElse("Nacimiento", ""), z.getOrElse("Ingreso", ""), z.getOrElse("Egreso", ""), institution.get, z.getOrElse("Legajo", ""), z.getOrElse("Titulo", ""), List[News](), List[News](), List[News](), List[News](), List[LinkedinUserProfile](), z.getOrElse("Pais", ""), z.getOrElse("Email_1", ""), z.getOrElse("Email_2", ""), dateTimeFormat.format(now), "", "")
+          var csvProspect = Prospect(UUID.randomUUID().toString,
+                                     z.getOrElse("Nombre", ""),
+                                     z.getOrElse("Apellido", ""),
+                                     z.getOrElse("Tipo", ""),
+                                     z.getOrElse("Documento", ""),
+                                     z.getOrElse("Nacimiento", ""),
+                                     workingData,
+                                     academicData,
+                                     List[News](), List[News](), List[News](), List[News](),
+                                     List[LinkedinUserProfile](),
+                                     z.getOrElse("Pais", ""),
+                                     z.getOrElse("Email_1", ""), z.getOrElse("Email_2", ""),
+                                     dateTimeFormat.format(now), "", "")
 
           val headOption = existentProspects.find(p => prospectService.matchGraduates(csvProspect, p))
           if (headOption.isDefined) {

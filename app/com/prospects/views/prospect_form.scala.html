@@ -99,11 +99,52 @@
     </div>
   </div>
 </fieldset>
+<fieldset>
+    <legend>Informacion Academica</legend>
+  <div class="row form-group">
+    <div class="col-md-6">
+      <label for="academy">Institution</label>
+      <select name="academy" id="academy" class="form-control">
+      @for(institution: Institution <- institutions){
+        @if(prospect("academy").equals(institution._id)){
+          <option value="@institution._id" selected>@institution.name</option>
+        } else{
+          <option value="@institution._id" >@institution.name</option>
+        }
+      }
+      </select>
+    </div>
+    <div class="col-md-6">
+        <label for="institutionCode">Codigo Académico</label>
+        <input type="text" class="form-control" name="academyCode" id="academyCode" placeholder="ABC123" value="@prospect("academyCode")">
+    </div>
+  </div>
+  <div class="row form-group">
+    <div class="col-md-6">
+        <label for="career">Titulo</label>
+        <input type="text" name="academyTitle" class="form-control" id="academyTitle" placeholder="Estudiante" value="@prospect("academyTitle")">
+    </div>
+  </div>
+  <div class="row form-group">
+    <div class="col-md-6">
+        <label for="entryDate">Fecha de Ingreso</label>
+      <input type="date" name="academyEntryDate" id="academyEntryDate" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("academyEntryDate")">
+    </div>
+
+    <div class="col-md-6">
+        <label for="exitDate">Fecha de Egreso</label>
+      <input type="date" name="academyExitDate" id="academyExitDate" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("academyExitDate")">
+    </div>
+  </div>
+</fieldset>
 <div class="row form-group">
   <input type="hidden" name="_id" id="_id"  value="@prospect("_id")">
   <input type="hidden" name="institution._id" id="institution._id"  value="">
   <input type="hidden" name="institution.name" id="institution.name"  value="">
   <input type="hidden" name="institution.address" id="institution.address"  value="">
+  <input type="hidden" name="academy._id" id="academy._id"  value="">
+  <input type="hidden" name="academy.name" id="academy.name"  value="">
+  <input type="hidden" name="academy.address" id="academy.address"  value="">
   <input type="hidden" name="linkedInProfile._id" id="linkedInProfile._id"  value="">
   <input type="hidden" name="linkedInProfile.actualPosition" id="linkedInProfile.actualPosition"  value="">
   <input type="hidden" name="linkedInProfile.profileUrl" id="linkedInProfile.profileUrl"  value="">
