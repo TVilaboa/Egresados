@@ -234,15 +234,19 @@ class ProspectController @Inject()(prospectService: ProspectService,
                                                                input("workingCode"),
                                                                workingInstitution)
 
+        institutionalDataService.save(workingData)
+
         //Academic Data
         val academicInstitution: Institution = Await.result(institutionService.find(input("academicInstitution")), Duration.Inf)
 
         val academicData: InstitutionalData = InstitutionalData(UUID.randomUUID().toString,
-                                                                input("academicEntry"),
-                                                                input("academicExit"),
-                                                                input("academicTitle"),
-                                                                input("academicCode"),
-                                                                academicInstitution)
+            input("academicEntry"),
+            input("academicExit"),
+            input("academicTitle"),
+            input("academicCode"),
+            academicInstitution)
+
+        institutionalDataService.save(academicData)
 
         val prospect: Prospect = Prospect(uuid,
                                           input("firstName"),

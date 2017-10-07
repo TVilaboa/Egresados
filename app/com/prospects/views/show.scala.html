@@ -131,7 +131,7 @@
               </div>
             </fieldset>
             <fieldset>
-              <legend>Informacion Institucional </legend>
+              <legend>Datos institucionales: Laboral </legend>
               <div class="row form-group">
                 <div class="col-md-4">
                   <span><strong>Institución: </strong>@prospect.get.workingData.institution.name</span>
@@ -149,6 +149,29 @@
                 </div>
                 <div class="col-md-4">
                   <span><strong>Fecha de Egreso: </strong>@prospect.get.workingData.exitDate</span>
+                </div>
+                <div class="col-md-4"></div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Datos institucionales: Académicos </legend>
+              <div class="row form-group">
+                <div class="col-md-4">
+                  <span><strong>Institución: </strong>@prospect.get.academicData.institution.name</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Código Institucional: </strong>@prospect.get.academicData.institutionCode</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Título: </strong>@prospect.get.academicData.title</span>
+                </div>
+              </div>
+              <div class="row form-group">
+                <div class="col-md-4">
+                  <span><strong>Fecha de Ingreso: </strong>@prospect.get.academicData.entryDate</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Fecha de Egreso: </strong>@prospect.get.academicData.exitDate</span>
                 </div>
                 <div class="col-md-4"></div>
               </div>
@@ -195,17 +218,18 @@
                               <span id="profile"><a href="@profile.profileUrl" target="_blank">@prospect.get.getFullName</a></span>
                           </div>
                       </div>
-                      <div class="row form-group">
-                          <div class="col-lg-12">
-                              <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-jobs">
-                                  <thead>
-                                      <tr>
-                                          <th>Institucion</th>
-                                          <th>Rol</th>
-                                          <th>Periodo</th>
-                                      </tr>
-                                  </thead>
-                                  <tbody>
+                      @if(profile.jobList.nonEmpty){
+                          <div class="row form-group">
+                              <div class="col-lg-12">
+                                  <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-jobs">
+                                      <thead>
+                                          <tr>
+                                              <th>Institucion</th>
+                                              <th>Rol</th>
+                                              <th>Periodo</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
 
                                       @profile.jobList.foreach((job: LinkedinJob) =>
                                           <tr class="graduate">
@@ -215,21 +239,23 @@
                                           </tr>
                                       )
 
-                                  </tbody>
-                              </table>
+                                      </tbody>
+                                  </table>
+                              </div>
                           </div>
-                      </div>
-                      <div class="row form-group">
-                          <div class="col-lg-12">
-                              <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-education">
-                                  <thead>
-                                      <tr>
-                                          <th>Institucion</th>
-                                          <th>Titulo</th>
-                                          <th>Periodo</th>
-                                      </tr>
-                                  </thead>
-                                  <tbody>
+                      }
+                      @if(profile.educationList.nonEmpty){
+                          <div class="row form-group">
+                              <div class="col-lg-12">
+                                  <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-education">
+                                      <thead>
+                                          <tr>
+                                              <th>Institucion</th>
+                                              <th>Titulo</th>
+                                              <th>Periodo</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
 
                                       @profile.educationList.foreach((item: LinkedinEducation) =>
                                           <tr class="graduate">
@@ -239,11 +265,11 @@
                                           </tr>
                                       )
 
-                                  </tbody>
-                              </table>
+                                      </tbody>
+                                  </table>
+                              </div>
                           </div>
-                      </div>
-
+                      }
                   }
               </div>
                 }

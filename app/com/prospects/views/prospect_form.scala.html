@@ -62,11 +62,11 @@
   </div>
 </fieldset>
 <fieldset>
-    <legend>Informacion Institucional</legend>
+    <legend>Informacion Laboral</legend>
   <div class="row form-group">
     <div class="col-md-6">
-      <label for="institution">Institution</label>
-      <select name="institution" id="institution" class="form-control">
+      <label for="workingInstitution">Institution</label>
+      <select name="workingInstitution" id="workingInstitution" class="form-control">
       @for(institution: Institution <- institutions){
         @if(prospect("institution").equals(institution._id)){
           <option value="@institution._id" selected>@institution.name</option>
@@ -77,25 +77,25 @@
       </select>
     </div>
     <div class="col-md-6">
-        <label for="institutionCode">Codigo Institucional</label>
-        <input type="text" class="form-control" name="institutionCode" id="institutionCode" placeholder="ABC123" value="@prospect("institutionCode")">
+        <label for="workingCode">Codigo Institucional</label>
+        <input type="text" class="form-control" name="workingCode" id="workingCode" placeholder="ABC123" value="@prospect("institutionCode")">
     </div>
   </div>
   <div class="row form-group">
     <div class="col-md-6">
-        <label for="career">Titulo</label>
-        <input type="text" name="title" class="form-control" id="title" placeholder="CEO" value="@prospect("title")">
+        <label for="workingTitle">Titulo</label>
+        <input type="text" name="workingTitle" class="form-control" id="workingTitle" placeholder="CEO" value="@prospect("title")">
     </div>
   </div>
   <div class="row form-group">
     <div class="col-md-6">
-        <label for="entryDate">Fecha de Ingreso</label>
-      <input type="date" name="entryDate" id="entryDate" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("entryDate")">
+        <label for="workingEntry">Fecha de Ingreso</label>
+      <input type="date" name="workingEntry" id="workingEntry" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("entryDate")">
     </div>
 
     <div class="col-md-6">
-        <label for="exitDate">Fecha de Egreso</label>
-      <input type="date" name="exitDate" id="exitDate" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("exitDate")">
+        <label for="workingExit">Fecha de Egreso</label>
+      <input type="date" name="workingExit" id="workingExit" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("exitDate")">
     </div>
   </div>
 </fieldset>
@@ -103,8 +103,8 @@
     <legend>Informacion Academica</legend>
   <div class="row form-group">
     <div class="col-md-6">
-      <label for="academy">Institution</label>
-      <select name="academy" id="academy" class="form-control">
+      <label for="academicInstitution">Institution</label>
+      <select name="academicInstitution" id="academicInstitution" class="form-control">
       @for(institution: Institution <- institutions){
         @if(prospect("academy").equals(institution._id)){
           <option value="@institution._id" selected>@institution.name</option>
@@ -115,25 +115,25 @@
       </select>
     </div>
     <div class="col-md-6">
-        <label for="institutionCode">Codigo Académico</label>
-        <input type="text" class="form-control" name="academyCode" id="academyCode" placeholder="ABC123" value="@prospect("academyCode")">
+        <label for="academicCode">Codigo Académico</label>
+        <input type="text" class="form-control" name="academicCode" id="academicCode" placeholder="ABC123" value="@prospect("academyCode")">
     </div>
   </div>
   <div class="row form-group">
     <div class="col-md-6">
-        <label for="career">Titulo</label>
-        <input type="text" name="academyTitle" class="form-control" id="academyTitle" placeholder="Estudiante" value="@prospect("academyTitle")">
+        <label for="academicTitle">Titulo</label>
+        <input type="text" name="academicTitle" class="form-control" id="academicTitle" placeholder="Estudiante" value="@prospect("academyTitle")">
     </div>
   </div>
   <div class="row form-group">
     <div class="col-md-6">
-        <label for="entryDate">Fecha de Ingreso</label>
-      <input type="date" name="academyEntryDate" id="academyEntryDate" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("academyEntryDate")">
+        <label for="academicEntry">Fecha de Ingreso</label>
+      <input type="date" name="academicEntry" id="academicEntry" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("academyEntryDate")">
     </div>
 
     <div class="col-md-6">
-        <label for="exitDate">Fecha de Egreso</label>
-      <input type="date" name="academyExitDate" id="academyExitDate" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("academyExitDate")">
+        <label for="academicExit">Fecha de Egreso</label>
+      <input type="date" name="academicExit" id="academicExit" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("academyExitDate")">
     </div>
   </div>
 </fieldset>
