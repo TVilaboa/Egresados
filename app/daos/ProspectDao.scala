@@ -125,7 +125,7 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
     }
 
     //Academic Data
-    val academicDoc = document.get("workingData") match {
+    val academicDoc = document.get("academicData") match {
       case Some(doc) => doc.asDocument()
       case None => null
     }

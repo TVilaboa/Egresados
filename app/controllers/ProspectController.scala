@@ -507,8 +507,8 @@ class ProspectController @Inject()(prospectService: ProspectService,
           val workingData: InstitutionalData = InstitutionalData(UUID.randomUUID().toString,
                                                                  z.getOrElse("Ingreso", ""),
                                                                  z.getOrElse("Egreso", ""),
-                                                                 z.getOrElse("Ingreso", ""),
-                                                                 z.getOrElse("Ingreso", ""),
+                                                                 z.getOrElse("Legajo", ""),
+                                                                 z.getOrElse("Titulo", ""),
                                                                  institution.get)
 
           val academicData: InstitutionalData = InstitutionalData.DEFAULT_EMPTY
