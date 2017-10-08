@@ -36,5 +36,5 @@ object InstitutionalData {
 
   implicit val institutionalDataFormat = Json.format[InstitutionalData]
 
-  def DEFAULT_EMPTY: InstitutionalData = InstitutionalData("", "", "", "", "", Institution.DEFAULT_EMPTY)
+  def DEFAULT_EMPTY: InstitutionalData = InstitutionalData(UUID.randomUUID().toString, "", "", "", "", Institution.DEFAULT_EMPTY)
 }
