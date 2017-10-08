@@ -9,9 +9,7 @@ class ApplicationSpec extends Specification {
 
   "Application" should {
 
-    "send 404 on a bad request" in new WithApplication {
-      route(app, FakeRequest(GET, "/boum")).get.value must some(404) or none or equalTo(404)
-    }
+
 
     "check the service is alive" in new WithApplication {
       val login = route(app, FakeRequest(GET, "/api/infobae")).get
