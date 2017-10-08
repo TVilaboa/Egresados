@@ -50,28 +50,34 @@
           //    TODO incorporar validaciones de fechas
           $(function(){
             $('#prospectForm').validate({
-              rules : {
-                firstName : {require : true},
-                lastName : {require : true},
-                documentId : {require : true},
-                birthdate : {require : true},
-                institution : {require : true},
-                institutionCode : {require : true},
-                title : {require : true},
-                entryDate : {require : true},
-                exitDate : {require : true}
-              },
-              messages : {
-                firstName : {require : 'Ingrese un nombre válido'},
-                lastName : {require : 'Ingrese un apellido válido'},
-                documentId : {require : 'Ingrese un numero de documento válido'},
-                birthdate : {require : 'Ingrese una fecha de nacimiento'},
-                institution : {require : 'Seleccione la institución a la que pertenece el prospecto'},
-                institutionCode : {require : 'Ingrese el número de referencia del prospecto en la instititución'},
-                title : {require : 'Ingrese el valor del título que posee el prospecto'},
-                entryDate : {require : 'Indique la fecha de ingreso del prospecto'},
-                exitDate : {require : 'Indique la fecha de Egreso del prospecto'}
-              },
+                rules : {
+                    firstName : {require : true},
+                    lastName : {require : true},
+                    documentId : {require : true},
+                    birthdate : {require : true},
+                    workingInstitution : {require : true},
+                    workingTitle : {require : true},
+                    workingEntry : {require : true},
+                    workingExit : {require : true},
+                    academicInstitution : {require : true},
+                    academicTitle : {require : true},
+                    academicEntry : {require : true},
+                    academicExit : {require : true}
+                },
+                messages : {
+                    firstName : {require : 'Ingrese un nombre válido'},
+                    lastName : {require : 'Ingrese un apellido válido'},
+                    documentId : {require : 'Ingrese un numero de documento válido'},
+                    birthdate : {require : 'Ingrese una fecha de nacimiento'},
+                    workingInstitution : {require : 'Seleccione la institución en la que trabaja el prospecto'},
+                    workingTitle : {require : 'Ingrese el valor del cargo que posee el prospecto'},
+                    workingEntry : {require : 'Indique la fecha de ingreso del prospecto'},
+                    workingExit : {require : 'Indique la fecha de Egreso del prospecto'},
+                    academicInstitution : {require : 'Seleccione la institución a la que pertenece el prospecto'},
+                    academicTitle : {require : 'Ingrese el valor del título que posee el prospecto'},
+                    academicEntry : {require : 'Indique la fecha de ingreso del prospecto'},
+                    academicExit : {require : 'Indique la fecha de Egreso del prospecto'}
+                },
               submitHandler : function(form){
                 $.ajax({
                   url : form.action,

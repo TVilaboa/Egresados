@@ -26,6 +26,8 @@ case class InstitutionalData(_id: String = UUID.randomUUID().toString,
                                         "title"-> Json.toJson(title),
                                         "InstitutionCode"-> Json.toJson(institutionCode),
                                         "institution"-> institution.toJson))
+
+  def isEmpty: Boolean = entryDate.isEmpty || exitDate.isEmpty || title.isEmpty
 }
 
 object InstitutionalData {

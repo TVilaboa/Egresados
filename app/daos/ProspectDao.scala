@@ -219,11 +219,11 @@ class MongoProspectDao @Inject()(mongo: Mongo) extends ProspectDao {
       case Failure(exception) => Institution.DEFAULT_EMPTY
     }
 
-    InstitutionalData(bson.get("id").asString().getValue,
-                      bson.get("id").asString().getValue,
-                      bson.get("id").asString().getValue,
-                      bson.get("id").asString().getValue,
-                      bson.get("id").asString().getValue,
+    InstitutionalData(bson.get("_id").asString().getValue,
+                      bson.get("entryDate").asString().getValue,
+                      bson.get("exitDate").asString().getValue,
+                      bson.get("title").asString().getValue,
+                      bson.get("institutionCode").asString().getValue,
                       institution)
   }
 

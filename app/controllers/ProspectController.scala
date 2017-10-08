@@ -321,22 +321,36 @@ class ProspectController @Inject()(prospectService: ProspectService,
         //Working Data
         val workingInstitution: Institution = Await.result(institutionService.find(input("workingInstitution")), Duration.Inf)
 
-        val workingData: InstitutionalData = InstitutionalData(UUID.randomUUID().toString,
+        val workingDataUUID: String = if(original.workingData.isEmpty) UUID.randomUUID().toString else original.workingData._id
+
+        val workingData: InstitutionalData = InstitutionalData(workingDataUUID,
           input("workingEntry"),
           input("workingExit"),
           input("workingTitle"),
           input("workingCode"),
           workingInstitution)
 
+        if(original.workingData.isEmpty)
+          Await.result(institutionalDataService.save(workingData), Duration.Inf)
+        else
+          Await.result(institutionalDataService.update(workingData), Duration.Inf)
+
         //Academic Data
         val academicInstitution: Institution = Await.result(institutionService.find(input("academicInstitution")), Duration.Inf)
 
-        val academicData: InstitutionalData = InstitutionalData(UUID.randomUUID().toString,
+        val academicDataUUID: String = if(original.academicData.isEmpty) UUID.randomUUID().toString else original.academicData._id
+
+        val academicData: InstitutionalData = InstitutionalData(academicDataUUID,
           input("academicEntry"),
           input("academicExit"),
           input("academicTitle"),
           input("academicCode"),
           academicInstitution)
+
+        if(original.academicData.isEmpty)
+          Await.result(institutionalDataService.save(academicData), Duration.Inf)
+        else
+          Await.result(institutionalDataService.update(academicData), Duration.Inf)
 
         val now : Date = Calendar.getInstance().getTime
 
