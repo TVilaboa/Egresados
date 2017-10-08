@@ -189,23 +189,33 @@ class ProspectController @Inject()(prospectService: ProspectService,
     }
   }
 
-  def create(message: String = "", default: Map[String, String] = null) =secureAction{
-    val prospect: Map[String, String]= if(default != null) default else Map("_id"->"",
-      "firstName"->"",
-      "lastName"->"",
-      "documentType"->"",
-      "documentId"->"",
-      "birthDate"->"",
-      "entryDate"->"",
-      "exitDate"->"",
-      "institution"->"",
-      "institutionCode"->"",
-      "title"->"",
-      "primaryEmail"->"",
-      "secondaryEmail"->"",
-      "country"->"")
-
-    Ok(com.prospects.views.html.create.render(prospect,message, documentTypes, institutions))
+  def create(message: String = "", default: Map[String, String] = null) = secureAction{
+    if(default != null)
+      Ok(com.prospects.views.html.create.render(default, message, documentTypes, institutions))
+    else {
+      val prospect: Map[String, String] = Map(
+        "_id" -> "",
+        "firstName" -> "",
+        "lastName" -> "",
+        "documentType" -> "",
+        "documentId" -> "",
+        "birthDate" -> "",
+        "entryDate" -> "",
+        "exitDate" -> "",
+        "title" -> "",
+        "institutionCode" -> "",
+        "institution" -> "",
+        "academyEntryDate" -> "",
+        "academyExitDate" -> "",
+        "academyCode" -> "",
+        "academyTitle" -> "",
+        "academy" -> "",
+        "primaryEmail" -> "",
+        "secondaryEmail" -> "",
+        "country" -> ""
+      )
+      Ok(com.prospects.views.html.create.render(prospect, message, documentTypes, institutions))
+    }
   }
 
   def store = secureAction.async{
@@ -233,7 +243,6 @@ class ProspectController @Inject()(prospectService: ProspectService,
                                                                input("workingTitle"),
                                                                input("workingCode"),
                                                                workingInstitution)
-
         institutionalDataService.save(workingData)
 
         //Academic Data
@@ -279,8 +288,7 @@ class ProspectController @Inject()(prospectService: ProspectService,
             case e: IOException => Future{Redirect(request.headers("referer"))}
           }
         }
-        else
-        {
+        else {
           val message = "Primary or secondary emails are already taken by another prospect"
            create(message,prospect.toMap).apply(request)
         }
