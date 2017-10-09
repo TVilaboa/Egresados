@@ -13,7 +13,8 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.mvc.Controller
+import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.mvc.{Controller, Request}
 import services.{InstitutionService, ProspectService}
 
 import scala.concurrent.duration.Duration
@@ -99,6 +100,52 @@ class InstitutionController @Inject()(institutionService: InstitutionService, pr
       val institution : Institution = Await.result(institutionService.find(id), Duration.Inf)
       institutionService.drop(institution)
       Redirect(routes.InstitutionController.index())
+    }
+  }
+
+  def storeJson = secureAction.async(parse.json){
+    implicit request: Request[JsValue] => {
+      val uuid : String = UUID.randomUUID().toString
+
+      val data: Map[String, JsValue] = request.body match{
+        case JsObject(fields) => fields.toMap
+        case _ => Map[String, JsValue]()
+      }
+
+      val name: String = data("name").toString().replace("\"","")
+      val address: String = data("address").toString().replace("\"","")
+      val institutionType: String = data("institutionType").toString().replace("\"","")
+      val sector: String = data("sector").toString().replace("\"","")
+
+      val institution: Institution = Institution(uuid, name, address, active = true,
+                                                 InstitutionType.withName(institutionType), InstitutionSector.withName(sector))
+
+      try{
+        if(institution.isEmpty)
+          Future{Ok(Json.toJson(Map[String, JsValue]("succes" -> Json.toJson(false), "errors" -> Json.toJson("empty institution"))))}
+        else{
+          institutionService.save(institution).map((_) => {
+            val json: Map[String, JsValue] = Map[String, JsValue](
+              "item" -> institution.toJson,
+              "success" -> Json.toJson(true)
+            )
+            Ok(Json.toJson(json))
+          }).recoverWith {
+            case e: MongoWriteException => Future {Forbidden}
+            case e => Future {Forbidden}
+          }
+        }
+      }
+      catch{
+        case e: IOException =>
+
+          val json: Map[String, JsValue] = Map[String, JsValue](
+            "errors" -> Json.toJson(e.getMessage),
+            "success" -> Json.toJson(false)
+          )
+
+          Future{Ok(Json.toJson(json))}
+      }
     }
   }
 

@@ -68,6 +68,30 @@
       });
     }
   </script>
+  <script>
+      function createInstitution(){
+          var data = {'name' : $('#name').val(),
+              'address' : $('#address').val(),
+              'institutionType' : $('#institutionType option:selected').val(),
+              'sector': $('#sector option:selected').val()
+          };
+          $.ajax({
+              url: '@routes.InstitutionController.storeJson',
+              type: 'POST',
+              contentType: 'application/json',
+              data : JSON.stringify(data),
+              success: function(response){
+                  if(response.success === true){
+                      $('#institutionModal').modal('hide');
+                      location.reload();
+                  }
+              },
+              error : function(response){
+                  console.log("ERROR " + response);
+              }
+          });
+      }
+  </script>
 }
 
 @layout(title = "Prospect Tracker | Prospect Profile", scripts, css) {
@@ -89,7 +113,12 @@
               <div class="col-md-6">
                 <h4>@prospect.get.getFullName</h4>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
+              </div>
+                <div class="col-md-1">
+                  <button type="button" data-toggle="modal" data-target="#institutionModal" class="btn btn-info"><span><i class="fa fa-plus"></i><span><i class="fa fa-institution"></i> Institución</span></button>
+              </div>
+              <div class="col-md-1">
               @helper.form(action = routes.ProspectController.edit(prospect.get._id)) {
                 <div align="right">
                   <button type="submit" class="btn btn-info"><span><i class="fa fa-pencil"></i> Editar</span></button>
@@ -145,6 +174,15 @@
               </div>
               <div class="row form-group">
                 <div class="col-md-4">
+                  <span><strong>Rubro: </strong>@prospect.get.workingData.institution.institutionType</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Sector: </strong>@prospect.get.workingData.institution.sector</span>
+                </div>
+                <div class="col-md-4"></div>
+              </div>
+              <div class="row form-group">
+                <div class="col-md-4">
                   <span><strong>Fecha de Ingreso: </strong>@prospect.get.workingData.entryDate</span>
                 </div>
                 <div class="col-md-4">
@@ -167,6 +205,15 @@
                 </div>
               </div>
               <div class="row form-group">
+                <div class="col-md-4">
+                    <span><strong>Rubro: </strong>@prospect.get.academicData.institution.institutionType</span>
+                </div>
+                <div class="col-md-4">
+                    <span><strong>Sector: </strong>@prospect.get.academicData.institution.sector</span>
+                </div>
+                <div class="col-md-4"></div>
+              </div>
+                <div class="row form-group">
                 <div class="col-md-4">
                   <span><strong>Fecha de Ingreso: </strong>@prospect.get.academicData.entryDate</span>
                 </div>
@@ -320,6 +367,8 @@
     </div>
 
   </div>
+
+  @com.institutions.views.html.institution_create_modal.render()
 }
 
 

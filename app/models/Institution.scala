@@ -14,6 +14,7 @@ case class Institution(_id: String = UUID.randomUUID().toString, name: String = 
 
   def toJson: JsValue = Json.toJson(Map("_id" -> _id, "name" -> name, "address" -> address, "active" -> active.toString, "institutionType" -> institutionType.toString, "sector" -> sector.toString))
 
+  def isEmpty: Boolean = name.isEmpty || address.isEmpty
 }
 
 object Institution {

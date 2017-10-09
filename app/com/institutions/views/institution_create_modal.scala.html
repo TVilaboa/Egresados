@@ -1,0 +1,59 @@
+@()
+<div id="institutionModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+      <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Alta de Institucion</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row form-group">
+          <div class="col-md-12">
+            <label for="name">Nombre</label>
+            <input type="text" class="form-control" name="name" id="name" placeholder="Universidad Austral">
+          </div>
+        </div>
+        <div class="row form-group">
+          <div class="col-md-12">
+            <label for="address">Direccion</label>
+            <input type="text" class="form-control" name="address" id="address" placeholder="Mariano Acosta 123">
+          </div>
+        </div>
+        <div class="row form-group">
+          <div class="col-md-6">
+            <label for="institutionType">Tipo de Institucion</label>
+            <select name="institutionType" title="institutionType" class="form-control" id="institutionType">
+              <option value="">Seleccionar</option>
+              @for(iType <- enums.InstitutionType.values) {
+                <option value="@iType.toString">@iType.toString</option>
+              }
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="sector">Rubro</label>
+            <select name="sector" title="sector" class="form-control" id="sector">
+
+              <option value="">Seleccionar</option>
+              @for(iSector <- enums.InstitutionSector.values) {
+                <option value="@iSector.toString">@iSector.toString</option>
+              }
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="row form-group">
+          <div class="col-md-6">
+            <button type="button" data-dismiss="modal" class="btn btn-default btn-lg pull-right">Cancel</button>
+          </div>
+          <div class="col-md-6">
+            <button type="button" onclick="createInstitution()" class="btn btn-primary btn-lg pull-left"><span><i class="fa fa-university"> Add</i></span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
