@@ -262,7 +262,7 @@
                       <div class="row form-group">
                           <div class="col-lg-12">
                               <label for="profile">Perfil N° @(i + 1) del Prospecto:</label>
-                              <span id="profile"><a href="@profile.profileUrl" target="_blank">@prospect.get.getFullName</a></span>
+                              <span id="profile"><a href="@(if(profile.profileUrl.contains("http")) profile.profileUrl else "http://" + profile.profileUrl)" target="_blank">@prospect.get.getFullName</a></span>
                           </div>
                       </div>
                       @if(profile.jobList.nonEmpty){

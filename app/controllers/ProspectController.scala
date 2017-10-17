@@ -173,16 +173,23 @@ class ProspectController @Inject()(prospectService: ProspectService,
       val titleFilter: String = filter("title").toLowerCase
       val codeFilter: String = filter("title").toLowerCase
 
-      val date = dateFormat.format(new DateTime(filter("exitDate")).toDate)
-      val dateFilter: String = date.toLowerCase
+      var dateFilter: String = ""
+      if(!filter("exitDate").isEmpty){
+        val date = dateFormat.format(new DateTime(filter("exitDate")).toDate)
+        dateFilter = date.toLowerCase
+      }
+      val firstName = filter("firstName").toLowerCase
+      val lastName = filter("lastName").toLowerCase
+      val documentId = filter("documentId").toLowerCase
 
       val filtered : List[Prospect] = prospects.filter{x: Prospect =>
-        x.firstName.toLowerCase.contains(filter("firstName").toLowerCase) &&
-        x.lastName.toLowerCase.contains(filter("lastName").toLowerCase) &&
-        (x.workingData.title.toLowerCase.contains(titleFilter) || x.academicData.title.toLowerCase.contains(titleFilter)) &&
-        (x.workingData.institutionCode.toLowerCase.contains(codeFilter) || x.academicData.institutionCode.toLowerCase.contains(codeFilter)) &&
-        (x.workingData.exitDate.toLowerCase.contains(dateFilter) || x.academicData.exitDate.toLowerCase.contains(dateFilter)) &&
-        x.documentId.toLowerCase.contains(filter("documentId").toLowerCase)
+
+        (firstName.isEmpty || x.firstName.toLowerCase.contains(firstName)) &&
+          (lastName.isEmpty || x.lastName.toLowerCase.contains(lastName)) &&
+        (titleFilter.isEmpty || x.workingData.title.toLowerCase.contains(titleFilter) || x.academicData.title.toLowerCase.contains(titleFilter)) &&
+        (codeFilter.isEmpty || x.workingData.institutionCode.toLowerCase.contains(codeFilter) || x.academicData.institutionCode.toLowerCase.contains(codeFilter)) &&
+        (dateFilter.isEmpty || x.workingData.exitDate.toLowerCase.contains(dateFilter) || x.academicData.exitDate.toLowerCase.contains(dateFilter)) &&
+          (documentId.isEmpty || x.documentId.toLowerCase.contains(documentId))
       }
 
       Ok(com.prospects.views.html.search.render(filtered, form, filter))
