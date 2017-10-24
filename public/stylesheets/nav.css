@@ -1,3 +1,12 @@
+a.disabled-link,
+a.disabled-link:visited,
+a.disabled-link:active,
+a.disabled-link:hover {
+    background-color: #d9d9d9 !important;
+    color: #aaa !important;
+}
+
+
 ul.list{
     padding-top: 5px;
     padding-bottom: 5px;

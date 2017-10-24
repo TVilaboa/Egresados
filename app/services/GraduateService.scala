@@ -1,5 +1,7 @@
 package services
 
+import java.text.Normalizer
+
 import com.google.inject.Inject
 import daos.{GraduateDao, UserDao}
 import models.{Graduate, User}
@@ -23,9 +25,11 @@ class GraduateService @Inject()(graduateDao: GraduateDao) {
 
   def findByStudentCode(studentCode : String): Future[Graduate] = graduateDao.findByStudentCode(studentCode)
 
-  def update(graduate: Graduate): Future[UpdateResult] = graduateDao.update(graduate)
+  def update(graduate: Graduate): Future[UpdateResult] = graduateDao.update(graduate.copy(firstName = Normalizer.normalize(graduate.firstName, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "")))
 
   def save(graduate: Graduate): Future[Completed] = graduateDao.save(graduate)
+
+  def drop(graduate: Graduate): Future[Graduate] = graduateDao.drop(graduate)
 
   def getNumberWithLinks : Future[Seq[(String,String,String,String)]] = graduateDao.getNumberWithLinks()
 }

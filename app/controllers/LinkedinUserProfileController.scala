@@ -1,18 +1,13 @@
 package controllers
 
-import java.sql.Timestamp
-import java.util.Date
-import play.data.format.Formats.DateTime
-
+import actions.SecureAction
 import com.google.inject.Inject
-import generators.LinkedInUrlGenerator
-import models.{Graduate, LinkedinUserProfile, LinkedinEducation, LinkedinJob}
-import play.api.mvc.{Action, Controller}
+import models._
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.mvc.Controller
 import scrapers.LinkedinUserProfileScraper
-import services.{GraduateService, LinkedinUserProfileService}
+import services.{LinkedinUserProfileService, ProspectService, ScrapingService}
 
-
-import scala.collection.mutable.ListBuffer
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
@@ -20,52 +15,35 @@ import scala.concurrent.{Await, Future}
   * Created by Nacho on 23/09/2016.
   */
 
-class LinkedinUserProfileController @Inject() (linkedinUserProfileService: LinkedinUserProfileService,graduateService: GraduateService) extends Controller{
+class LinkedinUserProfileController @Inject() (linkedinUserProfileService: LinkedinUserProfileService,
+                                               scraper : LinkedinUserProfileScraper,
+                                               prospectService: ProspectService, secureAction: SecureAction,
+                                               scrapingService: ScrapingService) extends Controller {
 
-  def saveLinkedinUserProfile(id : String) = Action {
-    val generator: LinkedInUrlGenerator = new LinkedInUrlGenerator()
-    var graduate : Graduate = Await.result(graduateService.find(id),Duration.Inf)
-    val link: List[String] = generator.getSearchedUrl(Option(graduate.firstName + " " +graduate.lastName),Option("Universidad Austral"))
-    val scraper : LinkedinUserProfileScraper = new LinkedinUserProfileScraper()
-    var linkedinUserProfile: LinkedinUserProfile = null
-    link.map{link : String =>
-      linkedinUserProfile = scraper.getLinkedinProfile(link)
-      linkedinUserProfileService.save(linkedinUserProfile)
-    }
-    if(Option(linkedinUserProfile).isDefined){
-      graduate = graduate.copy(linkedinUserProfile = Option(linkedinUserProfile).get)
-      var result = Await.result(graduateService.update(graduate),Duration.Inf)
-    }
+  def search(id: String) =secureAction{
+    val prospect : Future[Prospect] = prospectService.find(id)
 
-    Redirect("/profile/" + graduate._id)
+    prospect.map(runSearch)
 
+    Redirect(routes.ProspectController.show(id))
   }
 
-  def saveAllLinkedinUserProfile = Action {
-    val generator: LinkedInUrlGenerator = new LinkedInUrlGenerator()
-    var graduates = Seq[Graduate]()
-    val all: Future[Seq[Graduate]] = graduateService.all()
-    graduates = Await.result(all,Duration.Inf)
-    for(grad <- graduates) {
-      val link: List[String] = generator.getSearchedUrl(Option(grad.firstName + " " + grad.lastName), Option("Universidad Austral"))
-      val scraper: LinkedinUserProfileScraper = new LinkedinUserProfileScraper()
-      var linkedinUserProfile: LinkedinUserProfile = null
-      link.foreach { link: String =>
-        //var linkedinUserProfile = scraper.getLinkedinProfile(link)
-        //linkedinUserProfileService.save(linkedinUserProfile)
+  def searchAll =secureAction{
+    val prospects : Future[Seq[Prospect]] = prospectService.all()
 
-        linkedinUserProfile = scraper.getLinkedinProfile(link)
+    prospects.map(x => x.foreach(runSearch))
 
+    Redirect(routes.ProspectController.index(""))
+  }
 
-      }
-      if (linkedinUserProfile != null) {
-        var graduate = grad.copy(linkedinUserProfile = linkedinUserProfile)
-        var result = Await.result(graduateService.update(graduate), Duration.Inf)
-      }
-    }
+  private def runSearch(prospect: Prospect) = {
+    scrapingService.runLinkedinSearch(prospectService, scraper, linkedinUserProfileService, prospect)
+  }
 
-
-      Ok(views.html.index.render("Success"))
+  def deleteProfile(id:String) =secureAction {
+    val profile : LinkedinUserProfile = Await.result(linkedinUserProfileService.find(id),Duration.Inf)
+    linkedinUserProfileService.drop(profile)
+    Redirect(routes.Application.homeFeed())
   }
 
 }

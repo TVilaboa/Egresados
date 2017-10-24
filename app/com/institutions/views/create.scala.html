@@ -1,0 +1,103 @@
+@(institution: Map[String,String])
+@css = {
+  <!-- Application Style CSS -->
+  <link href="@routes.Assets.at("stylesheets/application.css")" rel="stylesheet">
+}
+
+@scripts = {
+  <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.validate.min.js")"></script>
+  <script type="text/javascript">
+          /**
+           * Script that allows only to type the selected characters
+           * */
+          function allowedCharacters(e){
+            var key = e.keyCode || e.which;
+            var keyword = String.fromCharCode(key).toLowerCase();
+            var allowed = " áéíóúabcdefghijklmnñopqrstuvwxyz0123456789";
+            var specialCharacters = "8-37-39-46";
+            var isSpecial = false;
+
+            for(var i in specialCharacters){
+              if(key == specialCharacters[i]){
+                isSpecial = true;
+                break;
+              }
+            }
+
+            if(allowed.indexOf(keyword)==-1 && !isSpecial){
+              return false;
+            }
+          }
+
+          $(document).ready(function() {
+            $('#name').on('keypress',function(event){
+              return allowedCharacters(event);
+            });
+
+            $('#address').on('keypress',function(event){
+              return allowedCharacters(event);
+            });
+          });
+
+  </script>
+  <script type="text/javascript">
+          //    TODO incorporar validaciones de fechas
+          $(function(){
+            $('#institutionForm').validate({
+              rules : {
+                name : {require : true, minLength:1},
+                address : {require : true, minLength:1}
+              },
+              messages : {
+                name : {require : 'Ingrese un nombre válido', minLength : 'Ingrese un nombre válido'},
+                address : {require : 'Ingrese una dirección válida', minLength: 'Ingrese una dirección válida'}
+              },
+              submitHandler : function(form){
+                $.ajax({
+                  url : form.action,
+                  type : form.method,
+                  data : $(form).serialize(),
+                  success : function(res){
+                    alert(res);
+                  }
+                });
+              }
+            });
+          });
+  </script>
+}
+
+@layout(title = "Prospect Tracker | Add Institution", scripts, css) {
+
+  <div id="wrapper">
+    <div id="page-wrapper">
+
+      <div class="row">
+        <div class="col-lg-12">
+          <h1 class="page-header">Nueva Institución</h1>
+          @*<div id="messageSpan" class="alert alert-danger" role="alert">*@
+          @*<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="false"></span>*@
+          @*<span class="sr-only">Error:</span>*@
+          @*<span>Agregar</span>*@
+          @*</div>*@
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="panel panel-default">
+            <div class="panel-body">
+
+              @helper.form(action = routes.InstitutionController.store(), 'id -> "institutionForm", 'class -> "form-horizontal") {
+                @com.institutions.views.html.institution_form(institution, "Add")
+              }
+              
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+}

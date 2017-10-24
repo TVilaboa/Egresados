@@ -1,49 +1,41 @@
 package controllers
 
-import java.sql.Timestamp
-import java.util.Date
-
+import actions.SecureAction
 import com.google.inject.Inject
-import generators.{InfobaeUrlGeneratorObject, InfobaeUrlGenerator, LaNacionUrlGeneratorObject, LaNacionUrlGenerator}
 import models._
-import play.api.mvc.{Action, Controller}
-import scrapers.{InfobaeScraper, LaNacionScraper}
-import services.{InfobaeNewsService, GraduateService, LaNacionNewsService}
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.mvc.Controller
+import scrapers.InfobaeScraper
+import services.{InfobaeNewsService, ProspectService, ScrapingService}
 
-import scala.collection.mutable.ListBuffer
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
+import scala.concurrent.Future
 
 /**
   * Created by Brian Re & Michele Re on 26/09/2016.
   */
-class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,graduateService: GraduateService) extends Controller{
+class InfobaeNewsController @Inject() (newsInfobaeService: InfobaeNewsService,
+                                       prospectService: ProspectService,
+                                       scraper: InfobaeScraper,
+                                       secureAction: SecureAction,
+                                       scrapingService: ScrapingService) extends Controller {
 
-  def saveNews(id : String) = Action {
-    val generator: InfobaeUrlGenerator = new InfobaeUrlGenerator()
-    var graduate : Graduate = Await.result(graduateService.find(id),Duration.Inf)
-    val links = InfobaeUrlGeneratorObject.search(Option(graduate.firstName + " " +graduate.lastName),Option("Universidad Austral"))
-    val scraper: InfobaeScraper = new InfobaeScraper()
-    var news: List[InfobaeNews] = List[InfobaeNews]()
-    var element: InfobaeNews = null
-    for(link <- links) {
-      element = scraper.scrape(link)
-      newsInfobaeService.save(element)
-      news = element :: news
-    }
-    graduate = graduate.copy(infobaeNews = news)
-    var result = Await.result(graduateService.update(graduate),Duration.Inf)
-    val userNews: InfobaeUserNews = new InfobaeUserNews(news, new Timestamp(new Date().getTime))
-    for(news <- userNews.news) {
-      println(news.url)
-      println(news.title)
-      println(news.date)
-      println(news.tuft)
-      println(news.author)
-      println("*********************************")
-    }
-    Redirect("/profile/" + graduate._id)
+  def search(id: String) =secureAction{
+    val prospect : Future[Prospect] = prospectService.find(id)
 
+    prospect.map(runSearch)
+
+    Redirect(routes.ProspectController.show(id))
   }
 
+  def searchAll =secureAction{
+    val prospects : Future[Seq[Prospect]] = prospectService.all()
+
+    prospects.map(x => x.foreach(runSearch))
+
+    Redirect(routes.ProspectController.index(""))
+  }
+
+  def runSearch(prospect: Prospect) : Unit = {
+    scrapingService.runInfobaeSearch(scraper, newsInfobaeService, prospectService, prospect)
+  }
 }

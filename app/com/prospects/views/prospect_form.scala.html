@@ -1,0 +1,168 @@
+@import java.util.Locale
+
+@(prospect: Map[String, String], action: String)(implicit documentTypes : List[String], institutions: Seq[Institution])
+<fieldset>
+    <legend>Informacion Personal </legend>
+  <div class="row form-group">
+    <div class="col-md-6">
+        <label for="firstName">Nombre</label>
+      <input type="text" required class="form-control" name="firstName" id="firstName" placeholder="FirstName" value="@prospect("firstName")">
+    </div>
+    <div class="col-md-6">
+        <label for="lastName">Apellido</label>
+      <input type="text" required class="form-control" name="lastName" id="lastName" placeholder="LastName" value="@prospect("lastName")">
+    </div>
+  </div>
+  <div class="row form-group">
+    <div class="col-md-6">
+        <label for="documentType">Tipo de Documento</label>
+      <select name="documentType" id="documentType" class="form-control">
+        @for(documentType: String <- documentTypes){
+          @if(prospect("documentType").equals(documentType)){
+            <option value="@documentType" selected>@documentType.toUpperCase</option>
+          } else{
+            <option value="@documentType" >@documentType.toUpperCase</option>
+          }
+        }
+      </select>
+    </div>
+    <div class="col-md-6">
+        <label for="documentId">N° Documento</label>
+      <input type="text"  class="form-control" name="documentId" id="documentId" placeholder="DNI" value="@prospect("documentId")">
+    </div>
+  </div>
+  <div class="row form-group">
+    <div class="col-md-6">
+        <label for="birthDate">Fecha de Nacimiento</label>
+      <input type="date" name="birthDate" id="birthDate" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("birthDate")">
+    </div>
+    <div class="col-md-6">
+        <label for="country">País de Residencia </label>
+        <select name="country" id="country" class="form-control">
+            <option value="">Seleccionar</option>
+      @for(country: (String,String)<- Locale.getISOCountries.map(c => new Locale("",c).getDisplayCountry) zip Locale.getISOCountries.map(c => new Locale("",c).getDisplayCountry)){
+        @if(prospect("country").equals(country._1)){
+          <option value="@country._1" selected>@country._2</option>
+        } else{
+          <option value="@country._1" >@country._2</option>
+        }
+      }
+      </select>
+    </div>
+  </div>
+  <div class="row form-group">
+    <div class="col-md-6">
+        <label for="primaryEmail">Email Personal</label>
+      <input type="email" required class="form-control" name="primaryEmail" id="primaryEmail" placeholder="some@@mail.com" value="@prospect("primaryEmail")">
+    </div>
+    <div class="col-md-6">
+        <label for="secondaryEmail">Email Profesional</label>
+        <input type="email" required class="form-control" name="secondaryEmail" id="secondaryEmail" placeholder="some@@mail.com" value="@prospect("secondaryEmail")">
+    </div>
+  </div>
+</fieldset>
+<fieldset>
+    <legend>Informacion Laboral</legend>
+  <div class="row form-group">
+    <div class="col-md-6">
+      <label for="workingInstitution">Institution</label>
+      <select name="workingInstitution" id="workingInstitution" class="form-control">
+      @for(institution: Institution <- institutions){
+        @if(prospect("institution").equals(institution._id)){
+          <option value="@institution._id" selected>@institution.name</option>
+        } else{
+          <option value="@institution._id" >@institution.name</option>
+        }
+      }
+      </select>
+    </div>
+    <div class="col-md-6">
+        <label for="workingCode">Codigo Institucional</label>
+        <input type="text" class="form-control" name="workingCode" id="workingCode" placeholder="ABC123" value="@prospect("institutionCode")">
+    </div>
+  </div>
+  <div class="row form-group">
+    <div class="col-md-6">
+        <label for="workingTitle">Titulo</label>
+        <input type="text" name="workingTitle" class="form-control" id="workingTitle" placeholder="CEO" value="@prospect("title")">
+    </div>
+  </div>
+  <div class="row form-group">
+    <div class="col-md-6">
+        <label for="workingEntry">Fecha de Ingreso</label>
+      <input type="date" name="workingEntry" id="workingEntry" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("entryDate")">
+    </div>
+
+    <div class="col-md-6">
+        <label for="workingExit">Fecha de Egreso</label>
+      <input type="date" name="workingExit" id="workingExit" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("exitDate")">
+    </div>
+  </div>
+</fieldset>
+<fieldset>
+    <legend>Informacion Academica</legend>
+  <div class="row form-group">
+    <div class="col-md-6">
+      <label for="academicInstitution">Institution</label>
+      <select name="academicInstitution" id="academicInstitution" class="form-control">
+      @for(institution: Institution <- institutions){
+        @if(prospect("academy").equals(institution._id)){
+          <option value="@institution._id" selected>@institution.name</option>
+        } else{
+          <option value="@institution._id" >@institution.name</option>
+        }
+      }
+      </select>
+    </div>
+    <div class="col-md-6">
+        <label for="academicCode">Codigo Académico</label>
+        <input type="text" class="form-control" name="academicCode" id="academicCode" placeholder="ABC123" value="@prospect("academyCode")">
+    </div>
+  </div>
+  <div class="row form-group">
+    <div class="col-md-6">
+        <label for="academicTitle">Titulo</label>
+        <input type="text" name="academicTitle" class="form-control" id="academicTitle" placeholder="Estudiante" value="@prospect("academyTitle")">
+    </div>
+  </div>
+  <div class="row form-group">
+    <div class="col-md-6">
+        <label for="academicEntry">Fecha de Ingreso</label>
+      <input type="date" name="academicEntry" id="academicEntry" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("academyEntryDate")">
+    </div>
+
+    <div class="col-md-6">
+        <label for="academicExit">Fecha de Egreso</label>
+      <input type="date" name="academicExit" id="academicExit" class="form-control" placeholder="dd/MM/yyyy" value="@prospect("academyExitDate")">
+    </div>
+  </div>
+</fieldset>
+<div class="row form-group">
+  <input type="hidden" name="_id" id="_id"  value="@prospect("_id")">
+  <input type="hidden" name="workingData._id"  value="">
+  <input type="hidden" name="workingData.institutionCode"  value="">
+  <input type="hidden" name="workingData.title" value="">
+  <input type="hidden" name="workingData.entryDate" value="">
+  <input type="hidden" name="workingData.exitDate" value="">
+  <input type="hidden" name="workingData.institution._id" id="institution._id"  value="">
+  <input type="hidden" name="workingData.institution.name" id="institution.name"  value="">
+  <input type="hidden" name="workingData.institution.address" id="institution.address"  value="">
+  <input type="hidden" name="academicData._id"  value="">
+  <input type="hidden" name="academicData.institutionCode"  value="">
+  <input type="hidden" name="academicData.title" value="">
+  <input type="hidden" name="academicData.entryDate" value="">
+  <input type="hidden" name="academicData.exitDate" value="">
+  <input type="hidden" name="academicData.institution._id" id="institution._id"  value="">
+  <input type="hidden" name="academicData.institution.name" id="institution.name"  value="">
+  <input type="hidden" name="academicData.institution.address" id="institution.address"  value="">
+  <input type="hidden" name="linkedInProfile._id" id="linkedInProfile._id"  value="">
+  <input type="hidden" name="linkedInProfile.actualPosition" id="linkedInProfile.actualPosition"  value="">
+  <input type="hidden" name="linkedInProfile.profileUrl" id="linkedInProfile.profileUrl"  value="">
+  <div class="col-md-6">
+    <a href="" class="btn btn-default btn-lg pull-right">Cancel</a>
+  </div>
+  <div class="col-md-6">
+    <button type="submit" class="btn btn-primary btn-lg pull-left"><span><i class="fa fa-graduation-cap"> @action</i></span></button>
+  </div>
+</div>
+

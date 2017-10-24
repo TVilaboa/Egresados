@@ -1,0 +1,56 @@
+@(institution: Map[String,String], action: String)
+<fieldset>
+  <legend>Informacion Institucional</legend>
+  <div class="row form-group">
+    <div class="col-md-6">
+      <label for="name">Nombre</label>
+      <input value="@institution("name")" type="text" class="form-control" name="name" id="name" placeholder="Universidad Austral">
+    </div>
+    <div class="col-md-6">
+      <label for="address">Direccion</label>
+      <input value="@institution("address")" type="text" class="form-control" name="address" id="address" placeholder="Mariano Acosta 123">
+    </div>
+  </div>
+  <div class="row form-group">
+    <div class="col-md-6">
+      <label for="institutionType">Tipo de Institucion</label>
+      <select name="institutionType" title="institutionType" class="form-control">
+        <option value="">Seleccionar</option>
+        @for(iType <- enums.InstitutionType.values) {
+          @if(institution("institutionType").equals(iType.toString)) {
+            <option value="@iType.toString" selected>@iType.toString</option>
+
+          } else {
+            <option value="@iType.toString">@iType.toString</option>
+          }
+
+        }
+      </select>
+    </div>
+    <div class="col-md-6">
+      <label for="sector">Rubro</label>
+      <select name="sector" title="sector" class="form-control">
+
+        <option value="">Seleccionar</option>
+        @for(iSector <- enums.InstitutionSector.values) {
+          @if(institution("sector").equals(iSector.toString)) {
+            <option value="@iSector.toString" selected>@iSector.toString</option>
+
+          } else {
+            <option value="@iSector.toString">@iSector.toString</option>
+          }
+
+        }
+      </select>
+    </div>
+  </div>
+</fieldset>
+<div class="row form-group">
+  <input type="hidden" name="_id" value="@institution("_id")">
+  <div class="col-md-6">
+    <a href="" class="btn btn-default btn-lg pull-right">Cancel</a>
+  </div>
+  <div class="col-md-6">
+    <button type="submit" class="btn btn-primary btn-lg pull-left"><span><i class="fa fa-university"> @action</i></span></button>
+  </div>
+</div>

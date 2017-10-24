@@ -13,7 +13,7 @@ To meet this goal, DataTables is developed with two distinct groups of users in 
 
 ## Installing DataTables
 
-To use DataTables, the primary way to obtain the software is to use the [DataTables downloader](//datatables.net/download). You can also include the individual files from the [DataTables CDN](//cdn.datatables.net). See the [documentation](//datatables.net/manual/installation) for full details.
+To use DataTables, the primary way to obtain the software is to use the [DataTables downloader](//datatables.net/download). You can also include the individual files from the [DataTables CDN](https://cdn.datatables.net). See the [documentation](//datatables.net/manual/installation) for full details.
 
 ### NPM and Bower
 

@@ -1,10 +1,24 @@
 <configuration>
-    
+
   <conversionRule conversionWord="coloredLevel" converterClass="play.api.libs.logback.ColoredLevel" />
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <pattern>%coloredLevel - %logger - %message%n%xException</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="ACIERTO" class="ch.qos.logback.core.FileAppender">
+    <file>logs/success.log</file>
+    <encoder>
+      <pattern>%date{dd/MM/yyyy HH:mm:ss} - [SUCCESS] - %message%n%xException</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="ERROR" class="ch.qos.logback.core.FileAppender">
+    <file>logs/error.log</file>
+    <encoder>
+      <pattern>%date{dd/MM/yyyy HH:mm:ss} - [ERROR] - %message%n%xException</pattern>
     </encoder>
   </appender>
 
@@ -14,6 +28,14 @@
   -->
   <logger name="play" level="INFO" />
   <logger name="application" level="DEBUG" />
+  <logger name="successLogger" level="INFO" >
+    <appender-ref ref="ACIERTO"/>
+  </logger>
+
+  <logger name="errorLogger" level="INFO" >
+    <appender-ref ref="ERROR"/>
+  </logger>
+
 
   <root level="ERROR">
     <appender-ref ref="STDOUT" />

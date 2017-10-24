@@ -1,44 +1,50 @@
 package controllers
 
-import java.sql.Timestamp
-import java.util.Date
-
 import actions.SecureAction
 import com.google.inject.Inject
-import generators.{LaNacionUrlGeneratorObject, LaNacionUrlGenerator}
-import models.{Graduate, LaNacionUserNews, LaNacionNews}
-import play.api.mvc.{Action, Controller}
+import models.{News, Prospect}
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.mvc.Controller
 import scrapers.LaNacionScraper
-import services.{GraduateService, LaNacionNewsService}
+import services.{LaNacionNewsService, ProspectService, ScrapingService}
 
-import scala.collection.mutable.ListBuffer
-import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
 
 /**
   * Created by matias on 21/09/2016.
   */
-class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService,graduateService: GraduateService, secureAction: SecureAction) extends Controller{
+class LaNacionNewsController @Inject() (newsLaNacionService: LaNacionNewsService,
+                                        prospectService: ProspectService,
+                                        scraper: LaNacionScraper,
+                                        secureAction: SecureAction,
+                                        scrapingService: ScrapingService) extends Controller {
 
-  def saveNews(id : String) = secureAction {
-    val generator: LaNacionUrlGenerator = new LaNacionUrlGenerator()
-    var graduate : Graduate = Await.result(graduateService.find(id),Duration.Inf)
-    val links = LaNacionUrlGeneratorObject.search(Option(graduate.firstName + " " +graduate.lastName),Option("Universidad Austral"))
-    val scraper: LaNacionScraper = new LaNacionScraper()
-    var news: List[LaNacionNews] = List[LaNacionNews]()
-    var element: LaNacionNews = null
-    for(link <- links) {
-      element = scraper.getArticleData(link)
-      newsLaNacionService.save(element)
-      news = element :: news
+  def search(id: String) =secureAction{
+    val prospect : Future[Prospect] = prospectService.find(id)
 
-      //news = scraper.getArticleData(link) :: news
-    }
-    graduate = graduate.copy(laNacionNews = news)
-    var result = Await.result(graduateService.update(graduate),Duration.Inf)
+    prospect.map(runSearch)
 
-    Redirect("/profile/" + graduate._id)
+    Redirect(routes.ProspectController.show(id))
+  }
 
+  def searchAll =secureAction{
+    val prospects : Future[Seq[Prospect]] = prospectService.all()
+
+    prospects.map(x => x.foreach(runSearch))
+
+    Redirect(routes.ProspectController.index(""))
+  }
+
+  private def runSearch(prospect: Prospect): Unit = {
+    scrapingService.runLaNacionSearch(scraper, newsLaNacionService, prospectService, prospect)
+  }
+
+  def deleteNews(id:String) =secureAction {
+    //Get graduate from DB.
+    val news : News = Await.result(newsLaNacionService.find(id),Duration.Inf)
+    Await.result(newsLaNacionService.drop(news), Duration.Inf)
+    Redirect("/")
   }
 
 }

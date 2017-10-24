@@ -1,0 +1,147 @@
+@(prospect: Map[String, String],message: String = "")(implicit documentTypes: List[String], institutions: Seq[Institution])
+@css = {
+  <!-- Application Style CSS -->
+  <link href="@routes.Assets.at("stylesheets/application.css")" rel="stylesheet">
+}
+
+@scripts = {
+  <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.validate.min.js")"></script>
+  <script type="text/javascript">
+          /**
+           * Script that allows only to type the selected characters
+           * */
+          function allowedCharacters(e){
+            var key = e.keyCode || e.which;
+            var keyword = String.fromCharCode(key).toLowerCase();
+            var allowed = " áéíóúabcdefghijklmnñopqrstuvwxyz";
+            var specialCharacters = "8-37-39-46";
+
+            var isSpecial = false;
+            for(var i in specialCharacters){
+              if(key == specialCharacters[i]){
+                isSpecial = true;
+                break;
+              }
+            }
+
+            if(allowed.indexOf(keyword)==-1 && !isSpecial){
+              return false;
+            }
+          }
+
+          $(document).ready(function() {
+//            $('#messageSpan').hide();
+
+            $('#firstName').on('keypress',function(event){
+              return allowedCharacters(event);
+            });
+
+            $('#lastName').on('keypress',function(event){
+              return allowedCharacters(event);
+            });
+
+            $('#title').on('keypress',function(event){
+              return allowedCharacters(event);
+            });
+          });
+
+  </script>
+  <script type="text/javascript">
+          //    TODO incorporar validaciones de fechas
+          $(function(){
+            $('#prospectForm').validate({
+                rules : {
+                    firstName : {require : true},
+                    lastName : {require : true},
+                    documentId : {require : true},
+                    birthdate : {require : true},
+                    workingInstitution : {require : true},
+                    workingTitle : {require : true},
+                    workingEntry : {require : true},
+                    workingExit : {require : true},
+                    academicInstitution : {require : true},
+                    academicTitle : {require : true},
+                    academicEntry : {require : true},
+                    academicExit : {require : true}
+                },
+                messages : {
+                    firstName : {require : 'Ingrese un nombre válido'},
+                    lastName : {require : 'Ingrese un apellido válido'},
+                    documentId : {require : 'Ingrese un numero de documento válido'},
+                    birthdate : {require : 'Ingrese una fecha de nacimiento'},
+                    workingInstitution : {require : 'Seleccione la institución en la que trabaja el prospecto'},
+                    workingTitle : {require : 'Ingrese el valor del cargo que posee el prospecto'},
+                    workingEntry : {require : 'Indique la fecha de ingreso del prospecto'},
+                    workingExit : {require : 'Indique la fecha de Egreso del prospecto'},
+                    academicInstitution : {require : 'Seleccione la institución a la que pertenece el prospecto'},
+                    academicTitle : {require : 'Ingrese el valor del título que posee el prospecto'},
+                    academicEntry : {require : 'Indique la fecha de ingreso del prospecto'},
+                    academicExit : {require : 'Indique la fecha de Egreso del prospecto'}
+                },
+              submitHandler : function(form){
+                $.ajax({
+                  url : form.action,
+                  type : form.method,
+                  data : $(form).serialize(),
+                  success : function(res){
+                    alert(res);
+                  }
+                });
+              }
+            });
+          });
+  </script>
+    <script>
+            $( document ).ready(function() {
+                document.getElementById("prospectForm").noValidate = false;
+                var $inputs = $('input[name=secondaryEmail],input[name=primaryEmail]');
+                var evalRequired = function () {
+                    // Set the required property of the other input to false if this input is not empty.
+                    $inputs.not(this).prop('required', !$(this).val().length);
+                };
+                $inputs.on('input', evalRequired);
+                $inputs.each(evalRequired);
+            });
+
+    </script>
+
+
+}
+
+@layout(title = "Prospect Tracker | Edit Prospect", scripts, css) {
+
+  <div id="wrapper">
+    <div id="page-wrapper">
+
+      <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Edicion de Prospecto</h1>
+            @if(message != ""){
+                <div id="messageSpan" class="alert alert-danger" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="false"></span>
+                    <span class="sr-only">Error:</span>
+                    <span>@message</span>
+                </div>
+            }
+
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="panel panel-default">
+            <div class="panel-body">
+
+              @helper.form(action = routes.ProspectController.update(prospect("_id")), 'id -> "prospectForm",'class -> "form-horizontal") {
+                @com.prospects.views.html.prospect_form(prospect, "Update")
+              }
+              
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+}

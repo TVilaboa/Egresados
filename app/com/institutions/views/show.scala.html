@@ -1,0 +1,117 @@
+@(institution: Option[Institution], prospects: List[Prospect])
+
+@css = {
+    <!-- DataTables CSS -->
+    <link href="@routes.Assets.at("bower_components/datatables/media/css/jquery.dataTables.min.css")" rel="stylesheet">
+    <link href="@routes.Assets.at("stylesheets/application.css")" rel="stylesheet">
+    <link href="@routes.Assets.at("bower_components/datatables/media/css/buttons.dataTables.min.css")" rel="stylesheet">
+}
+
+@scripts = {
+        <!-- DataTables JavaScript -->
+    <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/jquery.dataTables.min.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/dataTables.buttons.min.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/buttons.flash.min.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("bower_components/jszip.min.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/buttons.html5.min.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/buttons.print.min.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/buttons.colVis.min.js")"></script>
+
+        <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+    <script>
+            $(document).ready(function () {
+                $('#dataTables-example').DataTable({
+                    dom: 'Bfrtip',
+                    responsive: true,
+                    select: true,
+                    scrollX: true,
+                    buttons: [
+                        {
+                            extend: 'excel',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5, 6]
+                            }
+                        },
+                        {
+                            extend: 'csv',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5, 6]
+                            }
+                        },
+                        {
+                            text: 'JSON',
+                            action: function (e, dt, button, config) {
+                                var data = dt.buttons.exportData({
+                                    columns: [0, 1, 2, 3, 4, 5, 6]
+                                });
+
+                                $.fn.dataTable.fileSave(
+                                        new Blob([JSON.stringify(data)]),
+                                        'Export.json'
+                                );
+                            }
+                        }
+                    ]
+                });
+            });
+    </script>
+}
+
+
+@layout(title = "Prospect Tracker | Institution", scripts, css) {
+
+  <div id="page-wrapper">
+    <div class="row">
+      <div class="col-lg-12">
+          <h1 class="page-header">Institucion</h1>
+      </div>
+    </div>
+
+      <!-- /.row -->
+    <div class="row">
+      <div class="col-lg-12">
+      @if(institution.isDefined) {
+        <div class="panel panel-default">
+          <div class="alert alert-success">
+          @helper.form(action = routes.InstitutionController.edit(institution.get._id)) {
+            <div align="right">
+                <button type="submit" class="btn btn-info"><span><i class="fa fa-pencil"></i> Editar</span></button>
+            </div>
+          }
+          </div>
+          <div class="panel-body">
+            <div class="row form-group">
+              <div class="col-md-6 reference">
+                <label for="name">Nombre:</label>
+                <h3 id="name">@institution.get.name</h3>
+              </div>
+              <div class="col-md-6 reference">
+                <label for="address">Dirección:</label>
+                <h3 id="address">@institution.get.address</h3>
+              </div>
+            </div>
+              <div class="row form-group">
+                  <div class="col-md-6 reference">
+                      <label for="name">Tipo:</label>
+                      <h3 id="name">@institution.get.institutionType</h3>
+                  </div>
+                  <div class="col-md-6 reference">
+                      <label for="address">Rubro:</label>
+                      <h3 id="address">@institution.get.sector</h3>
+                  </div>
+              </div>
+          </div>
+        </div>
+
+          @com.prospects.views.html.prospect_list.render(prospects)
+      } else {
+        <div class="alert alert-danger">
+          <strong>No se puede visualizar la institución seleccionada</strong>
+        </div>
+      }
+      </div>
+    </div>
+  </div>
+}
+
+

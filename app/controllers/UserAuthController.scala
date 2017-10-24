@@ -1,6 +1,8 @@
 package controllers
 
+import java.io.IOException
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 
 import actions.SecureAction
 import com.google.inject.Inject
@@ -9,28 +11,25 @@ import forms.AuthForms.{LoginData, SignupData}
 import models.{Session, User}
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.libs.json.{Json, JsValue}
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import views.html
 import services.{SessionService, UserService}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import com.github.t3hnar.bcrypt._
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
 
 class UserAuthController @Inject()(userService: UserService,
                                    sessionService: SessionService,
                                    secureAction: SecureAction) extends Controller {
 
-  val loginForm = Form(
-    mapping = tuple(
-      "user" -> text,
-      "password" -> text
-    ) verifying("Invalid email or password", result => result match {
-      case (username, password) => check(username, password)
-    })
-  )
+  val loginForm = Form(mapping = tuple("user" -> text, "password" -> text)
+    verifying("Invalid email or password",
+              result => result match {case (username, password) => check(username, password)}))
 
   def checkPassword(username: String, password: String): Future[Boolean] = {
     userService.findByUsername(username).map(User => {
@@ -41,7 +40,7 @@ class UserAuthController @Inject()(userService: UserService,
 
   def check(username: String, password: String): Boolean = {
     if (userService.findByUsername(username) == null) return false
-    val b: Boolean = Await.result(checkPassword(username, password), scala.concurrent.duration.Duration(5, "seconds"))
+    val b: Boolean = Await.result(checkPassword(username, password), Duration.create(5, TimeUnit.SECONDS))
     b
   }
 
@@ -65,7 +64,7 @@ class UserAuthController @Inject()(userService: UserService,
 //          Ok(Json.toJson(response)).withCookies(Cookie("sessionId", sessionId))
 //          Redirect("/").withCookies(Cookie("sessionId", sessionId))
 
-          Ok(views.html.index.render("")).withCookies(Cookie("sessionId", sessionId))
+          Redirect("/").withCookies(Cookie("sessionId", sessionId))
         }else
           Unauthorized(views.html.login.render(null,"Invalid Password" ,null))
 
@@ -97,11 +96,11 @@ class UserAuthController @Inject()(userService: UserService,
     )
   )
 
-  def signupView = Action {
+  def signupView =Action {
 //    userService.create(userForm.get._1, userForm.get._2, userForm.get._3, userForm.get._4, 0)
     Ok(html.sign_up(userForm))
   }
-  def signup = Action.async { implicit request =>
+  def signup =Action.async { implicit request =>
     try {
       val user = User(
         UUID.randomUUID().toString,
@@ -123,7 +122,7 @@ class UserAuthController @Inject()(userService: UserService,
         }
       }
     } catch {
-      case e: Exception => Future {
+      case e: IOException => Future {
         //Ok(e.toString)
         BadRequest
       }

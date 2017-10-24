@@ -1,52 +1,86 @@
 package scrapers
 
-import java.io.IOException
-import java.util.UUID
-import models.InfobaeNews
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
+
 import scala.collection.JavaConversions._
 
 /**
   * Created by Brian Re & Michele Re
  */
+class InfobaeScraper extends NewsScraper{
 
-
-class InfobaeScraper {
-
-  def scrape(url: String): InfobaeNews ={
-    val userAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
-    var document: Option[Document] = None
-    try {
-      document = Option(Jsoup.connect(url).userAgent(userAgentString).get)
-    } catch {
-      case e: IOException => e.printStackTrace()
+  /**
+    * Retrieves the Title of a News
+    */
+  override protected def getTitle(document: Document): Option[String] = {
+    try{
+      Option(document.select(".article-header h1").head.text())
     }
-    val header = document.get.getElementsByTag("header")
-    var titulo: Option[String] = None
-    var copete: Option[String] = None
-    for (e <- header if e.getElementsByClass("article-header").size == 1) {
-      val elementsTitulo = e.getElementsByTag("h1")
-      if (elementsTitulo.size > 0) {
-        titulo = Option(e.getElementsByTag("h1").get(0).text())
-      }
-      val elementsCopete = e.getElementsByClass("subheadline")
-      if (elementsCopete.size > 0) {
-        copete = Option(e.getElementsByClass("subheadline").get(0).text())
-      }
-      //break
+    catch {
+      case e :Exception => None
     }
-    val elementAutorFecha = document.get.getElementsByClass("byline-author").get(0)
-    val elementsAutor = elementAutorFecha.getElementsByClass("author-name")
-    var autor: Option[String] = None
-    if (elementsAutor.size > 0) {
-      autor = Option(elementsAutor.get(0).text())
-    }
-    val fecha = elementAutorFecha.getElementsByClass("byline-date")
-      .get(0)
-      .text()
-
-
-    return new InfobaeNews(UUID.randomUUID().toString, url, titulo.get, fecha, copete.get, autor.get)
   }
+
+  /**
+    * Retrieves the Tuft of a News
+    */
+  override protected def getTuft(document: Document): Option[String] = {
+    try{
+      val tuft = Option(document.select(".article-header .subheadline").head.text())
+      tuft match{
+        case Some(x) => tuft
+        case None => Option("undefined")
+      }
+    }
+    catch {
+      case e :NoSuchElementException => Option("undefined")
+      case e :Exception => None
+    }
+  }
+
+
+  /**
+    * Retrieves the Date of a News
+    */
+  override protected def getDate(document: Document): Option[String] = {
+    try{
+      Option(document.select(".byline-date").head.text())
+    }
+    catch {
+      case e :Exception => None
+    }
+  }
+
+  /**
+    * Retrieves the Author of a News
+    */
+  override protected def getAuthor(document: Document): Option[String] = {
+    try{
+      val author = Option(document.select(".author-name").head.text())
+      author match{
+        case Some(x) => author
+        case None => Option("undefined")
+      }
+    }
+    catch{
+      case e :NoSuchElementException => Option("undefined")
+      case e :Exception => None
+    }
+  }
+
+  /**
+    * Define wether the news is a valid one
+    */
+  override protected def validateNews(name: Option[String], document: Document): Boolean = {
+    val articleContent : List[Element] = document.select("#article-content p").toList
+    var valid : Boolean = false
+    articleContent.foreach{x=>
+      if(x.toString.contains(name.get))
+        valid = true
+    }
+    valid
+  }
+
+  override protected def getScraperName(): String = "Infobae Scraper"
+
 }

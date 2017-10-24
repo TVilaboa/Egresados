@@ -1,0 +1,374 @@
+@(prospect: Option[Prospect])
+    @css = {
+        <!-- DataTables CSS -->
+        <link href="@routes.Assets.at("bower_components/datatables/media/css/jquery.dataTables.min.css")" rel="stylesheet">
+        <link href="@routes.Assets.at("stylesheets/application.css")" rel="stylesheet">
+        <link href="@routes.Assets.at("bower_components/datatables/media/css/buttons.dataTables.min.css")" rel="stylesheet">
+    }
+
+    @scripts = {
+            <!-- DataTables JavaScript -->
+        <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/jquery.dataTables.min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/dataTables.buttons.min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/buttons.flash.min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("bower_components/jszip.min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/buttons.html5.min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/buttons.print.min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/buttons.colVis.min.js")"></script>
+
+    <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+  <script>
+          $(document).ready(function() {
+            $('#dataTables-lanacion').DataTable({
+              dom: 'Bfrtip',
+              responsive: true,
+              select: true,
+              scrollX: true
+            });
+            $('#dataTables-elcronista').DataTable({
+              dom: 'Bfrtip',
+              responsive: true,
+              select: true,
+              scrollX: true
+            });
+            $('#dataTables-clarin').DataTable({
+              dom: 'Bfrtip',
+              responsive: true,
+              select: true,
+              scrollX: true
+            });
+            $('#dataTables-infobae').DataTable({
+              dom: 'Bfrtip',
+              responsive: true,
+              select: true,
+              scrollX: true
+            });
+          });
+  </script>
+  <script>
+    function addLink(source) {
+      var link = $('#'+source+'-input').val();
+      var data = {'link' : link,
+                  'source' : source
+                 };
+
+      $.ajax({
+        url: '@routes.ProspectController.addLink(prospect.get._id)',
+        type: 'POST',
+        contentType: 'application/json',
+        data : JSON.stringify(data),
+        success: function(response){
+          if(response.status === 'OK'){
+            location.reload();
+          }
+        },
+        error : function(response){
+          console.log("ERROR " + response);
+        }
+      });
+    }
+  </script>
+  <script>
+      function createInstitution(){
+          var data = {'name' : $('#name').val(),
+              'address' : $('#address').val(),
+              'institutionType' : $('#institutionType option:selected').val(),
+              'sector': $('#sector option:selected').val()
+          };
+          $.ajax({
+              url: '@routes.InstitutionController.storeJson',
+              type: 'POST',
+              contentType: 'application/json',
+              data : JSON.stringify(data),
+              success: function(response){
+                  if(response.success === true){
+                      $('#institutionModal').modal('hide');
+                      location.reload();
+                  }
+              },
+              error : function(response){
+                  console.log("ERROR " + response);
+              }
+          });
+      }
+  </script>
+}
+
+@layout(title = "Prospect Tracker | Prospect Profile", scripts, css) {
+
+  <div id="page-wrapper">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">Perfil del Prospecto</h1>
+      </div>
+    </div>
+
+      <!-- /.row -->
+    <div class="row">
+      <div class="col-lg-12">
+      @if(prospect.isDefined){
+        <div class="panel panel-default">
+          <div class="alert alert-info">
+            <div class="row">
+              <div class="col-md-6">
+                <h4>@prospect.get.getFullName</h4>
+              </div>
+              <div class="col-md-4">
+              </div>
+                <div class="col-md-1">
+                  <button type="button" data-toggle="modal" data-target="#institutionModal" class="btn btn-info"><span><i class="fa fa-plus"></i><span><i class="fa fa-institution"></i> Institución</span></button>
+              </div>
+              <div class="col-md-1">
+              @helper.form(action = routes.ProspectController.edit(prospect.get._id)) {
+                <div align="right">
+                  <button type="submit" class="btn btn-info"><span><i class="fa fa-pencil"></i> Editar</span></button>
+                </div>
+              </div>
+            </div>
+            }
+          </div>
+          <div class="panel-body">
+            <fieldset>
+              <legend>Informacion Personal</legend>
+              <div class="row form-group">
+                <div class="col-md-4">
+                  <span><strong>Nombre: </strong>@prospect.get.firstName</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Apellido: </strong>@prospect.get.lastName</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Documento: </strong>@prospect.get.getIdentification</span>
+                </div>
+              </div>
+              <div class="row form-group">
+                <div class="col-md-4">
+                  <span><strong>País de Residencia: </strong>@prospect.get.country</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Fecha de Nacimiento: </strong>@prospect.get.birthDate</span>
+                </div>
+                <div class="col-md-4"></div>
+              </div>
+              <div class="row form-group">
+                <div class="col-md-4">
+                    <span><strong>Email Personal: </strong>@prospect.get.primaryEmail</span>
+                </div>
+                <div class="col-md-4">
+                    <span><strong>Email Profesional: </strong>@prospect.get.secondaryEmail</span>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Datos institucionales: Laboral </legend>
+              <div class="row form-group">
+                <div class="col-md-4">
+                  <span><strong>Institución: </strong>@prospect.get.workingData.institution.name</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Código Institucional: </strong>@prospect.get.workingData.institutionCode</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Título: </strong>@prospect.get.workingData.title</span>
+                </div>
+              </div>
+              <div class="row form-group">
+                <div class="col-md-4">
+                  <span><strong>Rubro: </strong>@prospect.get.workingData.institution.institutionType</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Sector: </strong>@prospect.get.workingData.institution.sector</span>
+                </div>
+                <div class="col-md-4"></div>
+              </div>
+              <div class="row form-group">
+                <div class="col-md-4">
+                  <span><strong>Fecha de Ingreso: </strong>@prospect.get.workingData.entryDate</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Fecha de Egreso: </strong>@prospect.get.workingData.exitDate</span>
+                </div>
+                <div class="col-md-4"></div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Datos institucionales: Académicos </legend>
+              <div class="row form-group">
+                <div class="col-md-4">
+                  <span><strong>Institución: </strong>@prospect.get.academicData.institution.name</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Código Institucional: </strong>@prospect.get.academicData.institutionCode</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Título: </strong>@prospect.get.academicData.title</span>
+                </div>
+              </div>
+              <div class="row form-group">
+                <div class="col-md-4">
+                    <span><strong>Rubro: </strong>@prospect.get.academicData.institution.institutionType</span>
+                </div>
+                <div class="col-md-4">
+                    <span><strong>Sector: </strong>@prospect.get.academicData.institution.sector</span>
+                </div>
+                <div class="col-md-4"></div>
+              </div>
+                <div class="row form-group">
+                <div class="col-md-4">
+                  <span><strong>Fecha de Ingreso: </strong>@prospect.get.academicData.entryDate</span>
+                </div>
+                <div class="col-md-4">
+                  <span><strong>Fecha de Egreso: </strong>@prospect.get.academicData.exitDate</span>
+                </div>
+                <div class="col-md-4"></div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>News Tracking</legend>
+              @com.prospects.views.html.prospect_news.render(prospect.get.nacionNews,"Noticias: La Nación", "lanacion", prospect.get._id)
+              @com.prospects.views.html.add_link("lanacion-modal", "Agregar Link La Nacion", "lanacion")
+              <hr>
+              @com.prospects.views.html.prospect_news.render(prospect.get.clarinNews,"Noticias: Clarín", "clarin", prospect.get._id)
+              @com.prospects.views.html.add_link("clarin-modal", "Agregar Link Clarin", "clarin")
+              <hr>
+              @com.prospects.views.html.prospect_news.render(prospect.get.cronistaNews,"Noticias: El Cronista", "elcronista", prospect.get._id)
+              @com.prospects.views.html.add_link("elcronista-modal", "Agregar Link El Cronista", "elcronista")
+              <hr>
+              @com.prospects.views.html.prospect_news.render(prospect.get.infobaeNews,"Noticias: Infobae", "infobae", prospect.get._id)
+              @com.prospects.views.html.add_link("infobae-modal", "Agregar Link Infobae", "infobae")
+            </fieldset>
+            <fieldset>
+                <legend>LinkedIn Tracking - Last Successful Update: @prospect.get.updatedAt</legend>
+              <div class="row form-group">
+              @if(prospect.get.linkedInProfiles.filter(p => !p.rejected).isEmpty) {
+                  <div class="col-md-2">
+                      <span>No se encontró ningun perfil de LinkedIn</span>
+                  </div>
+                  <div class="col-md-3">
+                    @helper.form(action = routes.LinkedinUserProfileController.search(prospect.get._id)){
+                      <button class="btn btn-info">
+                        <span><i class="fa fa-linkedin"></i> Buscar Perfil LinkedIn</span>
+                      </button>
+                    }
+                  </div>
+                  <div class="col-md-3">
+                    <button class="btn btn-info" data-toggle="modal" data-target="#linkedin-modal"><span><i class="fa fa-link"></i> Agregar Link</span></button>
+                  </div>
+                  @com.prospects.views.html.add_link("linkedin-modal", "Agregar Url LinkedIn", "linkedin")
+
+                <div class="col-md-4"></div>
+                } else{
+                  @for((profile, i) <- prospect.get.linkedInProfiles.filter(p => !p.rejected).view.zipWithIndex) {
+                      <div class="row form-group">
+                          <div class="col-lg-12">
+                              <label for="profile">Perfil N° @(i + 1) del Prospecto:</label>
+                              <span id="profile"><a href="@(if(profile.profileUrl.contains("http")) profile.profileUrl else "http://" + profile.profileUrl)" target="_blank">@prospect.get.getFullName</a></span>
+                          </div>
+                      </div>
+                      @if(profile.jobList.nonEmpty){
+                          <div class="row form-group">
+                              <div class="col-lg-12">
+                                  <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-jobs">
+                                      <thead>
+                                          <tr>
+                                              <th>Institucion</th>
+                                              <th>Rol</th>
+                                              <th>Periodo</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+
+                                      @profile.jobList.foreach((job: LinkedinJob) =>
+                                          <tr class="graduate">
+                                          <td>@job.workplace</td>
+                                          <td>@job.position</td>
+                                          <td>@job.activityPeriod</td>
+                                          </tr>
+                                      )
+
+                                      </tbody>
+                                  </table>
+                              </div>
+                          </div>
+                      }
+                      @if(profile.educationList.nonEmpty){
+                          <div class="row form-group">
+                              <div class="col-lg-12">
+                                  <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-education">
+                                      <thead>
+                                          <tr>
+                                              <th>Institucion</th>
+                                              <th>Titulo</th>
+                                              <th>Periodo</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+
+                                      @profile.educationList.foreach((item: LinkedinEducation) =>
+                                          <tr class="graduate">
+                                          <td>@item.institute</td>
+                                          <td>@item.title</td>
+                                          <td>@item.educationPeriod</td>
+                                          </tr>
+                                      )
+
+                                      </tbody>
+                                  </table>
+                              </div>
+                          </div>
+                      }
+                  }
+              </div>
+                }
+            </fieldset>
+            <fieldset>
+              <legend>Actions</legend>
+              <div class="row form-group">
+                <div class="col-md-6">
+                  <a href="@routes.ProspectController.showValidation(prospect.get._id)" class="btn btn-info btn-lg pull-right">
+                    <span><i class="fa fa-tasks"></i> Validar Links</span>
+                  </a>
+                </div>
+                <div class="col-md-6">
+                  <button data-toggle="modal" data-target="#delete" value="delete" class="btn btn-danger btn-lg pull-left">
+                    <span><i class="fa fa-trash-o"></i> Eliminar</span>
+                  </button>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+            <!-- Modal -->
+        <div class="modal fade" id="myModal" role="dialog">
+          <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Delete graduate</h4>
+              </div>
+              <div class="modal-body">
+                <p>Are you sure you want to delete this graduate?</p>
+              </div>
+              <div class="modal-footer">
+                @helper.form(action = routes.ProspectController.delete(prospect.get._id)){
+                  <button type="button" class="btn btn-danger">Delete</button>
+                }
+                <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      } else {
+        <div class="alert alert-danger">
+          <strong>No existe el prospecto correspondiente</strong>
+        </div>
+      }
+      </div>
+    </div>
+
+  </div>
+
+  @com.institutions.views.html.institution_create_modal.render()
+}
+
+

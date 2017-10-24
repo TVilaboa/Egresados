@@ -1,0 +1,84 @@
+@(prospects: List[Prospect],message: String = "")
+
+@css = {
+  <!-- DataTables CSS -->
+  <link href="@routes.Assets.at("bower_components/datatables/media/css/jquery.dataTables.min.css")" rel="stylesheet">
+  <link href="@routes.Assets.at("stylesheets/application.css")" rel="stylesheet">
+  <link href="@routes.Assets.at("bower_components/datatables/media/css/buttons.dataTables.min.css")" rel="stylesheet">
+}
+
+@scripts = {
+    <!-- DataTables JavaScript -->
+  <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/jquery.dataTables.min.js")"></script>
+  <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/dataTables.buttons.min.js")"></script>
+  <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/buttons.flash.min.js")"></script>
+  <script type="text/javascript" src="@routes.Assets.at("bower_components/jszip.min.js")"></script>
+  <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/buttons.html5.min.js")"></script>
+  <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/buttons.print.min.js")"></script>
+  <script type="text/javascript" src="@routes.Assets.at("bower_components/datatables/media/js/buttons.colVis.min.js")"></script>
+
+    <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+  <script>
+          $(document).ready(function() {
+            $('#dataTables-example').DataTable({
+              dom: 'Bfrtip',
+              responsive: true,
+              select: true,
+              scrollX: true,
+              buttons: [
+                {
+                    extend : 'excel',
+                    exportOptions:{
+                        columns : [0, 1, 2, 3, 4, 5, 6]
+                    }
+                },
+                {
+                    extend : 'csv',
+                    exportOptions:{
+                        columns : [0, 1, 2, 3, 4, 5, 6]
+                    }
+                },
+                {
+                    text : 'JSON',
+                    action: function ( e, dt, button, config ) {
+                        var data = dt.buttons.exportData({
+                            columns : [0, 1, 2, 3, 4, 5, 6]
+                        });
+
+                        $.fn.dataTable.fileSave(
+                                new Blob( [ JSON.stringify( data ) ] ),
+                                'Export.json'
+                        );
+                    }
+                }
+              ]
+            });
+          });
+  </script>
+}
+
+@layout("Prospect Tracker | Prospects",scripts,css){
+
+  <div id="wrapper">
+
+    <div id="page-wrapper">
+
+      <div class="row">
+        <div class="col-lg-12">
+          <h1 class="page-header">Prospects</h1>
+            @if(message != ""){
+                <div id="messageSpan" class="alert alert-success" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="false"></span>
+                    <span class="sr-only">Error:</span>
+                    <span>@message</span>
+                </div>
+            }
+        </div>
+      </div>
+
+      @com.prospects.views.html.prospect_list.render(prospects)
+
+    </div>
+
+  </div>
+}

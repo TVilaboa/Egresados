@@ -1,0 +1,97 @@
+@import services.ScrapingService
+@(schedulingInterval : String, schedulingHour : String)
+
+@css = {
+}
+
+@scripts = {
+}
+
+@layout(title = "Prospect Tracker | Scheduling Configuration",scripts,css){
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Configuración de Automatización</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-body">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="scheduling-interval">Intervalo</label>
+                            <input class="form-control" type="text" readonly value="@schedulingInterval" id="scheduling-interval">
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="scheduling-hour">Horario (24 hs)</label>
+                            <input class="form-control" type="text" readonly value="@schedulingHour" id="scheduling-hour">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-body">
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <label for="scheduling-interval">Scraping Automatico Corriendo</label>
+                            <input class="form-control" type="text" readonly value="@ScrapingService.isAutoScrappingRunning" id="scheduling-interval">
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <label for="scheduling-hour">Progreso</label>
+                            <input class="form-control" type="text" readonly value="@ScrapingService.getCounter / @ScrapingService.getTotal" id="scheduling-hour">
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <label for="scheduling-interval">Ultima hora de inicio</label>
+                            <input class="form-control" type="text" readonly value="@ScrapingService.lastStartDate" id="scheduling-interval">
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <label for="scheduling-hour">Ultima hora de finalizacion</label>
+                            <input class="form-control" type="text" readonly value="@ScrapingService.lastFinishDate" id="scheduling-hour">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-body">
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <label for="scheduling-interval">Numero de Urls Generadas en la ultima corrida</label>
+                            <input class="form-control" type="text" readonly value="@ScrapingService.linksGenerated" id="scheduling-interval">
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                           @* <label for="scheduling-hour">Progreso</label>
+                            <input class="form-control" type="text" readonly value="@ScrapingService.getCounter / @ScrapingService.getTotal" id="scheduling-hour">*@
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            @*<label for="scheduling-interval">Ultima hora de inicio</label>
+                            <input class="form-control" type="text" readonly value="@ScrapingService.lastStartDate" id="scheduling-interval">*@
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                          @*  <label for="scheduling-hour">Ultima hora de finalizacion</label>
+                            <input class="form-control" type="text" readonly value="@ScrapingService.lastFinishDate" id="scheduling-hour">*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
