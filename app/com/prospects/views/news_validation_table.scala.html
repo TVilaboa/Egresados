@@ -23,7 +23,7 @@
           </thead>
           <tbody>
             <ul>
-            @for(item: News <- news){
+            @for(item: News <- news.sortBy(!_.validated)){
               <tr id="@item._id">
                   <td>
                       <input type="checkbox" class="pull-left" name="@source" value="@item._id" @item.selected>

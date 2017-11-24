@@ -30,7 +30,7 @@
         </thead>
         <tbody>
           <ul>
-            @for(item: News <- news){
+            @for(item: News <- news.filter(!_.rejected)){
               <tr>
                 <td>@item.title</td>
                 <td>@item.tuft</td>
